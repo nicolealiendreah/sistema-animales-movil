@@ -1,11 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_animales/core/routers.dart';
-import '../../core/constants.dart';
-import '../../widgets/custom_text_field.dart';
+import 'package:sistema_animales/core/constants.dart';
+import 'package:sistema_animales/servicess/user_service.dart';
+import 'package:sistema_animales/widgets/custom_text_field.dart';
 
-class LoginScreen extends StatelessWidget {
-  final TextEditingController usernameController = TextEditingController();
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final UserService _userService = UserService();
+
+  bool isLoading = false;
+
+  Future<void> _login() async {
+    setState(() => isLoading = true);
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+
+    final success = await _userService.login(email, password);
+
+    setState(() => isLoading = false);
+
+    if (success) {
+      Navigator.pushReplacementNamed(context, AppRoutes.animals);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Email o contraseña incorrectos')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +54,9 @@ class LoginScreen extends StatelessWidget {
                     Image.asset('assets/paw_logo.png', height: 150),
                     const SizedBox(height: 32),
                     CustomTextField(
-                      hintText: 'USERNAME',
-                      icon: Icons.person_outline,
-                      controller: usernameController,
+                      hintText: 'EMAIL',
+                      icon: Icons.email_outlined,
+                      controller: emailController,
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
@@ -47,11 +76,10 @@ class LoginScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: () {
-                        // Navegar sin validar por ahora
-                        Navigator.pushReplacementNamed(context, AppRoutes.animals);
-                      },
-                      child: const Text('LOGIN'),
+                      onPressed: isLoading ? null : _login,
+                      child: isLoading
+                          ? const CircularProgressIndicator()
+                          : const Text('LOGIN'),
                     ),
                     const SizedBox(height: 12),
                     TextButton(

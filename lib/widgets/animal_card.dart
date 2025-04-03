@@ -60,7 +60,10 @@ class AnimalCard extends StatelessWidget {
                       ),
                     ),
                     onPressed: onDetails,
-                    child: const Text('Datos'),
+                    child: const Text(
+                      'Datos',
+                      style: TextStyle(color: Colors.white),
+                    ),  
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -74,7 +77,11 @@ class AnimalCard extends StatelessWidget {
                       ),
                     ),
                     onPressed: onRescuer,
-                    child: const Text('Rescatista'),
+                    child: const Text(
+                      'Rescatista',
+                      style: TextStyle(color: Colors.white),
+                    ),
+
                   ),
                 ),
               ],

@@ -1,19 +1,40 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../core/env.dart';
 import '../models/user_model.dart';
-import 'api_service.dart';
 
 class UserService {
-  final ApiService _api = ApiService();
+  final String baseUrl = '$apiUrl/api/users';
 
-  Future<bool> login(String username, String password) async {
-    final res = await _api.post('/login', {
-      'username': username,
-      'password': password,
-    });
-    return res.statusCode == 200;
+  /// Simula login buscando el usuario por email y comparando contraseña
+  Future<bool> login(String email, String password) async {
+    final response = await http.get(Uri.parse(baseUrl));
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      final List users = body['sql']; // Solo SQL
+
+      // Buscar usuario por email
+      final user = users.firstWhere(
+        (u) => u['email'] == email,
+        orElse: () => null,
+      );
+
+      if (user != null && user['password'] == password) {
+        // Login exitoso
+        return true;
+      }
+    }
+    // Si no se encontró o la contraseña es incorrecta
+    return false;
   }
 
+  /// Registrar nuevo usuario
   Future<bool> register(User user) async {
-    final res = await _api.post('/users', user.toJson());
-    return res.statusCode == 201;
+    final response = await http.post(
+      Uri.parse(baseUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(user.toJson()),
+    );
+    return response.statusCode == 201;
   }
 }

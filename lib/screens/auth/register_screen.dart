@@ -1,17 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/core/routers.dart';
 import 'package:sistema_animales/servicess/user_service.dart';
-import '../../core/constants.dart';
-import '../../models/user_model.dart';
-import '../../widgets/custom_text_field.dart';
+import 'package:sistema_animales/models/user_model.dart';
+import 'package:sistema_animales/widgets/custom_text_field.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final UserService _userService = UserService();
+
+  bool isLoading = false;
+
+  Future<void> _register() async {
+    setState(() => isLoading = true);
+
+    final user = User(
+      name: firstNameController.text.trim(),
+      lastName: lastNameController.text.trim(),
+      username: usernameController.text.trim(),
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+    );
+
+    final success = await _userService.register(user);
+
+    setState(() => isLoading = false);
+
+    if (!mounted) return;
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Usuario registrado correctamente')),
+      );
+      Navigator.pushReplacementNamed(context, AppRoutes.login);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al registrar usuario')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,31 +117,10 @@ class RegisterScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () async {
-                        final user = User(
-                          username: usernameController.text.trim(),
-                          password: passwordController.text.trim(),
-                          firstName: firstNameController.text.trim(),
-                          lastName: lastNameController.text.trim(),
-                          email: emailController.text.trim(),
-                        );
-
-                        final success = await _userService.register(user);
-
-                        if (context.mounted) {
-                          if (success) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Usuario registrado correctamente')),
-                            );
-                            Navigator.pushReplacementNamed(context, AppRoutes.login);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Error al registrar usuario')),
-                            );
-                          }
-                        }
-                      },
-                      child: const Text('REGISTER'),
+                      onPressed: isLoading ? null : _register,
+                      child: isLoading
+                          ? const CircularProgressIndicator()
+                          : const Text('REGISTER'),
                     ),
                     const SizedBox(height: 32),
                     Image.asset('assets/vet_with_dog.png', height: 180),

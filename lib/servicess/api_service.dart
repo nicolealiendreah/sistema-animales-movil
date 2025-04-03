@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import '../core/env.dart';
 
 class ApiService {
-  final String baseUrl = Env.apiUrl;
+  final String baseUrl = apiUrl;
+
 
   /// GET: Obtener datos desde la API
   Future<http.Response> get(String endpoint) async {

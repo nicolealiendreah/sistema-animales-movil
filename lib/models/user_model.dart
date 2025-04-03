@@ -1,40 +1,44 @@
 class User {
-  final String? id;
-  final String firstName;
+  final int? id;
+  final String name;
   final String lastName;
   final String username;
   final String email;
   final String password;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   User({
     this.id,
-    required this.firstName,
+    required this.name,
     required this.lastName,
     required this.username,
     required this.email,
     required this.password,
+    this.createdAt,
+    this.updatedAt,
   });
 
-  // Factory para crear un usuario desde JSON
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['_id'],
-      firstName: json['firstName'],
+      id: json['id'],
+      name: json['name'],
       lastName: json['lastName'],
       username: json['username'],
       email: json['email'],
-      password: '', // Nunca deserializamos la contraseña desde backend
+      password: json['password'],
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 
-  // Convertir a JSON para enviar a la API
   Map<String, dynamic> toJson() {
     return {
-      'firstName': firstName,
-      'lastName': lastName,
-      'username': username,
-      'email': email,
-      'password': password,
+      "name": name,
+      "lastName": lastName,
+      "username": username,
+      "email": email,
+      "password": password,
     };
   }
 }

@@ -1,21 +1,63 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../core/env.dart';
 import '../models/transfer_model.dart';
-import 'api_service.dart';
 
 class TransferService {
-  final ApiService _api = ApiService();
+  final String baseUrl = '$apiUrl/api/transfers';
 
+  /// Obtener todos los traslados desde SQL
   Future<List<Transfer>> getAll() async {
-    final res = await _api.get('/transfers');
-    if (res.statusCode == 200) {
-      final List data = jsonDecode(res.body);
+    final response = await http.get(Uri.parse(baseUrl));
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      final List data = body['sql']; // SQL
       return data.map((e) => Transfer.fromJson(e)).toList();
+    } else {
+      throw Exception('Error al obtener traslados');
     }
-    throw Exception('Error al obtener traslados');
   }
 
-  Future<bool> create(Transfer transfer) async {
-    final res = await _api.post('/transfers', transfer.toJson());
-    return res.statusCode == 201;
+  /// Obtener un traslado por ID
+  Future<Transfer> getById(String id) async {
+    final response = await http.get(Uri.parse('$baseUrl/$id'));
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      return Transfer.fromJson(body);
+    } else {
+      throw Exception('Error al obtener traslado');
+    }
+  }
+
+  /// Crear un nuevo traslado
+  Future<void> create(Transfer transfer) async {
+    final response = await http.post(
+      Uri.parse(baseUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(transfer.toJson()),
+    );
+    if (response.statusCode != 201) {
+      throw Exception('Error al registrar traslado');
+    }
+  }
+
+  /// Actualizar un traslado existente
+  Future<void> update(String id, Transfer transfer) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/$id'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(transfer.toJson()),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Error al actualizar traslado');
+    }
+  }
+
+  /// Eliminar un traslado
+  Future<void> delete(String id) async {
+    final response = await http.delete(Uri.parse('$baseUrl/$id'));
+    if (response.statusCode != 200) {
+      throw Exception('Error al eliminar traslado');
+    }
   }
 }

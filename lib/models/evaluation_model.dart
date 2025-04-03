@@ -1,36 +1,38 @@
 class Evaluation {
-  final String? id;
-  final String animalId;
+  final int? id;
+  final int animalId;
   final String diagnostico;
-  final String? sintomas;
-  final String? tratamiento;
-  final String? medicacion;
+  final String? sintomasObservados;
+  final String? tratamientoAdministrado;
+  final String? medicacionRecetada;
   final String? veterinario;
-  final DateTime fechaEvaluacion;
+  final DateTime? fechaEvaluacion;
   final DateTime? proximaRevision;
 
   Evaluation({
     this.id,
     required this.animalId,
     required this.diagnostico,
-    this.sintomas,
-    this.tratamiento,
-    this.medicacion,
+    this.sintomasObservados,
+    this.tratamientoAdministrado,
+    this.medicacionRecetada,
     this.veterinario,
-    required this.fechaEvaluacion,
+    this.fechaEvaluacion,
     this.proximaRevision,
   });
 
   factory Evaluation.fromJson(Map<String, dynamic> json) {
     return Evaluation(
-      id: json['_id'],
+      id: json['id'],
       animalId: json['animalId'],
       diagnostico: json['diagnostico'],
-      sintomas: json['sintomas'],
-      tratamiento: json['tratamiento'],
-      medicacion: json['medicacion'],
+      sintomasObservados: json['sintomasObservados'],
+      tratamientoAdministrado: json['tratamientoAdministrado'],
+      medicacionRecetada: json['medicacionRecetada'],
       veterinario: json['veterinario'],
-      fechaEvaluacion: DateTime.parse(json['fechaEvaluacion']),
+      fechaEvaluacion: json['fechaEvaluacion'] != null
+          ? DateTime.parse(json['fechaEvaluacion'])
+          : null,
       proximaRevision: json['proximaRevision'] != null
           ? DateTime.parse(json['proximaRevision'])
           : null,
@@ -41,11 +43,11 @@ class Evaluation {
     return {
       'animalId': animalId,
       'diagnostico': diagnostico,
-      'sintomas': sintomas,
-      'tratamiento': tratamiento,
-      'medicacion': medicacion,
+      'sintomasObservados': sintomasObservados,
+      'tratamientoAdministrado': tratamientoAdministrado,
+      'medicacionRecetada': medicacionRecetada,
       'veterinario': veterinario,
-      'fechaEvaluacion': fechaEvaluacion.toIso8601String(),
+      'fechaEvaluacion': fechaEvaluacion?.toIso8601String(),
       'proximaRevision': proximaRevision?.toIso8601String(),
     };
   }

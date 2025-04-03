@@ -1,21 +1,63 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../core/env.dart';
 import '../models/adoption_model.dart';
-import 'api_service.dart';
 
 class AdoptionService {
-  final ApiService _api = ApiService();
+  final String baseUrl = '$apiUrl/api/adoptions';
 
+  /// Obtener todas las adopciones desde SQL
   Future<List<Adoption>> getAll() async {
-    final res = await _api.get('/adoptions');
-    if (res.statusCode == 200) {
-      final List data = jsonDecode(res.body);
+    final response = await http.get(Uri.parse(baseUrl));
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      final List data = body['sql']; // SQL
       return data.map((e) => Adoption.fromJson(e)).toList();
+    } else {
+      throw Exception('Error al obtener adopciones');
     }
-    throw Exception('Error al obtener adopciones');
   }
 
-  Future<bool> create(Adoption adoption) async {
-    final res = await _api.post('/adoptions', adoption.toJson());
-    return res.statusCode == 201;
+  /// Obtener una adopción por ID
+  Future<Adoption> getById(String id) async {
+    final response = await http.get(Uri.parse('$baseUrl/$id'));
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      return Adoption.fromJson(body);
+    } else {
+      throw Exception('Error al obtener adopción');
+    }
+  }
+
+  /// Crear una nueva adopción
+  Future<void> create(Adoption adoption) async {
+    final response = await http.post(
+      Uri.parse(baseUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(adoption.toJson()),
+    );
+    if (response.statusCode != 201) {
+      throw Exception('Error al registrar adopción');
+    }
+  }
+
+  /// Actualizar una adopción
+  Future<void> update(String id, Adoption adoption) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/$id'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(adoption.toJson()),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Error al actualizar adopción');
+    }
+  }
+
+  /// Eliminar una adopción
+  Future<void> delete(String id) async {
+    final response = await http.delete(Uri.parse('$baseUrl/$id'));
+    if (response.statusCode != 200) {
+      throw Exception('Error al eliminar adopción');
+    }
   }
 }

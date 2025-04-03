@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sistema_animales/screens/evaluation/medical_evaluation_screen.dart';
 import '../../../models/animal_model.dart';
 import '../../../core/constants.dart';
 import '../../../widgets/modal_card.dart';
@@ -16,13 +17,14 @@ class AnimalDetailPopup extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.arrow_back),
               const SizedBox(width: 8),
-              Text('Datos ${animal.nombre}', style: AppTextStyles.heading),
+              Text(
+                'Datos ${animal.nombre}',
+                style: AppTextStyles.heading.copyWith(color: Colors.black),
+              ),
             ],
           ),
           const SizedBox(height: 16),
-
           _buildRow('Nombre:', animal.nombre),
           _buildRow('Especie:', animal.especie ?? ''),
           _buildRow('Raza:', animal.raza ?? ''),
@@ -31,11 +33,13 @@ class AnimalDetailPopup extends StatelessWidget {
           _buildRow('Estado de Salud:', animal.estadoSalud ?? ''),
           _buildRow('Tipo de alimentación:', animal.tipoAlimentacion ?? ''),
           _buildRow('Cantidad recomendada:', animal.cantidadRecomendada ?? ''),
-          _buildRow('Frecuencia recomendada:', animal.frecuenciaRecomendada ?? ''),
-          _buildRow('Fecha de Liberación:', animal.fechaLiberacion?.toString().split('T').first ?? ''),
-          _buildRow('Ubicación de Liberación:', animal.ubicacionLiberacion ?? ''),
+          _buildRow(
+              'Frecuencia recomendada:', animal.frecuenciaRecomendada ?? ''),
+          _buildRow('Fecha de Liberación:',
+              animal.fechaLiberacion?.toString().split('T').first ?? ''),
+          _buildRow(
+              'Ubicación de Liberación:', animal.ubicacionLiberacion ?? ''),
           const SizedBox(height: 16),
-
           Center(
             child: Container(
               height: 90,
@@ -48,19 +52,64 @@ class AnimalDetailPopup extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-
-          Align(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            alignment: WrapAlignment.center,
+            children: [
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          MedicalEvaluationScreen(animal: animal),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.pets, size: 18),
+                label: const Text('Ev.Medicas'),
               ),
-              onPressed: () {
-                // Acción editar (si aplica)
-              },
-              icon: const Icon(Icons.edit),
-              label: const Text('Editar Datos'),
-            ),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                ),
+                onPressed: () {
+                  // Acción para geolocalización
+                },
+                icon: const Icon(Icons.location_on, size: 18),
+                label: const Text('Geolocalizacion'),
+              ),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                ),
+                onPressed: () {
+                  // Acción para historial de traslados
+                },
+                icon: const Icon(Icons.list_alt, size: 18),
+                label: const Text('Historial Traslados'),
+              ),
+            ],
           ),
         ],
       ),
@@ -72,7 +121,10 @@ class AnimalDetailPopup extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Expanded(flex: 4, child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(
+              flex: 4,
+              child: Text(label,
+                  style: const TextStyle(fontWeight: FontWeight.bold))),
           Expanded(flex: 6, child: Text(value)),
         ],
       ),
