@@ -1,6 +1,7 @@
 class Transfer {
   final String? id;
   final String animalId;
+
   final String? ubicacionAnterior;
   final String? ubicacionNueva;
   final String? motivo;
@@ -18,16 +19,17 @@ class Transfer {
   });
 
   factory Transfer.fromJson(Map<String, dynamic> json) {
-    return Transfer(
-      id: json['_id'],
-      animalId: json['animalId'],
-      ubicacionAnterior: json['ubicacionAnterior'],
-      ubicacionNueva: json['ubicacionNueva'],
-      motivo: json['motivo'],
-      observaciones: json['observaciones'],
-      fechaTraslado: DateTime.parse(json['fechaTraslado']),
-    );
-  }
+  return Transfer(
+    id: json['_id']?.toString(),
+    animalId: json['animalId'].toString(), // ✅ aquí el fix
+    ubicacionAnterior: json['ubicacionAnterior'],
+    ubicacionNueva: json['ubicacionNueva'],
+    motivo: json['motivo'],
+    observaciones: json['observaciones'],
+    fechaTraslado: DateTime.parse(json['fechaTraslado']),
+  );
+}
+
 
   Map<String, dynamic> toJson() {
     return {

@@ -174,21 +174,6 @@ class _RescuerFormScreenState extends State<RescuerFormScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: AppColors.primary,
-        shape: const CircularNotchedRectangle(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: const [
-              Icon(Icons.folder_copy_rounded, color: Colors.white),
-              Icon(Icons.home, color: Colors.white),
-              Icon(Icons.pets, color: Colors.white),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

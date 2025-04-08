@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_animales/screens/evaluation/medical_evaluation_screen.dart';
+import 'package:sistema_animales/screens/transfer/transfer_list_screen.dart';
 import '../../../models/animal_model.dart';
 import '../../../core/constants.dart';
 import '../../../widgets/modal_card.dart';
@@ -104,7 +105,13 @@ class AnimalDetailPopup extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16)),
                 ),
                 onPressed: () {
-                  // Acción para historial de traslados
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          TransferListScreen(animal: animal),
+                    ),
+                  );
                 },
                 icon: const Icon(Icons.list_alt, size: 18),
                 label: const Text('Historial Traslados'),

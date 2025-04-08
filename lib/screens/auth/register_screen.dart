@@ -66,6 +66,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Flecha arriba alineada a la izquierda
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(
+                              context, AppRoutes.login);
+                        },
+                      ),
+                    ),
                     const Text(
                       'Create an Account',
                       style: AppTextStyles.heading,
@@ -112,7 +123,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.white,
                         foregroundColor: AppColors.buttonText,
-                        padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 100, vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),

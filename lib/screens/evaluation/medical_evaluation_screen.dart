@@ -4,11 +4,13 @@ import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/models/animal_model.dart';
 import 'package:sistema_animales/models/evaluation_model.dart';
 import 'package:sistema_animales/servicess/evaluation_service.dart';
+import 'evaluation_form_screen.dart';
 
 class MedicalEvaluationScreen extends StatefulWidget {
   final Animal animal;
+  final Evaluation? evaluation;
 
-  const MedicalEvaluationScreen({super.key, required this.animal});
+  const MedicalEvaluationScreen({super.key, required this.animal, this.evaluation,});
 
   @override
   State<MedicalEvaluationScreen> createState() =>
@@ -20,6 +22,7 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
   Evaluation? _evaluation;
   bool _isLoading = true;
   String? _error;
+  
 
   @override
   void initState() {
@@ -97,8 +100,13 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8),
-                    const Text('Evaluaciones médicas y tratamientos',
-                        style: AppTextStyles.heading),
+                    Expanded(
+                      child: Text(
+                        'Evaluaciones médicas y tratamientos',
+                        style: AppTextStyles.heading.copyWith(fontSize: 18),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -108,7 +116,7 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Evaluaciones médicas y tratamientos\n${widget.animal.nombre}',
+                    '${widget.animal.nombre}',
                     style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 16,
@@ -194,21 +202,28 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
                                 const SizedBox(height: 20),
                                 ElevatedButton.icon(
                                   onPressed: () {
-                                    // TODO: Navegar a formulario de edición
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => EvaluationFormScreen(
+                                          animal: widget.animal,
+                                          evaluation: _evaluation,
+                                        ),
+                                      ),
+                                    );
                                   },
                                   icon: const Icon(Icons.add),
-                                  label:
-                                      const Text('Agregar/Editar Evaluación'),
+                                  label: const Text('Agregar Evaluación'),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.primary,
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 14),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(12)),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),

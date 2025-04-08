@@ -4,6 +4,7 @@ import 'package:sistema_animales/core/routers.dart';
 import 'package:sistema_animales/models/animal_model.dart';
 import 'package:sistema_animales/screens/animal/animal_detail_popup.dart';
 import 'package:sistema_animales/screens/rescuer/rescuer_detail_popup.dart';
+import 'package:sistema_animales/screens/shared/pantalla_nav.dart';
 import 'package:sistema_animales/servicess/animal_service.dart';
 import 'package:sistema_animales/servicess/rescuer_service.dart';
 import 'package:sistema_animales/widgets/animal_card.dart';
@@ -38,6 +39,9 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
 
     _timer = Timer.periodic(const Duration(seconds: 10), (_) async {
       final updatedAnimals = await _animalService.getAll();
+
+      if (!mounted) return; // 👈 PREVIENE el error
+
       setState(() {
         _allAnimals = updatedAnimals;
         _filterAnimals(_searchController.text);
@@ -67,8 +71,10 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
   }
 
   @override
+  @override
   void dispose() {
     _searchController.dispose();
+    _timer?.cancel(); // 👈 IMPORTANTE
     super.dispose();
   }
 
@@ -215,21 +221,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
         foregroundColor: Colors.white,
         child: const Icon(Icons.add),
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: AppColors.primary,
-        shape: const CircularNotchedRectangle(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: const [
-              Icon(Icons.folder_copy_rounded, color: Colors.white),
-              Icon(Icons.home, color: Colors.white),
-              Icon(Icons.pets, color: Colors.white),
-            ],
-          ),
-        ),
-      ),
+      bottomNavigationBar: PantallaNav(context: context),
     );
   }
 }
