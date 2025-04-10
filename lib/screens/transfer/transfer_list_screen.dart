@@ -99,9 +99,12 @@ class _TransferListScreenState extends State<TransferListScreen> {
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8),
-                    const Text(
-                      'Historial de Traslados y Seguimiento',
-                      style: AppTextStyles.heading,
+                    Expanded(
+                      child: Text(
+                        'Historial de Traslados y Seguimiento',
+                        style: AppTextStyles.heading.copyWith(fontSize: 18),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ],
                 ),
@@ -172,9 +175,9 @@ class _TransferListScreenState extends State<TransferListScreen> {
                                     );
                                   },
                                   icon: const Icon(Icons.add),
-                                  label: const Text('Agregar/Editar Traslado'),
+                                  label: const Text('Agregar Traslado'),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green[700],
+                                    backgroundColor: AppColors.primary,
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 14),

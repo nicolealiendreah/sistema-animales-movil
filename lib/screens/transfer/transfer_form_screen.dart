@@ -52,7 +52,6 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
 
     final transfer = Transfer(
       animalId: widget.animal.id.toString(),
-
       ubicacionAnterior: _ubicacionAnterior.text,
       ubicacionNueva: _ubicacionNueva.text,
       motivo: _motivo.text,
@@ -89,38 +88,38 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
         fit: StackFit.expand,
         children: [
           Image.asset('assets/background2.jpg', fit: BoxFit.cover),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () => Navigator.pop(context),
+          Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(
+                    top: 50, left: 20, right: 20, bottom: 16),
+                color: AppColors.primary,
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Historial de Traslados y Seguimiento',
+                        style: AppTextStyles.heading.copyWith(fontSize: 18),
+                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Historial de Traslados y Seguimiento',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Form(
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Form(
                     key: _formKey,
                     child: Column(
                       children: [
-                        _buildField('Ubicacion Anterior', _ubicacionAnterior),
-                        _buildField('Ubicacion Nueva', _ubicacionNueva),
+                        _buildField('Ubicación Anterior', _ubicacionAnterior),
+                        _buildField('Ubicación Nueva', _ubicacionNueva),
                         _buildField('Motivo Traslado', _motivo),
                         _buildField('Responsable del Traslado', _responsable),
                         _buildField('Observaciones', _observaciones),
@@ -159,12 +158,13 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                           ),
                           child: const Text('GUARDAR'),
                         ),
+                        const SizedBox(height: 32),
                       ],
                     ),
-                  )
-                ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),

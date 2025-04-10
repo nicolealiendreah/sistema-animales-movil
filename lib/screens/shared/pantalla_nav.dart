@@ -20,19 +20,19 @@ class PantallaNav extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.folder_copy_rounded, color: Colors.white),
               onPressed: () {
-                //Navigator.pushNamed(context, AppRoutes.rescuers);
+                Navigator.pushNamed(context, AppRoutes.adoptionList);
               },
             ),
             IconButton(
               icon: const Icon(Icons.home, color: Colors.white),
               onPressed: () {
-                //Navigator.pushNamed(context, AppRoutes.animals);
+                Navigator.pushNamed(context, AppRoutes.animals);
               },
             ),
             IconButton(
               icon: const Icon(Icons.pets, color: Colors.white),
               onPressed: () {
-                //Navigator.pushNamed(context, AppRoutes.animalForm);
+                Navigator.pushNamed(context, AppRoutes.report);
               },
             ),
           ],

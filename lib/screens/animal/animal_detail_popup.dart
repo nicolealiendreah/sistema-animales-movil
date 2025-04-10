@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_animales/screens/evaluation/medical_evaluation_screen.dart';
+import 'package:sistema_animales/screens/geolocation/geolocation_screen.dart';
 import 'package:sistema_animales/screens/transfer/transfer_list_screen.dart';
 import '../../../models/animal_model.dart';
 import '../../../core/constants.dart';
@@ -90,7 +91,12 @@ class AnimalDetailPopup extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16)),
                 ),
                 onPressed: () {
-                  // Acción para geolocalización
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GeolocationScreen(),
+                    ),
+                  );
                 },
                 icon: const Icon(Icons.location_on, size: 18),
                 label: const Text('Geolocalizacion'),
@@ -108,8 +114,7 @@ class AnimalDetailPopup extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          TransferListScreen(animal: animal),
+                      builder: (context) => TransferListScreen(animal: animal),
                     ),
                   );
                 },

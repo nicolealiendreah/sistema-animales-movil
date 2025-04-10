@@ -123,7 +123,7 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
                     ),
                     Expanded(
                       child: Text(
-                        'Editar/Agregar Evaluaciones médicas y tratamientos ${widget.animal.nombre}',
+                        'Agregar Evaluaciones médicas y tratamientos ${widget.animal.nombre}',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
