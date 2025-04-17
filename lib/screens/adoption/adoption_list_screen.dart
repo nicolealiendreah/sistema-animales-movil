@@ -6,6 +6,7 @@ import 'package:sistema_animales/models/adoption_model.dart';
 import 'package:sistema_animales/models/animal_model.dart';
 import 'package:sistema_animales/servicess/adoption_service.dart';
 import 'package:sistema_animales/servicess/animal_service.dart';
+import 'package:sistema_animales/models/animal_rescatista_model.dart';
 
 class AdoptionListScreen extends StatefulWidget {
   const AdoptionListScreen({super.key});
@@ -18,8 +19,8 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
   final AdoptionService _adoptionService = AdoptionService();
   final AnimalService _animalService = AnimalService();
 
-  List<Animal> _animals = [];
-  Animal? _selectedAnimal;
+  List<AnimalRescatista> _animals = [];
+  AnimalRescatista? _selectedAnimal;
   Adoption? _adoption;
 
   bool _isLoading = true;
@@ -117,16 +118,16 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                   const Text('Nombre del animal:',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold)),
-                                  DropdownButtonFormField<Animal>(
+                                  DropdownButtonFormField<AnimalRescatista>(
                                     decoration: const InputDecoration(
                                       border: UnderlineInputBorder(),
                                     ),
                                     value: _selectedAnimal,
                                     hint: const Text('Seleccionar animal'),
                                     items: _animals
-                                        .map((animal) => DropdownMenuItem(
-                                              value: animal,
-                                              child: Text(animal.nombre),
+                                        .map((ar) => DropdownMenuItem(
+                                              value: ar,
+                                              child: Text(ar.animal.nombre),
                                             ))
                                         .toList(),
                                     onChanged: (value) {
@@ -135,7 +136,8 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                         _adoption = null;
                                       });
                                       if (value != null) {
-                                        _loadAdoptionData(value.id.toString());
+                                        _loadAdoptionData(
+                                            value.animal.id.toString());
                                       }
                                     },
                                   ),
@@ -175,7 +177,8 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                             const SizedBox(height: 24),
                             ElevatedButton.icon(
                               onPressed: () {
-                                Navigator.pushNamed(context, AppRoutes.adoptionForm);
+                                Navigator.pushNamed(
+                                    context, AppRoutes.adoptionForm);
                               },
                               icon: const Icon(Icons.add),
                               label: const Text('Agregar/Editar Gestión'),

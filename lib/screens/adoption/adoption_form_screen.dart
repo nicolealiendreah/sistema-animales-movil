@@ -5,6 +5,7 @@ import 'package:sistema_animales/models/adoption_model.dart';
 import 'package:sistema_animales/models/animal_model.dart';
 import 'package:sistema_animales/servicess/adoption_service.dart';
 import 'package:sistema_animales/servicess/animal_service.dart';
+import 'package:sistema_animales/models/animal_rescatista_model.dart';
 
 class AdoptionFormScreen extends StatefulWidget {
   const AdoptionFormScreen({super.key});
@@ -18,8 +19,8 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
   final AnimalService _animalService = AnimalService();
   final _formKey = GlobalKey<FormState>();
 
-  List<Animal> _animals = [];
-  Animal? _selectedAnimal;
+  List<AnimalRescatista> _animals = [];
+AnimalRescatista? _selectedAnimal;
   Adoption? _adoption;
   DateTime? _fechaAdopcion;
 
@@ -79,7 +80,8 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
     if (time == null) return;
 
     setState(() {
-      _fechaAdopcion = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+      _fechaAdopcion =
+          DateTime(date.year, date.month, date.day, time.hour, time.minute);
     });
   }
 
@@ -127,7 +129,8 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
           Column(
             children: [
               Container(
-                padding: const EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 16),
+                padding: const EdgeInsets.only(
+                    top: 50, left: 20, right: 20, bottom: 16),
                 color: AppColors.primary,
                 child: Row(
                   children: [
@@ -153,20 +156,21 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                           child: Text('Nombre del animal:',
                               style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
-                        DropdownButtonFormField<Animal>(
+                        DropdownButtonFormField<AnimalRescatista>(
                           value: _selectedAnimal,
                           items: _animals.map((animal) {
                             return DropdownMenuItem(
                               value: animal,
-                              child: Text(animal.nombre),
+                              child: Text(animal.animal.nombre),
                             );
                           }).toList(),
-                          onChanged: (Animal? animal) {
+                          onChanged: (AnimalRescatista? animal) {
                             if (animal != null) {
                               setState(() {
                                 _selectedAnimal = animal;
                               });
-                              _loadAdoption(animal.id!);
+                              _loadAdoption(animal
+                                  .animal.id!); // 👈 accede al id correctamente
                             }
                           },
                           decoration: const InputDecoration(
@@ -179,9 +183,12 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                         const SizedBox(height: 12),
                         _buildField('Estado actual', estado),
                         _buildField('Nombre del adoptante', nombreAdoptante),
-                        _buildField('Contacto del adoptante', contactoAdoptante),
-                        _buildField('Dirección del adoptante', direccionAdoptante),
-                        _buildField('Observaciones', observaciones, maxLines: 3),
+                        _buildField(
+                            'Contacto del adoptante', contactoAdoptante),
+                        _buildField(
+                            'Dirección del adoptante', direccionAdoptante),
+                        _buildField('Observaciones', observaciones,
+                            maxLines: 3),
                         const SizedBox(height: 12),
                         const Align(
                           alignment: Alignment.centerLeft,
@@ -224,7 +231,8 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
     );
   }
 
-  Widget _buildField(String label, TextEditingController controller, {int maxLines = 1}) {
+  Widget _buildField(String label, TextEditingController controller,
+      {int maxLines = 1}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
@@ -239,7 +247,8 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
             decoration: InputDecoration(
               fillColor: Colors.white,
               filled: true,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             ),
           ),
         ],

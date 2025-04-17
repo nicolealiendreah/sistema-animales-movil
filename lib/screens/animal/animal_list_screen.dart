@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/core/routers.dart';
 import 'package:sistema_animales/models/animal_model.dart';
+import 'package:sistema_animales/models/animal_rescatista_model.dart';
 import 'package:sistema_animales/screens/animal/animal_detail_popup.dart';
 import 'package:sistema_animales/screens/rescuer/rescuer_detail_popup.dart';
 import 'package:sistema_animales/screens/shared/pantalla_nav.dart';
@@ -20,11 +21,12 @@ class AnimalListScreen extends StatefulWidget {
 
 class _AnimalListScreenState extends State<AnimalListScreen> {
   final AnimalService _animalService = AnimalService();
-  late Future<List<Animal>> _futureAnimals;
 
   final TextEditingController _searchController = TextEditingController();
-  List<Animal> _allAnimals = [];
-  List<Animal> _filteredAnimals = [];
+  late Future<List<AnimalRescatista>> _futureAnimals;
+  List<AnimalRescatista> _allAnimals = [];
+  List<AnimalRescatista> _filteredAnimals = [];
+
   Timer? _timer;
 
   @override
@@ -49,7 +51,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
     });
   }
 
-  Future<List<Animal>> _loadAnimals() async {
+  Future<List<AnimalRescatista>> _loadAnimals() async {
     final animals = await _animalService.getAll();
     setState(() {
       _allAnimals = animals;
@@ -59,10 +61,9 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
   }
 
   void _filterAnimals(String query) {
-    final filtered = _allAnimals.where((animal) {
-      final name = animal.nombre.toLowerCase();
-      final searchLower = query.toLowerCase();
-      return name.contains(searchLower);
+    final filtered = _allAnimals.where((item) {
+      final name = item.animal.nombre.toLowerCase();
+      return name.contains(query.toLowerCase());
     }).toList();
 
     setState(() {
@@ -135,7 +136,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                 ),
               ),
               Expanded(
-                child: FutureBuilder<List<Animal>>(
+                child: FutureBuilder<List<AnimalRescatista>>(
                   future: _futureAnimals,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -158,43 +159,23 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                         ),
                         itemCount: _filteredAnimals.length,
                         itemBuilder: (context, index) {
-                          final animal = _filteredAnimals[index];
+                          final item = _filteredAnimals[index];
+
                           return AnimalCard(
-                            animal: animal,
+                            animal: item.animal,
                             onDetails: () {
                               showDialog(
                                 context: context,
                                 builder: (_) =>
-                                    AnimalDetailPopup(animal: animal),
+                                    AnimalDetailPopup(animal: item.animal),
                               );
                             },
-                            onRescuer: () async {
-                              final rescuerService = RescuerService();
-                              try {
-                                final rescatistas =
-                                    await rescuerService.getAll();
-                                if (rescatistas.isNotEmpty) {
-                                  final rescuer = rescatistas.first;
-
-                                  showDialog(
-                                    context: context,
-                                    builder: (_) =>
-                                        RescuerDetailPopup(rescuer: rescuer),
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            'No hay rescatistas disponibles')),
-                                  );
-                                }
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          'Error al cargar rescatista: $e')),
-                                );
-                              }
+                            onRescuer: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) =>
+                                    RescuerDetailPopup(rescuer: item.rescuer),
+                              );
                             },
                           );
                         },

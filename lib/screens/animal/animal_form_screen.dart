@@ -24,10 +24,16 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   final TextEditingController tipoAlimentacion = TextEditingController();
   final TextEditingController cantidadRecomendada = TextEditingController();
   final TextEditingController frecuenciaRecomendada = TextEditingController();
-  final TextEditingController fechaLiberacionController = TextEditingController();
+  final TextEditingController fechaLiberacionController =
+      TextEditingController();
   final TextEditingController ubicacionLiberacion = TextEditingController();
 
   DateTime? _fechaLiberacion;
+
+  final TextEditingController nombreRescatista = TextEditingController();
+  final TextEditingController telefonoRescatista = TextEditingController();
+  final TextEditingController ubicacionRescate = TextEditingController();
+  DateTime? _fechaRescate;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -39,7 +45,25 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
     if (picked != null) {
       setState(() {
         _fechaLiberacion = picked;
-        fechaLiberacionController.text = picked.toLocal().toString().split(' ')[0];
+        fechaLiberacionController.text =
+            picked.toLocal().toString().split(' ')[0];
+      });
+    }
+  }
+
+  final TextEditingController fechaRescateController = TextEditingController();
+
+  Future<void> _selectFechaRescate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _fechaRescate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        _fechaRescate = picked;
+        fechaRescateController.text = picked.toLocal().toString().split(' ')[0];
       });
     }
   }
@@ -47,26 +71,31 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, complete todos los campos obligatorios')),
+        const SnackBar(
+            content: Text('Por favor, complete todos los campos obligatorios')),
       );
       return;
     }
 
-    final animal = Animal(
-      nombre: nombre.text,
-      especie: especie.text,
-      raza: raza.text,
-      sexo: sexo.text,
-      edad: int.tryParse(edad.text),
-      estadoSalud: estadoSalud.text,
-      tipoAlimentacion: tipoAlimentacion.text,
-      cantidadRecomendada: cantidadRecomendada.text,
-      frecuenciaRecomendada: frecuenciaRecomendada.text,
-      fechaLiberacion: _fechaLiberacion,
-      ubicacionLiberacion: ubicacionLiberacion.text,
-    );
+    final data = {
+      "nombreRescatista": nombreRescatista.text,
+      "telefonoRescatista": telefonoRescatista.text,
+      "fechaRescate": _fechaRescate?.toIso8601String(),
+      "ubicacionRescate": ubicacionRescate.text,
+      "nombre": nombre.text,
+      "especie": especie.text,
+      "raza": raza.text,
+      "sexo": sexo.text,
+      "edad": int.tryParse(edad.text),
+      "estadoSalud": estadoSalud.text,
+      "tipoAlimentacion": tipoAlimentacion.text,
+      "cantidadRecomendada": cantidadRecomendada.text,
+      "frecuenciaRecomendada": frecuenciaRecomendada.text,
+      "fechaLiberacion": _fechaLiberacion?.toIso8601String(),
+      "ubicacionLiberacion": ubicacionLiberacion.text,
+    };
 
-    final success = await _service.create(animal);
+    final success = await _service.create(data);
 
     if (!mounted) return;
 
@@ -93,7 +122,8 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
           Column(
             children: [
               Container(
-                padding: const EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 16),
+                padding: const EdgeInsets.only(
+                    top: 50, left: 20, right: 20, bottom: 16),
                 color: AppColors.primary,
                 child: Row(
                   children: [
@@ -102,7 +132,8 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8),
-                    const Text('Datos del Animal', style: AppTextStyles.heading),
+                    const Text('Datos del Animal',
+                        style: AppTextStyles.heading),
                   ],
                 ),
               ),
@@ -114,9 +145,12 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text('Datos', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold)),
+                        const Text('Datos',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold)),
                         const SizedBox(height: 16),
-
                         CustomFormTextField(
                           hintText: 'Nombre',
                           controller: nombre,
@@ -124,7 +158,6 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                           validator: _requiredValidator,
                         ),
                         const SizedBox(height: 16),
-
                         CustomFormTextField(
                           hintText: 'Especie',
                           controller: especie,
@@ -132,7 +165,6 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                           validator: _requiredValidator,
                         ),
                         const SizedBox(height: 16),
-
                         CustomFormTextField(
                           hintText: 'Raza',
                           controller: raza,
@@ -140,7 +172,6 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                           validator: _requiredValidator,
                         ),
                         const SizedBox(height: 16),
-
                         Row(
                           children: [
                             Expanded(
@@ -163,7 +194,6 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                           ],
                         ),
                         const SizedBox(height: 16),
-
                         CustomFormTextField(
                           hintText: 'Estado de Salud',
                           controller: estadoSalud,
@@ -171,7 +201,6 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                           validator: _requiredValidator,
                         ),
                         const SizedBox(height: 16),
-
                         CustomFormTextField(
                           hintText: 'Tipo de alimentación',
                           controller: tipoAlimentacion,
@@ -179,7 +208,6 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                           validator: _requiredValidator,
                         ),
                         const SizedBox(height: 16),
-
                         CustomFormTextField(
                           hintText: 'Cantidad recomendada',
                           controller: cantidadRecomendada,
@@ -187,7 +215,6 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                           validator: _requiredValidator,
                         ),
                         const SizedBox(height: 16),
-
                         CustomFormTextField(
                           hintText: 'Frecuencia recomendada',
                           controller: frecuenciaRecomendada,
@@ -195,10 +222,9 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                           validator: _requiredValidator,
                         ),
                         const SizedBox(height: 16),
-
-                        const Text('Fecha de Liberación:', style: TextStyle(color: Colors.black)),
+                        const Text('Fecha de Liberación:',
+                            style: TextStyle(color: Colors.black)),
                         const SizedBox(height: 6),
-
                         GestureDetector(
                           onTap: () => _selectDate(context),
                           child: AbsorbPointer(
@@ -211,16 +237,54 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-
                         CustomFormTextField(
                           hintText: 'Ubicación de Liberación',
                           controller: ubicacionLiberacion,
                           icon: Icons.location_on,
                           validator: _requiredValidator,
                         ),
-
+                        const Text('Datos del Rescatista',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold)),
+                        SizedBox(height: 16),
+                        CustomFormTextField(
+                          hintText: 'Nombre del Rescatista',
+                          controller: nombreRescatista,
+                          icon: Icons.person,
+                          validator: _requiredValidator,
+                        ),
+                        SizedBox(height: 16),
+                        CustomFormTextField(
+                          hintText: 'Teléfono del Rescatista',
+                          controller: telefonoRescatista,
+                          icon: Icons.phone,
+                          validator: _requiredValidator,
+                        ),
+                        SizedBox(height: 16),
+                        GestureDetector(
+                          onTap: () => _selectFechaRescate(context),
+                          child: AbsorbPointer(
+                            child: CustomFormTextField(
+                              hintText: 'Fecha del Rescate',
+                              controller: fechaRescateController,
+                              icon: Icons.calendar_today,
+                              validator: _requiredValidator,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        CustomFormTextField(
+                          hintText: 'Ubicación del Rescate',
+                          controller: ubicacionRescate,
+                          icon: Icons.location_on,
+                          validator: _requiredValidator,
+                        ),
+                        SizedBox(height: 24),
                         const SizedBox(height: 16),
-                        const Text('Foto:', style: TextStyle(color: Colors.black)),
+                        const Text('Foto:',
+                            style: TextStyle(color: Colors.black)),
                         const SizedBox(height: 10),
                         Center(
                           child: Container(
@@ -233,10 +297,10 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                                 BoxShadow(color: Colors.black26, blurRadius: 5),
                               ],
                             ),
-                            child: const Icon(Icons.image, size: 50, color: Colors.grey),
+                            child: const Icon(Icons.image,
+                                size: 50, color: Colors.grey),
                           ),
                         ),
-
                         const SizedBox(height: 24),
                         ElevatedButton(
                           onPressed: _submit,

@@ -11,7 +11,7 @@ class UserService {
     final response = await http.get(Uri.parse(baseUrl));
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-      final List users = body['sql']; // Solo SQL
+      final List users = body['postgres']; // Solo SQL
 
       // Buscar usuario por email
       final user = users.firstWhere(

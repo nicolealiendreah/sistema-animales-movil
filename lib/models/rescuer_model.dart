@@ -15,7 +15,7 @@ class Rescuer {
 
   factory Rescuer.fromJson(Map<String, dynamic> json) {
     return Rescuer(
-      id: json['_id'],
+      id: json['id']?.toString() ?? json['_id'], // permite compatibilidad
       nombre: json['nombre'],
       telefono: json['telefono'],
       fechaRescate: DateTime.parse(json['fechaRescate']),

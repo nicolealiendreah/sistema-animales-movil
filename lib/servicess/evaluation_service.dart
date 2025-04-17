@@ -11,7 +11,7 @@ class EvaluationService {
     final response = await http.get(Uri.parse(baseUrl));
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-      final List data = body['sql']; // Solo SQL
+      final List data = body['postgres']; // Solo SQL
       return data.map((e) => Evaluation.fromJson(e)).toList();
     } else {
       throw Exception('Error al obtener evaluaciones');

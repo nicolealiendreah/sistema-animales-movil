@@ -11,7 +11,7 @@ class AdoptionService {
     final response = await http.get(Uri.parse(baseUrl));
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-      final List data = body['sql']; // SQL
+      final List data = body['postgres']; // SQL
       return data.map((e) => Adoption.fromJson(e)).toList();
     } else {
       throw Exception('Error al obtener adopciones');
