@@ -1,5 +1,5 @@
 class Animal {
-  final int? id;
+  final String? id;
   final String nombre;
   final String? especie;
   final String? raza;
@@ -29,7 +29,7 @@ class Animal {
 
   factory Animal.fromJson(Map<String, dynamic> json) {
     return Animal(
-      id: json['_id'],
+      id: json['id'].toString(), 
       nombre: json['nombre'],
       especie: json['especie'],
       raza: json['raza'],

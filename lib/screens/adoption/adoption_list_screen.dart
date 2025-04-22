@@ -88,7 +88,7 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8),
-                    const Text('Traslados y Seguimiento',
+                    const Text('Historial de Adopciones',
                         style: AppTextStyles.heading),
                   ],
                 ),
@@ -142,7 +142,7 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                     },
                                   ),
                                   const SizedBox(height: 20),
-                                  const Text('Fecha de rescate/liberación',
+                                  const Text('Fecha de Adopcion',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold)),
                                   Row(

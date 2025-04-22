@@ -71,7 +71,7 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final evaluation = Evaluation(
-      animalId: widget.animal.id!,
+      animalId: widget.animal.nombre,
       diagnostico: diagnostico.text,
       sintomasObservados: sintomas.text,
       tratamientoAdministrado: tratamiento.text,
@@ -182,13 +182,10 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
               )
             ],
           )
-          
         ],
-        
       ),
     );
   }
-  
 
   Widget _buildTextField(String label, TextEditingController controller) {
     return Padding(

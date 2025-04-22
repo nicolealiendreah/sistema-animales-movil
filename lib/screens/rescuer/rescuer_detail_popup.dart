@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/models/rescuer_model.dart';
-import 'package:sistema_animales/screens/rescuer/rescuer_form_screen.dart';
 import 'package:sistema_animales/servicess/rescuer_service.dart';
 import 'package:sistema_animales/widgets/modal_card.dart';
 import 'package:intl/intl.dart';
@@ -57,21 +56,6 @@ class RescuerDetailPopup extends StatelessWidget {
           const SizedBox(height: 16),
           Align(
             alignment: Alignment.center,
-            child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const RescuerFormScreen()),
-                );
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Agregar/Editar Datos'),
-            ),
           ),
         ],
       ),

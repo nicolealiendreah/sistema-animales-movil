@@ -141,6 +141,8 @@ class _TransferListScreenState extends State<TransferListScreen> {
                                           _transfer?.motivo),
                                       _buildRow('Observaciones',
                                           _transfer?.observaciones),
+                                      _buildRow('Responsable',
+                                          _transfer?.responsable),
                                       const SizedBox(height: 12),
                                       const Text('Fecha de traslado:',
                                           style: TextStyle(

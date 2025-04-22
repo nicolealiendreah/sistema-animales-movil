@@ -10,7 +10,11 @@ class MedicalEvaluationScreen extends StatefulWidget {
   final Animal animal;
   final Evaluation? evaluation;
 
-  const MedicalEvaluationScreen({super.key, required this.animal, this.evaluation,});
+  const MedicalEvaluationScreen({
+    super.key,
+    required this.animal,
+    this.evaluation,
+  });
 
   @override
   State<MedicalEvaluationScreen> createState() =>
@@ -22,7 +26,6 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
   Evaluation? _evaluation;
   bool _isLoading = true;
   String? _error;
-  
 
   @override
   void initState() {
@@ -31,26 +34,31 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
   }
 
   Future<void> _loadEvaluation() async {
-    try {
-      final evaluations = await _evaluationService.getAll();
-      final int animalId = widget.animal.id ?? 0;
+  try {
+    final evaluations = await _evaluationService.getAll();
+    final String animalId = widget.animal.id.toString(); // UUID
 
-      final matching = evaluations.firstWhere(
-        (e) => e.animalId == animalId,
-        orElse: () => Evaluation(animalId: animalId, diagnostico: ''),
-      );
+    /*for (var e in evaluations) {
+      print('Comparando ${e.animalId} con $animalId');
+    }*/
 
-      setState(() {
-        _evaluation = matching;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
-    }
+    final matching = evaluations.firstWhere(
+      (e) => e.animalId == animalId,
+      orElse: () => Evaluation(animalId: animalId, diagnostico: ''),
+    );
+
+    setState(() {
+      _evaluation = matching;
+      _isLoading = false;
+    });
+  } catch (e) {
+    setState(() {
+      _error = e.toString();
+      _isLoading = false;
+    });
   }
+}
+
 
   String _formatDate(DateTime? date) {
     if (date == null) return '-';

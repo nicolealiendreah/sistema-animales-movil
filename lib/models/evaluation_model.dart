@@ -1,6 +1,6 @@
 class Evaluation {
-  final int? id;
-  final int animalId;
+  final String? id;
+  final String animalId;
   final String diagnostico;
   final String? sintomasObservados;
   final String? tratamientoAdministrado;
@@ -22,26 +22,27 @@ class Evaluation {
   });
 
   factory Evaluation.fromJson(Map<String, dynamic> json) {
-    return Evaluation(
-      id: json['id'],
-      animalId: json['animalId'],
-      diagnostico: json['diagnostico'],
-      sintomasObservados: json['sintomasObservados'],
-      tratamientoAdministrado: json['tratamientoAdministrado'],
-      medicacionRecetada: json['medicacionRecetada'],
-      veterinario: json['veterinario'],
-      fechaEvaluacion: json['fechaEvaluacion'] != null
-          ? DateTime.parse(json['fechaEvaluacion'])
-          : null,
-      proximaRevision: json['proximaRevision'] != null
-          ? DateTime.parse(json['proximaRevision'])
-          : null,
-    );
-  }
+  print(' Parseando evaluación con animalId: ${json['animalId']}');
+  return Evaluation(
+    id: json['id'],
+    animalId: json['animalId']?.toString() ?? '',
+    diagnostico: json['diagnostico'],
+    sintomasObservados: json['sintomasObservados'],
+    tratamientoAdministrado: json['tratamientoAdministrado'],
+    medicacionRecetada: json['medicacionRecetada'],
+    veterinario: json['veterinario'],
+    fechaEvaluacion: json['fechaEvaluacion'] != null
+        ? DateTime.parse(json['fechaEvaluacion'])
+        : null,
+    proximaRevision: json['proximaRevision'] != null
+        ? DateTime.parse(json['proximaRevision'])
+        : null,
+  );
+}
 
   Map<String, dynamic> toJson() {
     return {
-      'animalId': animalId,
+      'nombreAnimal': animalId,
       'diagnostico': diagnostico,
       'sintomasObservados': sintomasObservados,
       'tratamientoAdministrado': tratamientoAdministrado,

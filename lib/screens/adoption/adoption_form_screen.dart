@@ -43,7 +43,7 @@ AnimalRescatista? _selectedAnimal;
     });
   }
 
-  Future<void> _loadAdoption(int animalId) async {
+  Future<void> _loadAdoption(String animalId) async {
     final adoptions = await _adoptionService.getAll();
     final match = adoptions.firstWhere(
       (a) => a.animalId.toString() == animalId.toString(),
@@ -139,7 +139,7 @@ AnimalRescatista? _selectedAnimal;
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8),
-                    const Text('Traslados y Seguimiento',
+                    const Text('Historial de Adopciones',
                         style: AppTextStyles.heading),
                   ],
                 ),
@@ -170,7 +170,7 @@ AnimalRescatista? _selectedAnimal;
                                 _selectedAnimal = animal;
                               });
                               _loadAdoption(animal
-                                  .animal.id!); // 👈 accede al id correctamente
+                                  .animal.id!);
                             }
                           },
                           decoration: const InputDecoration(

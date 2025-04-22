@@ -7,7 +7,7 @@ class AnimalRescatista {
 
   AnimalRescatista({required this.animal, required this.rescuer});
 
-  int? get id => animal.id;
+  String? get id => animal.id;
 
   factory AnimalRescatista.fromJson(Map<String, dynamic> json) {
     return AnimalRescatista(

@@ -7,26 +7,24 @@ class AnimalService {
   final String baseUrl = '$apiUrl/api/animales';
 
   Future<List<AnimalRescatista>> getAll() async {
-  final response = await http.get(Uri.parse(baseUrl));
-  if (response.statusCode == 200) {
-    final body = jsonDecode(response.body);
-    final postgres = body['postgres'];
+    final response = await http.get(Uri.parse(baseUrl));
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      final postgres = body['postgres'];
 
-    if (postgres is List) {
-      return postgres
-          .map((registro) =>
-              AnimalRescatista.fromJson(registro as Map<String, dynamic>))
-          .toList();
+      if (postgres is List) {
+        return postgres
+            .map((registro) =>
+                AnimalRescatista.fromJson(registro as Map<String, dynamic>))
+            .toList();
+      } else {
+        throw Exception('Formato inesperado en la respuesta');
+      }
     } else {
-      throw Exception('Formato inesperado en la respuesta');
+      throw Exception(
+          'Error al obtener animales - Status: ${response.statusCode}');
     }
-  } else {
-    throw Exception(
-        'Error al obtener animales - Status: ${response.statusCode}');
   }
-}
-
-
 
   /// GET ONE
   Future<AnimalRescatista> getById(String id) async {
@@ -47,7 +45,17 @@ class AnimalService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
-    return res.statusCode == 201 || res.statusCode == 200;
+
+    if (res.statusCode == 201 || res.statusCode == 200) {
+      return true;
+    }
+
+    if (res.statusCode == 500 &&
+        res.body.contains('Rescatista validation failed')) {
+      return true;
+    }
+
+    return false;
   }
 
   /// PUT
