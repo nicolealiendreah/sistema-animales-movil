@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_animales/core/constants.dart';
 
+import 'package:flutter/material.dart';
+import 'package:sistema_animales/core/constants.dart';
+
 class GeolocationScreen extends StatelessWidget {
   const GeolocationScreen({super.key});
 
@@ -27,7 +30,7 @@ class GeolocationScreen extends StatelessWidget {
                     const SizedBox(width: 8),
                     const Expanded(
                       child: Text(
-                        'Geolocalización y Monitoreo Animal 1',
+                        'Geolocalización y Monitoreo',
                         style: AppTextStyles.heading,
                         textAlign: TextAlign.center,
                       ),
@@ -80,12 +83,12 @@ class GeolocationScreen extends StatelessWidget {
                         ),
                         child: Table(
                           border: TableBorder.all(color: Colors.black26),
-                          children: [
+                          children: const [
                             TableRow(
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 color: AppColors.primary,
                               ),
-                              children: const [
+                              children: [
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Text(
@@ -106,17 +109,36 @@ class GeolocationScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            for (int i = 0; i < 3; i++)
-                              const TableRow(children: [
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text(''),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text(''),
-                                ),
-                              ]),
+                            TableRow(children: [
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('2025-04-10'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('Refugio Central - La Paz'),
+                              ),
+                            ]),
+                            TableRow(children: [
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('2025-04-15'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('Centro Veterinario El Alto'),
+                              ),
+                            ]),
+                            TableRow(children: [
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('2025-04-18'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('Zona Verde - Liberación'),
+                              ),
+                            ]),
                           ],
                         ),
                       ),

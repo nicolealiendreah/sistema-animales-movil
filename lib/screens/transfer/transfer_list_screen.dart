@@ -5,6 +5,7 @@ import 'package:sistema_animales/models/animal_model.dart';
 import 'package:sistema_animales/models/transfer_model.dart';
 import 'package:sistema_animales/servicess/transfer_service.dart';
 import 'transfer_form_screen.dart';
+import 'package:collection/collection.dart';
 
 class TransferListScreen extends StatefulWidget {
   final Animal animal;
@@ -30,12 +31,8 @@ class _TransferListScreenState extends State<TransferListScreen> {
   Future<void> _loadTransfer() async {
     try {
       final transfers = await _transferService.getAll();
-      final matching = transfers.firstWhere(
+      final matching = transfers.firstWhereOrNull(
         (t) => t.animalId == widget.animal.id.toString(),
-        orElse: () => Transfer(
-          animalId: widget.animal.id.toString(),
-          fechaTraslado: DateTime.now(),
-        ),
       );
 
       setState(() {
@@ -167,14 +164,18 @@ class _TransferListScreenState extends State<TransferListScreen> {
                                 ),
                                 const SizedBox(height: 20),
                                 ElevatedButton.icon(
-                                  onPressed: () {
-                                    Navigator.push(
+                                  onPressed: () async {
+                                    final result = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) => TransferFormScreen(
                                             animal: widget.animal),
                                       ),
                                     );
+
+                                    if (result == true) {
+                                      _loadTransfer();
+                                    }
                                   },
                                   icon: const Icon(Icons.add),
                                   label: const Text('Agregar Traslado'),

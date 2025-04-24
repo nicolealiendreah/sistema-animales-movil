@@ -39,7 +39,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
       _filterAnimals(_searchController.text);
     });
 
-    _timer = Timer.periodic(const Duration(seconds: 10), (_) async {
+    _timer = Timer.periodic(const Duration(seconds: 2), (_) async {
       final updatedAnimals = await _animalService.getAll();
 
       if (!mounted) return; // 👈 PREVIENE el error
@@ -75,7 +75,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
   @override
   void dispose() {
     _searchController.dispose();
-    _timer?.cancel(); // 👈 IMPORTANTE
+    _timer?.cancel(); 
     super.dispose();
   }
 

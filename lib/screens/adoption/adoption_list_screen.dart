@@ -46,20 +46,20 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
   }
 
   Future<void> _loadAdoptionData(String animalId) async {
-    try {
-      final adoptions = await _adoptionService.getAll();
-      final match = adoptions.firstWhere(
-        (a) => a.animalId.toString() == animalId,
-        orElse: () => Adoption(
-          animalId: animalId,
-          fechaAdopcion: DateTime.now(),
-        ),
-      );
-      setState(() {
-        _adoption = match;
-      });
-    } catch (_) {}
+  try {
+    final adoptions = await _adoptionService.getAll();
+    final match = adoptions.firstWhere((a) => a.animalId == animalId);
+
+    setState(() {
+      _adoption = match;
+    });
+  } catch (_) {
+    // No encontrada
+    setState(() {
+      _adoption = null;
+    });
   }
+}
 
   String _formatDate(DateTime? date) =>
       date != null ? DateFormat.yMMMd().format(date) : '-';
@@ -176,9 +176,13 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                             ),
                             const SizedBox(height: 24),
                             ElevatedButton.icon(
-                              onPressed: () {
-                                Navigator.pushNamed(
+                              onPressed: () async {
+                                final result = await Navigator.pushNamed(
                                     context, AppRoutes.adoptionForm);
+                                if (result == true && _selectedAnimal != null) {
+                                  _loadAdoptionData(
+                                      _selectedAnimal!.animal.id!);
+                                }
                               },
                               icon: const Icon(Icons.add),
                               label: const Text('Agregar/Editar Gestión'),

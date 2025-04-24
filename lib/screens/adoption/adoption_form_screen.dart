@@ -20,7 +20,7 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
   final _formKey = GlobalKey<FormState>();
 
   List<AnimalRescatista> _animals = [];
-AnimalRescatista? _selectedAnimal;
+  AnimalRescatista? _selectedAnimal;
   Adoption? _adoption;
   DateTime? _fechaAdopcion;
 
@@ -44,24 +44,31 @@ AnimalRescatista? _selectedAnimal;
   }
 
   Future<void> _loadAdoption(String animalId) async {
-    final adoptions = await _adoptionService.getAll();
-    final match = adoptions.firstWhere(
-      (a) => a.animalId.toString() == animalId.toString(),
-      orElse: () => Adoption(
-        animalId: animalId.toString(),
-        fechaAdopcion: DateTime.now(),
-      ),
-    );
+    try {
+      final adoptions = await _adoptionService.getAll();
+      final match = adoptions.firstWhere((a) => a.animalId == animalId);
 
-    setState(() {
-      _adoption = match;
-      estado.text = match.estado ?? '';
-      nombreAdoptante.text = match.nombreAdoptante ?? '';
-      contactoAdoptante.text = match.contactoAdoptante ?? '';
-      direccionAdoptante.text = match.direccionAdoptante ?? '';
-      observaciones.text = match.observaciones ?? '';
-      _fechaAdopcion = match.fechaAdopcion;
-    });
+      setState(() {
+        _adoption = match;
+        estado.text = match.estado ?? '';
+        nombreAdoptante.text = match.nombreAdoptante ?? '';
+        contactoAdoptante.text = match.contactoAdoptante ?? '';
+        direccionAdoptante.text = match.direccionAdoptante ?? '';
+        observaciones.text = match.observaciones ?? '';
+        _fechaAdopcion = match.fechaAdopcion;
+      });
+    } catch (_) {
+      // No se encontró adopción
+      setState(() {
+        _adoption = null;
+        estado.clear();
+        nombreAdoptante.clear();
+        contactoAdoptante.clear();
+        direccionAdoptante.clear();
+        observaciones.clear();
+        _fechaAdopcion = null; // 👈 No se muestra ninguna fecha
+      });
+    }
   }
 
   Future<void> _pickDateTime() async {
@@ -94,7 +101,7 @@ AnimalRescatista? _selectedAnimal;
   Future<void> _submit() async {
     if (_formKey.currentState!.validate() && _selectedAnimal != null) {
       final adoption = Adoption(
-        animalId: _selectedAnimal!.id!.toString(),
+        animalId: _selectedAnimal!.animal.nombre,
         estado: estado.text,
         nombreAdoptante: nombreAdoptante.text,
         contactoAdoptante: contactoAdoptante.text,
@@ -109,8 +116,9 @@ AnimalRescatista? _selectedAnimal;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Adopción guardada')),
         );
-        Navigator.pop(context);
+        Navigator.pop(context, true);
       } catch (e) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error al guardar: $e')),
         );
@@ -169,8 +177,7 @@ AnimalRescatista? _selectedAnimal;
                               setState(() {
                                 _selectedAnimal = animal;
                               });
-                              _loadAdoption(animal
-                                  .animal.id!);
+                              _loadAdoption(animal.animal.id!);
                             }
                           },
                           decoration: const InputDecoration(

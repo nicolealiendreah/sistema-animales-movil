@@ -51,13 +51,16 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final transfer = Transfer(
-      animalId: widget.animal.id.toString(),
+      animalId: widget.animal.nombre,
       ubicacionAnterior: _ubicacionAnterior.text,
       ubicacionNueva: _ubicacionNueva.text,
       motivo: _motivo.text,
       observaciones: _observaciones.text,
+      responsable: _responsable.text,
       fechaTraslado: _fechaTraslado ?? DateTime.now(),
     );
+
+    print('🔼 Enviando Transfer: ${transfer.toJson()}');
 
     try {
       await _service.create(transfer);
@@ -65,9 +68,10 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Traslado registrado')),
       );
-      Navigator.pop(context);
+      Navigator.pop(context, true); // 👈 para refrescar
     } catch (e) {
       if (!mounted) return;
+      print('❌ Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );

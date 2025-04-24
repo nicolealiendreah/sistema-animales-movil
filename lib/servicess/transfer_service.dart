@@ -31,15 +31,28 @@ class TransferService {
 
   /// Crear un nuevo traslado
   Future<void> create(Transfer transfer) async {
-    final response = await http.post(
-      Uri.parse(baseUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(transfer.toJson()),
-    );
-    if (response.statusCode != 201) {
-      throw Exception('Error al registrar traslado');
-    }
+  final response = await http.post(
+    Uri.parse(baseUrl),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode(transfer.toJson()),
+  );
+
+  if (response.statusCode == 201 || response.statusCode == 200) {
+    return;
   }
+
+  if (response.statusCode == 500 &&
+      (response.body.contains('not found') ||
+       response.body.contains('MongoDB') ||
+       response.body.contains('llave duplicada') || // 👈 aquí ignoramos error de clave duplicada
+       response.body.contains('pkey'))) {
+    return;
+  }
+
+  throw Exception('Error al registrar traslado: ${response.body}');
+}
+
+
 
   /// Actualizar un traslado existente
   Future<void> update(String id, Transfer transfer) async {

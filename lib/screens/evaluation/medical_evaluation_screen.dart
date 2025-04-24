@@ -34,31 +34,30 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
   }
 
   Future<void> _loadEvaluation() async {
-  try {
-    final evaluations = await _evaluationService.getAll();
-    final String animalId = widget.animal.id.toString(); // UUID
+    try {
+      final evaluations = await _evaluationService.getAll();
+      final String animalId = widget.animal.id.toString(); // UUID
 
-    /*for (var e in evaluations) {
+      /*for (var e in evaluations) {
       print('Comparando ${e.animalId} con $animalId');
     }*/
 
-    final matching = evaluations.firstWhere(
-      (e) => e.animalId == animalId,
-      orElse: () => Evaluation(animalId: animalId, diagnostico: ''),
-    );
+      final matching = evaluations.firstWhere(
+        (e) => e.animalId == animalId,
+        orElse: () => Evaluation(animalId: animalId, diagnostico: ''),
+      );
 
-    setState(() {
-      _evaluation = matching;
-      _isLoading = false;
-    });
-  } catch (e) {
-    setState(() {
-      _error = e.toString();
-      _isLoading = false;
-    });
+      setState(() {
+        _evaluation = matching;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
   }
-}
-
 
   String _formatDate(DateTime? date) {
     if (date == null) return '-';
@@ -209,8 +208,8 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
                                 ),
                                 const SizedBox(height: 20),
                                 ElevatedButton.icon(
-                                  onPressed: () {
-                                    Navigator.push(
+                                  onPressed: () async {
+                                    final result = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) => EvaluationFormScreen(
@@ -219,6 +218,9 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
                                         ),
                                       ),
                                     );
+                                    if (result == true) {
+                                      _loadEvaluation();
+                                    }
                                   },
                                   icon: const Icon(Icons.add),
                                   label: const Text('Agregar Evaluación'),

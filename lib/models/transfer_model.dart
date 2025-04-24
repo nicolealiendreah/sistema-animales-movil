@@ -20,28 +20,28 @@ class Transfer {
   });
 
   factory Transfer.fromJson(Map<String, dynamic> json) {
-  return Transfer(
-    id: json['_id']?.toString(),
-    animalId: json['animalId'].toString(),
-    ubicacionAnterior: json['ubicacionAnterior'],
-    ubicacionNueva: json['ubicacionNueva'],
-    motivo: json['motivo'],
-    observaciones: json['observaciones'],
-    responsable: json['responsable'],
-    fechaTraslado: DateTime.parse(json['fechaTraslado']),
-  );
-}
-
+    return Transfer(
+      id: json['id'] ?? json['_id'],
+      animalId: json['animalId']?.toString() ?? '',
+      ubicacionAnterior: json['ubicacionAnterior'],
+      ubicacionNueva: json['ubicacionNueva'],
+      motivo: json['motivo'],
+      observaciones: json['observaciones'],
+      responsable: json['responsable'],
+      fechaTraslado: DateTime.parse(json['fechaTraslado']),
+    );
+  }
 
   Map<String, dynamic> toJson() {
-    return {
-      'animalId': animalId,
-      'ubicacionAnterior': ubicacionAnterior,
-      'ubicacionNueva': ubicacionNueva,
-      'motivo': motivo,
-      'observaciones': observaciones,
-      'responsable': responsable,
-      'fechaTraslado': fechaTraslado.toIso8601String(),
-    };
-  }
+  return {
+    'nombreAnimal': animalId,
+    'ubicacionAnterior': ubicacionAnterior,
+    'ubicacionNueva': ubicacionNueva,
+    'motivo': motivo,
+    'observaciones': observaciones,
+    'responsable': responsable,
+    'fechaTraslado': fechaTraslado.toIso8601String(),
+  };
+}
+
 }

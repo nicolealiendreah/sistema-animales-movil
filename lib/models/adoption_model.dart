@@ -22,7 +22,7 @@ class Adoption {
   factory Adoption.fromJson(Map<String, dynamic> json) {
     return Adoption(
       id: json['_id'],
-      animalId: json['animalId'],
+      animalId: json['animalId']?.toString() ?? '',
       estado: json['estado'],
       nombreAdoptante: json['nombreAdoptante'],
       contactoAdoptante: json['contactoAdoptante'],
@@ -34,7 +34,7 @@ class Adoption {
 
   Map<String, dynamic> toJson() {
     return {
-      'animalId': animalId,
+      'nombreAnimal': animalId,
       'estado': estado,
       'nombreAdoptante': nombreAdoptante,
       'contactoAdoptante': contactoAdoptante,

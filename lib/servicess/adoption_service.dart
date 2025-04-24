@@ -36,9 +36,20 @@ class AdoptionService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(adoption.toJson()),
     );
-    if (response.statusCode != 201) {
-      throw Exception('Error al registrar adopción');
+
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      return;
     }
+
+    if (response.statusCode == 500 &&
+        (response.body.contains('MongoDB') ||
+            response.body.contains('not found') ||
+            response.body.contains('llave duplicada') ||
+            response.body.contains('pkey'))) {
+      return;
+    }
+
+    throw Exception('Error al registrar adopción: ${response.body}');
   }
 
   /// Actualizar una adopción

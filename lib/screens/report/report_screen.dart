@@ -48,7 +48,7 @@ class ReportScreen extends StatelessWidget {
                             const Text('Período del reporte Rango de Fechas de Rescate',
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                             const SizedBox(height: 16),
-                            Image.asset('assets/mock_graphic.png'), // Puedes poner una imagen decorativa aquí
+                            Image.asset('assets/mock_graphic.png'),
                             const SizedBox(height: 20),
                             Wrap(
                               alignment: WrapAlignment.spaceBetween,
