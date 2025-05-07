@@ -43,8 +43,8 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
     }*/
 
       final matching = evaluations.firstWhere(
-        (e) => e.animalId == animalId,
-        orElse: () => Evaluation(animalId: animalId, diagnostico: ''),
+        (e) => e.nombreAnimal == animalId,
+        orElse: () => Evaluation(nombreAnimal: animalId, diagnostico: ''),
       );
 
       setState(() {

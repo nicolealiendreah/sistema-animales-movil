@@ -26,7 +26,6 @@ class AnimalService {
     }
   }
 
-  /// GET ONE
   Future<AnimalRescatista> getById(String id) async {
     final response = await http.get(Uri.parse('$baseUrl/$id'));
 
@@ -38,7 +37,6 @@ class AnimalService {
     }
   }
 
-  /// POST
   Future<bool> create(Map<String, dynamic> data) async {
     final res = await http.post(
       Uri.parse(baseUrl),
@@ -58,7 +56,7 @@ class AnimalService {
     return false;
   }
 
-  /// PUT
+
   Future<void> update(String id, Map<String, dynamic> data) async {
     final response = await http.put(
       Uri.parse('$baseUrl/$id'),
@@ -71,7 +69,6 @@ class AnimalService {
     }
   }
 
-  /// DELETE
   Future<void> delete(String id) async {
     final response = await http.delete(Uri.parse('$baseUrl/$id'));
 

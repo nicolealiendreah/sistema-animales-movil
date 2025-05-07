@@ -43,10 +43,10 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
     });
   }
 
-  Future<void> _loadAdoption(String animalId) async {
+  Future<void> _loadAdoption(String nombreAnimal) async {
     try {
       final adoptions = await _adoptionService.getAll();
-      final match = adoptions.firstWhere((a) => a.animalId == animalId);
+      final match = adoptions.firstWhere((a) => a.nombreAnimal == nombreAnimal);
 
       setState(() {
         _adoption = match;
@@ -58,7 +58,6 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
         _fechaAdopcion = match.fechaAdopcion;
       });
     } catch (_) {
-      // No se encontró adopción
       setState(() {
         _adoption = null;
         estado.clear();
@@ -66,7 +65,7 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
         contactoAdoptante.clear();
         direccionAdoptante.clear();
         observaciones.clear();
-        _fechaAdopcion = null; // 👈 No se muestra ninguna fecha
+        _fechaAdopcion = null;
       });
     }
   }
@@ -101,7 +100,7 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
   Future<void> _submit() async {
     if (_formKey.currentState!.validate() && _selectedAnimal != null) {
       final adoption = Adoption(
-        animalId: _selectedAnimal!.animal.nombre,
+        nombreAnimal: _selectedAnimal!.animal.nombre,
         estado: estado.text,
         nombreAdoptante: nombreAdoptante.text,
         contactoAdoptante: contactoAdoptante.text,

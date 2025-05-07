@@ -32,7 +32,7 @@ class _TransferListScreenState extends State<TransferListScreen> {
     try {
       final transfers = await _transferService.getAll();
       final matching = transfers.firstWhereOrNull(
-        (t) => t.animalId == widget.animal.id.toString(),
+        (t) => t.nombreAnimal == widget.animal.id.toString(),
       );
 
       setState(() {

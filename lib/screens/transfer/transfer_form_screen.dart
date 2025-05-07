@@ -51,7 +51,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final transfer = Transfer(
-      animalId: widget.animal.nombre,
+      nombreAnimal: widget.animal.nombre,
       ubicacionAnterior: _ubicacionAnterior.text,
       ubicacionNueva: _ubicacionNueva.text,
       motivo: _motivo.text,

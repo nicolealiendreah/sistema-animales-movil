@@ -6,7 +6,6 @@ import '../models/evaluation_model.dart';
 class EvaluationService {
   final String baseUrl = '$apiUrl/api/evaluations';
 
-  /// Obtener todas las evaluaciones desde SQL
   Future<List<Evaluation>> getAll() async {
     final response = await http.get(Uri.parse(baseUrl));
     if (response.statusCode == 200) {
@@ -18,7 +17,6 @@ class EvaluationService {
     }
   }
 
-  /// Obtener una evaluación por ID
   Future<Evaluation> getById(String id) async {
     final response = await http.get(Uri.parse('$baseUrl/$id'));
     if (response.statusCode == 200) {
@@ -29,7 +27,6 @@ class EvaluationService {
     }
   }
 
-  /// Crear nueva evaluación
   Future<void> create(Evaluation evaluation) async {
   final response = await http.post(
     Uri.parse(baseUrl),
@@ -51,9 +48,6 @@ class EvaluationService {
   throw Exception('Error al registrar evaluación: ${response.body}');
 }
 
-
-
-  /// Actualizar evaluación existente
   Future<void> update(String id, Evaluation evaluation) async {
     final response = await http.put(
       Uri.parse('$baseUrl/$id'),
@@ -65,7 +59,6 @@ class EvaluationService {
     }
   }
 
-  /// Eliminar evaluación
   Future<void> delete(String id) async {
     final response = await http.delete(Uri.parse('$baseUrl/$id'));
     if (response.statusCode != 200) {

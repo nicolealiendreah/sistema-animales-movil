@@ -71,7 +71,7 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final evaluation = Evaluation(
-      animalId: widget.animal.nombre,
+      nombreAnimal: widget.animal.nombre,
       diagnostico: diagnostico.text,
       sintomasObservados: sintomas.text,
       tratamientoAdministrado: tratamiento.text,

@@ -45,10 +45,10 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
     }
   }
 
-  Future<void> _loadAdoptionData(String animalId) async {
+  Future<void> _loadAdoptionData(String nombreAnimal) async {
   try {
     final adoptions = await _adoptionService.getAll();
-    final match = adoptions.firstWhere((a) => a.animalId == animalId);
+    final match = adoptions.firstWhere((a) => a.nombreAnimal == nombreAnimal);
 
     setState(() {
       _adoption = match;

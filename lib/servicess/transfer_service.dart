@@ -6,7 +6,6 @@ import '../models/transfer_model.dart';
 class TransferService {
   final String baseUrl = '$apiUrl/api/transfers';
 
-  /// Obtener todos los traslados desde SQL
   Future<List<Transfer>> getAll() async {
     final response = await http.get(Uri.parse(baseUrl));
     if (response.statusCode == 200) {
@@ -18,7 +17,6 @@ class TransferService {
     }
   }
 
-  /// Obtener un traslado por ID
   Future<Transfer> getById(String id) async {
     final response = await http.get(Uri.parse('$baseUrl/$id'));
     if (response.statusCode == 200) {
@@ -29,7 +27,6 @@ class TransferService {
     }
   }
 
-  /// Crear un nuevo traslado
   Future<void> create(Transfer transfer) async {
   final response = await http.post(
     Uri.parse(baseUrl),
@@ -44,17 +41,13 @@ class TransferService {
   if (response.statusCode == 500 &&
       (response.body.contains('not found') ||
        response.body.contains('MongoDB') ||
-       response.body.contains('llave duplicada') || // 👈 aquí ignoramos error de clave duplicada
+       response.body.contains('llave duplicada') || 
        response.body.contains('pkey'))) {
     return;
   }
 
   throw Exception('Error al registrar traslado: ${response.body}');
 }
-
-
-
-  /// Actualizar un traslado existente
   Future<void> update(String id, Transfer transfer) async {
     final response = await http.put(
       Uri.parse('$baseUrl/$id'),
@@ -65,8 +58,6 @@ class TransferService {
       throw Exception('Error al actualizar traslado');
     }
   }
-
-  /// Eliminar un traslado
   Future<void> delete(String id) async {
     final response = await http.delete(Uri.parse('$baseUrl/$id'));
     if (response.statusCode != 200) {

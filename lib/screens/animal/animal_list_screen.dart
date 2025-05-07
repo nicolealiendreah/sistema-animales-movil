@@ -21,6 +21,7 @@ class AnimalListScreen extends StatefulWidget {
 
 class _AnimalListScreenState extends State<AnimalListScreen> {
   final AnimalService _animalService = AnimalService();
+  final RescuerService _rescuerService = RescuerService();
 
   final TextEditingController _searchController = TextEditingController();
   late Future<List<AnimalRescatista>> _futureAnimals;
@@ -75,7 +76,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
   @override
   void dispose() {
     _searchController.dispose();
-    _timer?.cancel(); 
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -171,11 +172,21 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                               );
                             },
                             onRescuer: () {
-                              showDialog(
-                                context: context,
-                                builder: (_) =>
-                                    RescuerDetailPopup(rescuer: item.rescuer),
-                              );
+                              final rescuer =
+                                  item.rescuer; // <-- variable local
+                              if (rescuer != null) {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) =>
+                                      RescuerDetailPopup(rescuer: rescuer),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Este animal no tiene rescatista registrado')),
+                                );
+                              }
                             },
                           );
                         },
@@ -190,12 +201,23 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final result =
-              await Navigator.pushNamed(context, AppRoutes.animalForm);
-          if (result == true) {
-            setState(() {
-              _futureAnimals = _animalService.getAll();
-            });
+          final rescatistas = await _rescuerService.getAll();
+
+          if (rescatistas.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content:
+                    Text('Registra al menos un rescatista antes de continuar'),
+              ),
+            );
+          } else {
+            final result =
+                await Navigator.pushNamed(context, AppRoutes.animalForm);
+            if (result == true) {
+              setState(() {
+                _futureAnimals = _animalService.getAll();
+              });
+            }
           }
         },
         backgroundColor: AppColors.primary,

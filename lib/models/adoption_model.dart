@@ -1,6 +1,6 @@
 class Adoption {
   final String? id;
-  final String animalId;
+  final String nombreAnimal;
   final String? estado;
   final String? nombreAdoptante;
   final String? contactoAdoptante;
@@ -10,7 +10,7 @@ class Adoption {
 
   Adoption({
     this.id,
-    required this.animalId,
+    required this.nombreAnimal,
     this.estado,
     this.nombreAdoptante,
     this.contactoAdoptante,
@@ -21,8 +21,8 @@ class Adoption {
 
   factory Adoption.fromJson(Map<String, dynamic> json) {
     return Adoption(
-      id: json['_id'],
-      animalId: json['animalId']?.toString() ?? '',
+      id: json['id'] ?? json['_id'],
+      nombreAnimal: json['nombreAnimal'] ?? '',
       estado: json['estado'],
       nombreAdoptante: json['nombreAdoptante'],
       contactoAdoptante: json['contactoAdoptante'],
@@ -34,7 +34,7 @@ class Adoption {
 
   Map<String, dynamic> toJson() {
     return {
-      'nombreAnimal': animalId,
+      'nombreAnimal': nombreAnimal,
       'estado': estado,
       'nombreAdoptante': nombreAdoptante,
       'contactoAdoptante': contactoAdoptante,

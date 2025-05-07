@@ -6,7 +6,6 @@ import '../models/adoption_model.dart';
 class AdoptionService {
   final String baseUrl = '$apiUrl/api/adoptions';
 
-  /// Obtener todas las adopciones desde SQL
   Future<List<Adoption>> getAll() async {
     final response = await http.get(Uri.parse(baseUrl));
     if (response.statusCode == 200) {
@@ -18,7 +17,6 @@ class AdoptionService {
     }
   }
 
-  /// Obtener una adopción por ID
   Future<Adoption> getById(String id) async {
     final response = await http.get(Uri.parse('$baseUrl/$id'));
     if (response.statusCode == 200) {
@@ -29,7 +27,6 @@ class AdoptionService {
     }
   }
 
-  /// Crear una nueva adopción
   Future<void> create(Adoption adoption) async {
     final response = await http.post(
       Uri.parse(baseUrl),
@@ -52,7 +49,6 @@ class AdoptionService {
     throw Exception('Error al registrar adopción: ${response.body}');
   }
 
-  /// Actualizar una adopción
   Future<void> update(String id, Adoption adoption) async {
     final response = await http.put(
       Uri.parse('$baseUrl/$id'),
@@ -64,7 +60,6 @@ class AdoptionService {
     }
   }
 
-  /// Eliminar una adopción
   Future<void> delete(String id) async {
     final response = await http.delete(Uri.parse('$baseUrl/$id'));
     if (response.statusCode != 200) {
