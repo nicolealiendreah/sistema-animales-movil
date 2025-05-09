@@ -43,7 +43,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
     _timer = Timer.periodic(const Duration(seconds: 2), (_) async {
       final updatedAnimals = await _animalService.getAll();
 
-      if (!mounted) return; // 👈 PREVIENE el error
+      if (!mounted) return;
 
       setState(() {
         _allAnimals = updatedAnimals;
@@ -172,8 +172,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                               );
                             },
                             onRescuer: () {
-                              final rescuer =
-                                  item.rescuer; // <-- variable local
+                              final rescuer = item.rescuer;
                               if (rescuer != null) {
                                 showDialog(
                                   context: context,
@@ -199,30 +198,56 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final rescatistas = await _rescuerService.getAll();
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          const SizedBox(height: 10),
+          FloatingActionButton(
+            heroTag: 'addRescuer',
+            onPressed: () async {
+              final result =
+                  await Navigator.pushNamed(context, AppRoutes.rescatistaForm);
+              if (result == true) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Rescatista registrado exitosamente')),
+                );
+              }
+            },
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            child: const Icon(Icons.person_add),
+          ),
+            
+          const SizedBox(height: 10),
+          FloatingActionButton(
+            heroTag: 'addAnimal',
+            onPressed: () async {
+              final rescatistas = await _rescuerService.getAll();
 
-          if (rescatistas.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content:
-                    Text('Registra al menos un rescatista antes de continuar'),
-              ),
-            );
-          } else {
-            final result =
-                await Navigator.pushNamed(context, AppRoutes.animalForm);
-            if (result == true) {
-              setState(() {
-                _futureAnimals = _animalService.getAll();
-              });
-            }
-          }
-        },
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        child: const Icon(Icons.add),
+              if (rescatistas.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                        'Registra al menos un rescatista antes de continuar'),
+                  ),
+                );
+              } else {
+                final result =
+                    await Navigator.pushNamed(context, AppRoutes.animalForm);
+                if (result == true) {
+                  setState(() {
+                    _futureAnimals = _animalService.getAll();
+                  });
+                }
+              }
+            },
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            child: const Icon(Icons.add),
+          ),
+        ],
       ),
       bottomNavigationBar: PantallaNav(context: context),
     );

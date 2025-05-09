@@ -46,15 +46,11 @@ class AnimalCard extends StatelessWidget {
                     const Center(child: Icon(Icons.pets, color: Colors.grey)),
               ),
               const SizedBox(height: 8),
-
-              // Info
               Text(animal.nombre,
                   style: const TextStyle(fontWeight: FontWeight.bold)),
               Text(animal.especie ?? 'Especie'),
               Text(animal.raza ?? 'Raza'),
               const SizedBox(height: 8),
-
-              // Botones
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [

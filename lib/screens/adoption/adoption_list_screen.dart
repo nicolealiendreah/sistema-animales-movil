@@ -46,20 +46,19 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
   }
 
   Future<void> _loadAdoptionData(String nombreAnimal) async {
-  try {
-    final adoptions = await _adoptionService.getAll();
-    final match = adoptions.firstWhere((a) => a.nombreAnimal == nombreAnimal);
+    try {
+      final adoptions = await _adoptionService.getAll();
+      final match = adoptions.firstWhere((a) => a.nombreAnimal == nombreAnimal);
 
-    setState(() {
-      _adoption = match;
-    });
-  } catch (_) {
-    // No encontrada
-    setState(() {
-      _adoption = null;
-    });
+      setState(() {
+        _adoption = match;
+      });
+    } catch (_) {
+      setState(() {
+        _adoption = null;
+      });
+    }
   }
-}
 
   String _formatDate(DateTime? date) =>
       date != null ? DateFormat.yMMMd().format(date) : '-';
@@ -136,8 +135,7 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                         _adoption = null;
                                       });
                                       if (value != null) {
-                                        _loadAdoptionData(
-                                            value.animal.id.toString());
+                                        _loadAdoptionData(value.animal.nombre);
                                       }
                                     },
                                   ),

@@ -1,41 +1,49 @@
 class Tratamiento {
-  final String id;
+  final String? id;
+  final String? animalId;
   final String nombreAnimal;
-  final String tratamiento;
-  final String fechaTratamiento;
-  final String responsable;
-  final String observaciones;
-  final String duracion;
+  final String? tratamiento;
+  final DateTime? fechaTratamiento;
+  final String? responsable;
+  final String? observaciones;
+  final String? duracion;
 
   Tratamiento({
-    required this.id,
+    this.id,
+    this.animalId,
     required this.nombreAnimal,
-    required this.tratamiento,
-    required this.fechaTratamiento,
-    required this.responsable,
-    required this.observaciones,
-    required this.duracion,
+    this.tratamiento,
+    this.fechaTratamiento,
+    this.responsable,
+    this.observaciones,
+    this.duracion,
   });
 
-  factory Tratamiento.fromJson(Map<String, dynamic> json) {
+
+    factory Tratamiento.fromJson(Map<String, dynamic> json) {
     return Tratamiento(
       id: json['id'],
-      nombreAnimal: json['nombreAnimal'],
-      tratamiento: json['tratamiento'],
-      fechaTratamiento: json['fechaTratamiento'],
-      responsable: json['responsable'],
-      observaciones: json['observaciones'],
-      duracion: json['duracion'],
+      animalId: json['animalId'],
+      nombreAnimal: json['animal']?['nombre'] ?? json['nombreAnimal'] ?? 'Desconocido',
+      tratamiento: json['tratamiento'] ?? '',
+      fechaTratamiento: json['fechaTratamiento'] != null
+          ? DateTime.parse(json['fechaTratamiento'])
+          : null,
+      responsable: json['responsable'] ?? '',
+      observaciones: json['observaciones'] ?? '',
+      duracion: json['duracion'] ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'nombreAnimal': nombreAnimal,
-        'tratamiento': tratamiento,
-        'fechaTratamiento': fechaTratamiento,
-        'responsable': responsable,
-        'observaciones': observaciones,
-        'duracion': duracion,
-      };
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nombreAnimal': nombreAnimal,
+      'tratamiento': tratamiento,
+      'fechaTratamiento': fechaTratamiento?.toIso8601String(),
+      'responsable': responsable,
+      'observaciones': observaciones,
+      'duracion': duracion,
+    };
+  }
 }

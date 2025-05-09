@@ -1,5 +1,6 @@
 class Evaluation {
   final String? id;
+  final String? animalId;
   final String nombreAnimal;
   final String diagnostico;
   final String? sintomasObservados;
@@ -11,6 +12,7 @@ class Evaluation {
 
   Evaluation({
     this.id,
+    this.animalId,
     required this.nombreAnimal,
     required this.diagnostico,
     this.sintomasObservados,
@@ -23,8 +25,9 @@ class Evaluation {
 
   factory Evaluation.fromJson(Map<String, dynamic> json) {
     return Evaluation(
-      id: json['id'] ?? json['_id'],
-      nombreAnimal: json['nombreAnimal'] ?? '',
+      id: json['id'],
+      animalId: json['animalId'],
+      nombreAnimal: json['animal']?['nombre'] ?? json['nombreAnimal'],
       diagnostico: json['diagnostico'],
       sintomasObservados: json['sintomasObservados'],
       tratamientoAdministrado: json['tratamientoAdministrado'],

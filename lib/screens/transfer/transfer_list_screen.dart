@@ -21,6 +21,7 @@ class _TransferListScreenState extends State<TransferListScreen> {
   Transfer? _transfer;
   bool _isLoading = true;
   String? _error;
+  List<Transfer> _transfers = [];
 
   @override
   void initState() {
@@ -31,12 +32,12 @@ class _TransferListScreenState extends State<TransferListScreen> {
   Future<void> _loadTransfer() async {
     try {
       final transfers = await _transferService.getAll();
-      final matching = transfers.firstWhereOrNull(
-        (t) => t.nombreAnimal == widget.animal.id.toString(),
-      );
+      final matching = transfers
+          .where((t) => t.nombreAnimal == widget.animal.nombre)
+          .toList();
 
       setState(() {
-        _transfer = matching;
+        _transfers = matching;
         _isLoading = false;
       });
     } catch (e) {
@@ -116,52 +117,56 @@ class _TransferListScreenState extends State<TransferListScreen> {
                             padding: const EdgeInsets.all(20),
                             child: Column(
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                          color: Colors.black12, blurRadius: 6),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      _buildRow('Ubicación anterior',
-                                          _transfer?.ubicacionAnterior),
-                                      _buildRow('Ubicación nueva',
-                                          _transfer?.ubicacionNueva),
-                                      _buildRow('Motivo del traslado',
-                                          _transfer?.motivo),
-                                      _buildRow('Observaciones',
-                                          _transfer?.observaciones),
-                                      _buildRow('Responsable',
-                                          _transfer?.responsable),
-                                      const SizedBox(height: 12),
-                                      const Text('Fecha de traslado:',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold)),
-                                      Row(
-                                        children: [
-                                          Text(
-                                              _formatDate(
-                                                  _transfer?.fechaTraslado),
+                                ..._transfers.map((t) {
+                                  return Container(
+                                    margin: const EdgeInsets.only(bottom: 20),
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                            color: Colors.black12,
+                                            blurRadius: 6),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        _buildRow('Ubicación anterior:',
+                                            t.ubicacionAnterior),
+                                        _buildRow('Ubicación nueva:',
+                                            t.ubicacionNueva),
+                                        _buildRow(
+                                            'Motivo del traslado:', t.motivo),
+                                        _buildRow(
+                                            'Observaciones:', t.observaciones),
+                                        _buildRow(
+                                            'Responsable:', t.responsable),
+                                        const SizedBox(height: 12),
+                                        const Text('Fecha de traslado:',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              _formatDate(t.fechaTraslado),
                                               style: const TextStyle(
-                                                  color: Colors.blue)),
-                                          const SizedBox(width: 10),
-                                          Text(
-                                              _formatTime(
-                                                  _transfer?.fechaTraslado),
+                                                  color: Colors.blue),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Text(
+                                              _formatTime(t.fechaTraslado),
                                               style: const TextStyle(
-                                                  color: Colors.blue)),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                                  color: Colors.blue),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
                                 const SizedBox(height: 20),
                                 ElevatedButton.icon(
                                   onPressed: () async {

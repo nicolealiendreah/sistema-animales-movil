@@ -2,50 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/models/animal_model.dart';
-import 'package:sistema_animales/models/evaluation_model.dart';
-import 'package:sistema_animales/servicess/evaluation_service.dart';
-import 'evaluation_form_screen.dart';
+import 'package:sistema_animales/models/tratamiento_model.dart';
+import 'package:sistema_animales/servicess/tratamiento_service.dart';
 
-class MedicalEvaluationScreen extends StatefulWidget {
+import 'treatment_form_screen.dart';
+
+class TreatmentDetailScreen extends StatefulWidget {
   final Animal animal;
-  final Evaluation? evaluation;
 
-  const MedicalEvaluationScreen({
-    super.key,
-    required this.animal,
-    this.evaluation,
-  });
+  const TreatmentDetailScreen({super.key, required this.animal});
 
   @override
-  State<MedicalEvaluationScreen> createState() =>
-      _MedicalEvaluationScreenState();
+  State<TreatmentDetailScreen> createState() => _TreatmentDetailScreenState();
 }
 
-class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
-  final EvaluationService _evaluationService = EvaluationService();
-  Evaluation? _evaluation;
+class _TreatmentDetailScreenState extends State<TreatmentDetailScreen> {
+  final TratamientoService _treatmentService = TratamientoService();
+  Tratamiento? _treatment;
   bool _isLoading = true;
   String? _error;
 
   @override
   void initState() {
     super.initState();
-    _loadEvaluation();
+    _loadTreatment();
   }
 
-  Future<void> _loadEvaluation() async {
+  Future<void> _loadTreatment() async {
     try {
-      final evaluations = await _evaluationService.getAll();
-      final String animalId = widget.animal.id.toString();
-
-      final matching = evaluations.firstWhere(
-        (e) => e.nombreAnimal == widget.animal.nombre,
-        orElse: () =>
-            Evaluation(nombreAnimal: widget.animal.nombre, diagnostico: ''),
+      final treatments = await _treatmentService.getAll();
+      final matching = treatments.firstWhere(
+        (t) => t.nombreAnimal == widget.animal.nombre,
+        orElse: () => Tratamiento(
+          nombreAnimal: widget.animal.nombre,
+          tratamiento: '',
+          fechaTratamiento: null,
+          responsable: '',
+          observaciones: '',
+          duracion: '',
+        ),
       );
 
       setState(() {
-        _evaluation = matching;
+        _treatment = matching;
         _isLoading = false;
       });
     } catch (e) {
@@ -56,15 +55,8 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
     }
   }
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return '-';
-    return DateFormat.yMMMd().format(date);
-  }
-
-  String _formatTime(DateTime? date) {
-    if (date == null) return '-';
-    return DateFormat.jm().format(date);
-  }
+  String _formatDate(DateTime? date) =>
+      date != null ? DateFormat.yMMMd().format(date) : '-';
 
   Widget _buildRow(String label, String? value) {
     return Padding(
@@ -106,7 +98,7 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Evaluaciones médicas',
+                        'Tratamiento del Animal',
                         style: AppTextStyles.heading.copyWith(fontSize: 18),
                         textAlign: TextAlign.center,
                       ),
@@ -122,9 +114,10 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
                   child: Text(
                     '${widget.animal.nombre}',
                     style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16,
-                        color: Colors.black),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ),
@@ -152,53 +145,23 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      _buildRow('Diagnóstico:',
-                                          _evaluation?.diagnostico),
-                                      _buildRow('Síntomas observados:',
-                                          _evaluation?.sintomasObservados),
-                                      _buildRow('Tratamiento administrado:',
-                                          _evaluation?.tratamientoAdministrado),
-                                      _buildRow('Medicación recetada:',
-                                          _evaluation?.medicacionRecetada),
-                                      _buildRow('Veterinario a cargo:',
-                                          _evaluation?.veterinario),
+                                      _buildRow('Tratamiento:',
+                                          _treatment?.tratamiento),
+                                      _buildRow(
+                                          'Duración:', _treatment?.duracion),
+                                      _buildRow('Responsable:',
+                                          _treatment?.responsable),
+                                      _buildRow('Observaciones:',
+                                          _treatment?.observaciones),
                                       const SizedBox(height: 12),
-                                      const Text('Fecha de evaluación:',
+                                      const Text('Fecha de Tratamiento:',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold)),
-                                      Row(
-                                        children: [
-                                          Text(
-                                              _formatDate(
-                                                  _evaluation?.fechaEvaluacion),
-                                              style: const TextStyle(
-                                                  color: Colors.blue)),
-                                          const SizedBox(width: 10),
-                                          Text(
-                                              _formatTime(
-                                                  _evaluation?.fechaEvaluacion),
-                                              style: const TextStyle(
-                                                  color: Colors.blue)),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 12),
-                                      const Text('Próxima revisión:',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold)),
-                                      Row(
-                                        children: [
-                                          Text(
-                                              _formatDate(
-                                                  _evaluation?.proximaRevision),
-                                              style: const TextStyle(
-                                                  color: Colors.blue)),
-                                          const SizedBox(width: 10),
-                                          Text(
-                                              _formatTime(
-                                                  _evaluation?.proximaRevision),
-                                              style: const TextStyle(
-                                                  color: Colors.blue)),
-                                        ],
+                                      Text(
+                                        _formatDate(
+                                            _treatment?.fechaTratamiento),
+                                        style:
+                                            const TextStyle(color: Colors.blue),
                                       ),
                                     ],
                                   ),
@@ -209,18 +172,16 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
                                     final result = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => EvaluationFormScreen(
-                                          animal: widget.animal,
-                                          evaluation: _evaluation,
-                                        ),
+                                        builder: (_) => TreatmentFormScreen(
+                                            animal: widget.animal),
                                       ),
                                     );
                                     if (result == true) {
-                                      _loadEvaluation();
+                                      _loadTreatment();
                                     }
                                   },
                                   icon: const Icon(Icons.add),
-                                  label: const Text('Agregar Evaluación'),
+                                  label: const Text('Agregar Tratamiento'),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.primary,
                                     foregroundColor: Colors.white,

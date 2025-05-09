@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sistema_animales/screens/evaluation/medical_evaluation_screen.dart';
 import 'package:sistema_animales/screens/geolocation/geolocation_screen.dart';
 import 'package:sistema_animales/screens/transfer/transfer_list_screen.dart';
+import 'package:sistema_animales/screens/treatment/treatment_screen.dart';
 import '../../../models/animal_model.dart';
 import '../../../core/constants.dart';
 import '../../../widgets/modal_card.dart';
@@ -33,14 +34,11 @@ class AnimalDetailPopup extends StatelessWidget {
           _buildRow('Sexo:', animal.sexo ?? ''),
           _buildRow('Edad:', animal.edad?.toString() ?? ''),
           _buildRow('Estado de Salud:', animal.estadoSalud ?? ''),
+          _buildRow('Tipo:', animal.tipo ?? ''),
           _buildRow('Tipo de alimentación:', animal.tipoAlimentacion ?? ''),
           _buildRow('Cantidad recomendada:', animal.cantidadRecomendada ?? ''),
           _buildRow(
               'Frecuencia recomendada:', animal.frecuenciaRecomendada ?? ''),
-          _buildRow('Fecha de Liberación:',
-              animal.fechaLiberacion?.toString().split('T').first ?? ''),
-          _buildRow(
-              'Ubicación de Liberación:', animal.ubicacionLiberacion ?? ''),
           const SizedBox(height: 16),
           Center(
             child: Container(
@@ -80,6 +78,27 @@ class AnimalDetailPopup extends StatelessWidget {
                 },
                 icon: const Icon(Icons.pets, size: 18),
                 label: const Text('Ev.Medicas'),
+              ),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          TreatmentDetailScreen(animal: animal),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.pets, size: 18),
+                label: const Text('Tratamientos'),
               ),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(

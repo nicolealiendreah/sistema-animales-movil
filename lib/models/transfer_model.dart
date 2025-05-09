@@ -1,5 +1,6 @@
 class Transfer {
   final String? id;
+  final String? animalId;
   final String nombreAnimal;
   final String? ubicacionAnterior;
   final String? ubicacionNueva;
@@ -10,6 +11,7 @@ class Transfer {
 
   Transfer({
     this.id,
+    this.animalId,
     required this.nombreAnimal,
     this.ubicacionAnterior,
     this.ubicacionNueva,
@@ -21,8 +23,9 @@ class Transfer {
 
   factory Transfer.fromJson(Map<String, dynamic> json) {
     return Transfer(
-      id: json['id'] ?? json['_id'],
-      nombreAnimal: json['nombreAnimal'] ?? '',
+      id: json['id'],
+      animalId: json['animalId'],
+      nombreAnimal: json['animal']?['nombre'] ?? json['nombreAnimal'],
       ubicacionAnterior: json['ubicacionAnterior'],
       ubicacionNueva: json['ubicacionNueva'],
       motivo: json['motivo'],

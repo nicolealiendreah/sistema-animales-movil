@@ -56,7 +56,6 @@ class AnimalService {
     return false;
   }
 
-
   Future<void> update(String id, Map<String, dynamic> data) async {
     final response = await http.put(
       Uri.parse('$baseUrl/$id'),

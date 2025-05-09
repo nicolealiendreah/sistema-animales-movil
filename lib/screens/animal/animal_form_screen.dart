@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/models/animal_model.dart';
+import 'package:sistema_animales/models/rescuer_model.dart';
 import 'package:sistema_animales/servicess/animal_service.dart';
+import 'package:sistema_animales/servicess/rescuer_service.dart';
 import 'package:sistema_animales/widgets/custom_form_text_field.dart';
+import 'package:intl/intl.dart';
 
 class AnimalFormScreen extends StatefulWidget {
   const AnimalFormScreen({super.key});
@@ -14,11 +17,11 @@ class AnimalFormScreen extends StatefulWidget {
 class _AnimalFormScreenState extends State<AnimalFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _service = AnimalService();
+  final _rescuerService = RescuerService();
 
   final TextEditingController nombre = TextEditingController();
   final TextEditingController especie = TextEditingController();
   final TextEditingController raza = TextEditingController();
-  final TextEditingController sexo = TextEditingController();
   final TextEditingController edad = TextEditingController();
   final TextEditingController estadoSalud = TextEditingController();
   final TextEditingController tipoAlimentacion = TextEditingController();
@@ -29,11 +32,13 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   final TextEditingController ubicacionLiberacion = TextEditingController();
 
   DateTime? _fechaLiberacion;
-
-  final TextEditingController nombreRescatista = TextEditingController();
-  final TextEditingController telefonoRescatista = TextEditingController();
-  final TextEditingController ubicacionRescate = TextEditingController();
-  DateTime? _fechaRescate;
+  String? selectedTipo;
+  String? selectedSexo;
+  String? selectedRescatista;
+  String? selectedTelefono;
+  List<Rescuer> rescatistas = [];
+  DateTime? selectedFechaRescate;
+  String? selectedUbicacionRescate;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -46,26 +51,22 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
       setState(() {
         _fechaLiberacion = picked;
         fechaLiberacionController.text =
-            picked.toLocal().toString().split(' ')[0];
+            DateFormat('yyyy-MM-dd').format(picked);
       });
     }
   }
 
-  final TextEditingController fechaRescateController = TextEditingController();
+  Future<void> _loadRescatistas() async {
+    final lista = await _rescuerService.getAll();
+    setState(() {
+      rescatistas = lista;
+    });
+  }
 
-  Future<void> _selectFechaRescate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _fechaRescate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      setState(() {
-        _fechaRescate = picked;
-        fechaRescateController.text = picked.toLocal().toString().split(' ')[0];
-      });
-    }
+  @override
+  void initState() {
+    super.initState();
+    _loadRescatistas();
   }
 
   Future<void> _submit() async {
@@ -77,22 +78,24 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
       return;
     }
 
+    final selectedRescuer =
+        rescatistas.firstWhere((r) => r.nombre == selectedRescatista);
+
     final data = {
-      "nombreRescatista": nombreRescatista.text,
-      "telefonoRescatista": telefonoRescatista.text,
-      "fechaRescate": _fechaRescate?.toIso8601String(),
-      "ubicacionRescate": ubicacionRescate.text,
       "nombre": nombre.text,
       "especie": especie.text,
       "raza": raza.text,
-      "sexo": sexo.text,
+      "sexo": selectedSexo,
       "edad": int.tryParse(edad.text),
       "estadoSalud": estadoSalud.text,
+      "tipo": selectedTipo,
       "tipoAlimentacion": tipoAlimentacion.text,
       "cantidadRecomendada": cantidadRecomendada.text,
       "frecuenciaRecomendada": frecuenciaRecomendada.text,
       "fechaLiberacion": _fechaLiberacion?.toIso8601String(),
       "ubicacionLiberacion": ubicacionLiberacion.text,
+      "nombreRescatista": selectedRescuer.nombre,
+      "telefonoRescatista": selectedTelefono,
     };
 
     final success = await _service.create(data);
@@ -109,6 +112,13 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
         const SnackBar(content: Text('Error al registrar animal')),
       );
     }
+  }
+
+  String? _requiredValidator(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Este campo es obligatorio';
+    }
+    return null;
   }
 
   @override
@@ -152,84 +162,88 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                                 fontWeight: FontWeight.bold)),
                         const SizedBox(height: 16),
                         CustomFormTextField(
-                          hintText: 'Nombre',
-                          controller: nombre,
-                          icon: Icons.pets,
-                          validator: _requiredValidator,
+                            hintText: 'Nombre',
+                            controller: nombre,
+                            icon: Icons.pets,
+                            validator: _requiredValidator),
+                        const SizedBox(height: 16),
+                        CustomFormTextField(
+                            hintText: 'Especie',
+                            controller: especie,
+                            icon: Icons.pets,
+                            validator: _requiredValidator),
+                        const SizedBox(height: 16),
+                        CustomFormTextField(
+                            hintText: 'Raza',
+                            controller: raza,
+                            icon: Icons.pets,
+                            validator: _requiredValidator),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          value: selectedSexo,
+                          decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.transgender),
+                              labelText: 'Sexo'),
+                          items: ['Macho', 'Hembra']
+                              .map((sexo) => DropdownMenuItem(
+                                  value: sexo, child: Text(sexo)))
+                              .toList(),
+                          onChanged: (value) =>
+                              setState(() => selectedSexo = value),
+                          validator: (value) =>
+                              value == null ? 'Seleccione un sexo' : null,
                         ),
                         const SizedBox(height: 16),
                         CustomFormTextField(
-                          hintText: 'Especie',
-                          controller: especie,
-                          icon: Icons.pets,
-                          validator: _requiredValidator,
+                            hintText: 'Edad',
+                            controller: edad,
+                            icon: Icons.cake,
+                            validator: _requiredValidator),
+                        const SizedBox(height: 16),
+                        CustomFormTextField(
+                            hintText: 'Estado de Salud',
+                            controller: estadoSalud,
+                            icon: Icons.health_and_safety,
+                            validator: _requiredValidator),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          value: selectedTipo,
+                          decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.category),
+                              labelText: 'Tipo del Animal'),
+                          items: ['Silvestre', 'Doméstico']
+                              .map((tipo) => DropdownMenuItem(
+                                  value: tipo, child: Text(tipo)))
+                              .toList(),
+                          onChanged: (value) =>
+                              setState(() => selectedTipo = value),
+                          validator: (value) =>
+                              value == null ? 'Seleccione un tipo' : null,
                         ),
                         const SizedBox(height: 16),
                         CustomFormTextField(
-                          hintText: 'Raza',
-                          controller: raza,
-                          icon: Icons.pets,
-                          validator: _requiredValidator,
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: CustomFormTextField(
-                                hintText: 'Sexo',
-                                controller: sexo,
-                                icon: Icons.transgender,
-                                validator: _requiredValidator,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: CustomFormTextField(
-                                hintText: 'Edad',
-                                controller: edad,
-                                icon: Icons.cake,
-                                validator: _requiredValidator,
-                              ),
-                            ),
-                          ],
-                        ),
+                            hintText: 'Tipo de alimentación',
+                            controller: tipoAlimentacion,
+                            icon: Icons.restaurant,
+                            validator: _requiredValidator),
                         const SizedBox(height: 16),
                         CustomFormTextField(
-                          hintText: 'Estado de Salud',
-                          controller: estadoSalud,
-                          icon: Icons.health_and_safety,
-                          validator: _requiredValidator,
-                        ),
+                            hintText: 'Cantidad recomendada',
+                            controller: cantidadRecomendada,
+                            icon: Icons.line_weight,
+                            validator: _requiredValidator),
                         const SizedBox(height: 16),
                         CustomFormTextField(
-                          hintText: 'Tipo de alimentación',
-                          controller: tipoAlimentacion,
-                          icon: Icons.restaurant,
-                          validator: _requiredValidator,
-                        ),
+                            hintText: 'Frecuencia recomendada',
+                            controller: frecuenciaRecomendada,
+                            icon: Icons.schedule,
+                            validator: _requiredValidator),
                         const SizedBox(height: 16),
-                        CustomFormTextField(
-                          hintText: 'Cantidad recomendada',
-                          controller: cantidadRecomendada,
-                          icon: Icons.line_weight,
-                          validator: _requiredValidator,
-                        ),
-                        const SizedBox(height: 16),
-                        CustomFormTextField(
-                          hintText: 'Frecuencia recomendada',
-                          controller: frecuenciaRecomendada,
-                          icon: Icons.schedule,
-                          validator: _requiredValidator,
-                        ),
-                        const SizedBox(height: 16),
-                        const Text('Fecha de Liberación:',
-                            style: TextStyle(color: Colors.black)),
-                        const SizedBox(height: 6),
                         GestureDetector(
                           onTap: () => _selectDate(context),
                           child: AbsorbPointer(
                             child: CustomFormTextField(
-                              hintText: 'Seleccionar fecha',
+                              hintText: 'Seleccionar fecha de rescate',
                               controller: fechaLiberacionController,
                               icon: Icons.calendar_today,
                               validator: _requiredValidator,
@@ -238,68 +252,48 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                         ),
                         const SizedBox(height: 16),
                         CustomFormTextField(
-                          hintText: 'Ubicación de Liberación',
-                          controller: ubicacionLiberacion,
-                          icon: Icons.location_on,
-                          validator: _requiredValidator,
-                        ),
-                        const Text('Datos del Rescatista',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold)),
-                        SizedBox(height: 16),
-                        CustomFormTextField(
-                          hintText: 'Nombre del Rescatista',
-                          controller: nombreRescatista,
-                          icon: Icons.person,
-                          validator: _requiredValidator,
-                        ),
-                        SizedBox(height: 16),
-                        CustomFormTextField(
-                          hintText: 'Teléfono del Rescatista',
-                          controller: telefonoRescatista,
-                          icon: Icons.phone,
-                          validator: _requiredValidator,
-                        ),
-                        SizedBox(height: 16),
-                        GestureDetector(
-                          onTap: () => _selectFechaRescate(context),
-                          child: AbsorbPointer(
-                            child: CustomFormTextField(
-                              hintText: 'Fecha del Rescate',
-                              controller: fechaRescateController,
-                              icon: Icons.calendar_today,
-                              validator: _requiredValidator,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        CustomFormTextField(
-                          hintText: 'Ubicación del Rescate',
-                          controller: ubicacionRescate,
-                          icon: Icons.location_on,
-                          validator: _requiredValidator,
-                        ),
-                        SizedBox(height: 24),
+                            hintText: 'Ubicación de rescate',
+                            controller: ubicacionLiberacion,
+                            icon: Icons.location_on,
+                            validator: _requiredValidator),
                         const SizedBox(height: 16),
-                        const Text('Foto:',
-                            style: TextStyle(color: Colors.black)),
-                        const SizedBox(height: 10),
-                        Center(
-                          child: Container(
-                            height: 100,
-                            width: 140,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(color: Colors.black26, blurRadius: 5),
-                              ],
-                            ),
-                            child: const Icon(Icons.image,
-                                size: 50, color: Colors.grey),
+                        DropdownButtonFormField<String>(
+                          value: selectedRescatista,
+                          decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.person),
+                              labelText: 'Nombre del Rescatista'),
+                          items: rescatistas
+                              .map((r) => DropdownMenuItem(
+                                  value: r.nombre, child: Text(r.nombre)))
+                              .toList(),
+                          onChanged: (value) {
+                            final resc = rescatistas
+                                .firstWhere((r) => r.nombre == value);
+                            setState(() {
+                              selectedRescatista = value;
+                              selectedTelefono = resc.telefono;
+                              selectedFechaRescate = resc.fechaRescate;
+                              selectedUbicacionRescate = resc.ubicacionRescate;
+                            });
+                          },
+                          validator: (value) =>
+                              value == null ? 'Seleccione un rescatista' : null,
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          value: selectedTelefono,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.phone),
+                            labelText: 'Teléfono del Rescatista',
                           ),
+                          items: rescatistas
+                              .map((r) => DropdownMenuItem(
+                                  value: r.telefono, child: Text(r.telefono)))
+                              .toList(),
+                          onChanged: (value) =>
+                              setState(() => selectedTelefono = value),
+                          validator: (value) =>
+                              value == null ? 'Seleccione un teléfono' : null,
                         ),
                         const SizedBox(height: 24),
                         ElevatedButton(
@@ -321,28 +315,6 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: AppColors.primary,
-        shape: const CircularNotchedRectangle(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: const [
-              Icon(Icons.folder_copy_rounded, color: Colors.white),
-              Icon(Icons.home, color: Colors.white),
-              Icon(Icons.pets, color: Colors.white),
-            ],
-          ),
-        ),
-      ),
     );
-  }
-
-  String? _requiredValidator(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Este campo es obligatorio';
-    }
-    return null;
   }
 }

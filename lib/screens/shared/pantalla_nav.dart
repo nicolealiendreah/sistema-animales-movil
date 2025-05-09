@@ -24,6 +24,12 @@ class PantallaNav extends StatelessWidget {
               },
             ),
             IconButton(
+              icon: const Icon(Icons.location_searching, color: Colors.white),
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.liberacionList);
+              },
+            ),
+            IconButton(
               icon: const Icon(Icons.home, color: Colors.white),
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.animals);
