@@ -27,11 +27,11 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   final TextEditingController tipoAlimentacion = TextEditingController();
   final TextEditingController cantidadRecomendada = TextEditingController();
   final TextEditingController frecuenciaRecomendada = TextEditingController();
-  final TextEditingController fechaLiberacionController =
+  final TextEditingController fechaRescateController =
       TextEditingController();
-  final TextEditingController ubicacionLiberacion = TextEditingController();
+  final TextEditingController ubicacionRescate = TextEditingController();
 
-  DateTime? _fechaLiberacion;
+  DateTime? _fechaRescate;
   String? selectedTipo;
   String? selectedSexo;
   String? selectedRescatista;
@@ -43,14 +43,14 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _fechaLiberacion ?? DateTime.now(),
+      initialDate: _fechaRescate ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
     if (picked != null) {
       setState(() {
-        _fechaLiberacion = picked;
-        fechaLiberacionController.text =
+        _fechaRescate = picked;
+        fechaRescateController.text =
             DateFormat('yyyy-MM-dd').format(picked);
       });
     }
@@ -92,8 +92,8 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
       "tipoAlimentacion": tipoAlimentacion.text,
       "cantidadRecomendada": cantidadRecomendada.text,
       "frecuenciaRecomendada": frecuenciaRecomendada.text,
-      "fechaLiberacion": _fechaLiberacion?.toIso8601String(),
-      "ubicacionLiberacion": ubicacionLiberacion.text,
+      "fechaRescate": _fechaRescate?.toIso8601String(),
+      "ubicacionRescate": ubicacionRescate.text,
       "nombreRescatista": selectedRescuer.nombre,
       "telefonoRescatista": selectedTelefono,
     };
@@ -244,7 +244,7 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                           child: AbsorbPointer(
                             child: CustomFormTextField(
                               hintText: 'Seleccionar fecha de rescate',
-                              controller: fechaLiberacionController,
+                              controller: fechaRescateController,
                               icon: Icons.calendar_today,
                               validator: _requiredValidator,
                             ),
@@ -253,7 +253,7 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                         const SizedBox(height: 16),
                         CustomFormTextField(
                             hintText: 'Ubicación de rescate',
-                            controller: ubicacionLiberacion,
+                            controller: ubicacionRescate,
                             icon: Icons.location_on,
                             validator: _requiredValidator),
                         const SizedBox(height: 16),
@@ -272,8 +272,8 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                             setState(() {
                               selectedRescatista = value;
                               selectedTelefono = resc.telefono;
-                              selectedFechaRescate = resc.fechaRescate;
-                              selectedUbicacionRescate = resc.ubicacionRescate;
+                              selectedFechaRescate = resc.fechaRescatista;
+                              selectedUbicacionRescate = resc.ubicacionRescatista;
                             });
                           },
                           validator: (value) =>

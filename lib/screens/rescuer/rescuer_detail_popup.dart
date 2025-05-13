@@ -34,11 +34,11 @@ class RescuerDetailPopup extends StatelessWidget {
           _buildRow('Nombre del rescatista:', rescuer.nombre),
           _buildRow('Teléfono de contacto:', rescuer.telefono),
           _buildRow(
-              'Fecha del Rescate:',
-              rescuer.fechaRescate != null
-                  ? rescuer.fechaRescate!.toString().split('T').first
+              'Fecha del Rescatista:',
+              rescuer.fechaRescatista != null
+                  ? rescuer.fechaRescatista!.toString().split('T').first
                   : 'Sin fecha'),
-          _buildRow('Ubicación del Rescate:', rescuer.ubicacionRescate),
+          _buildRow('Ubicación del Rescatista:', rescuer.ubicacionRescatista),
           const SizedBox(height: 16),
           Center(
             child: Container(

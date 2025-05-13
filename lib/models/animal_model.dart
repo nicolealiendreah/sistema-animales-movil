@@ -10,8 +10,8 @@ class Animal {
   final String? tipoAlimentacion;
   final String? cantidadRecomendada;
   final String? frecuenciaRecomendada;
-  final DateTime? fechaLiberacion;
-  final String? ubicacionLiberacion;
+  final DateTime? fechaRescate;
+  final String? ubicacionRescate;
   final String? nombreRescatista;
   final String? telefonoRescatista;
 
@@ -27,8 +27,8 @@ class Animal {
     this.tipoAlimentacion,
     this.cantidadRecomendada,
     this.frecuenciaRecomendada,
-    this.fechaLiberacion,
-    this.ubicacionLiberacion,
+    this.fechaRescate,
+    this.ubicacionRescate,
     this.nombreRescatista,
     this.telefonoRescatista,
   });
@@ -46,10 +46,10 @@ class Animal {
       tipoAlimentacion: json['tipoAlimentacion'],
       cantidadRecomendada: json['cantidadRecomendada'],
       frecuenciaRecomendada: json['frecuenciaRecomendada'],
-      fechaLiberacion: json['fechaLiberacion'] != null
-          ? DateTime.parse(json['fechaLiberacion'])
+      fechaRescate: json['fechaRescate'] != null
+          ? DateTime.parse(json['fechaRescate'])
           : null,
-      ubicacionLiberacion: json['ubicacionLiberacion'],
+      ubicacionRescate: json['ubicacionRescate'],
       nombreRescatista: json['nombreRescatista'],
       telefonoRescatista: json['telefonoRescatista'],
     );
@@ -67,8 +67,8 @@ class Animal {
       'tipoAlimentacion': tipoAlimentacion,
       'cantidadRecomendada': cantidadRecomendada,
       'frecuenciaRecomendada': frecuenciaRecomendada,
-      'fechaLiberacion': fechaLiberacion?.toIso8601String(),
-      'ubicacionLiberacion': ubicacionLiberacion,
+      'fechaRescate': fechaRescate?.toIso8601String(),
+      'ubicacionRescate': ubicacionRescate,
       'nombreRescatista': nombreRescatista,
       'telefonoRescatista': telefonoRescatista,
     };

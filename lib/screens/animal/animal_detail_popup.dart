@@ -39,6 +39,13 @@ class AnimalDetailPopup extends StatelessWidget {
           _buildRow('Cantidad recomendada:', animal.cantidadRecomendada ?? ''),
           _buildRow(
               'Frecuencia recomendada:', animal.frecuenciaRecomendada ?? ''),
+          _buildRow(
+            'Fecha del Rescate:',
+            animal.fechaRescate != null
+                ? animal.fechaRescate!.toIso8601String().split('T').first
+                : 'Sin fecha',
+          ),
+          _buildRow('Ubicación del rescate:', animal.ubicacionRescate ?? ''),
           const SizedBox(height: 16),
           Center(
             child: Container(

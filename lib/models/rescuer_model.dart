@@ -2,15 +2,15 @@ class Rescuer {
   final String? id;
   final String nombre;
   final String telefono;
-  final DateTime fechaRescate;
-  final String ubicacionRescate;
+  final DateTime fechaRescatista;
+  final String ubicacionRescatista;
 
   Rescuer({
     this.id,
     required this.nombre,
     required this.telefono,
-    required this.fechaRescate,
-    required this.ubicacionRescate,
+    required this.fechaRescatista,
+    required this.ubicacionRescatista,
   });
 
   factory Rescuer.fromJson(Map<String, dynamic> json) {
@@ -18,8 +18,8 @@ class Rescuer {
       id: json['id']?.toString() ?? json['_id'],
       nombre: json['nombre'],
       telefono: json['telefono'],
-      fechaRescate: DateTime.parse(json['fechaRescate']),
-      ubicacionRescate: json['ubicacionRescate'],
+      fechaRescatista: DateTime.parse(json['fechaRescatista']),
+      ubicacionRescatista: json['ubicacionRescatista'],
     );
   }
 
@@ -27,8 +27,8 @@ class Rescuer {
     return {
       'nombre': nombre,
       'telefono': telefono,
-      'fechaRescate': fechaRescate.toIso8601String(),
-      'ubicacionRescate': ubicacionRescate,
+      'fechaRescatista': fechaRescatista.toIso8601String(),
+      'ubicacionRescatista': ubicacionRescatista,
     };
   }
 }

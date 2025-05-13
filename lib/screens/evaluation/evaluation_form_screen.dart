@@ -27,7 +27,7 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
   final TextEditingController sintomas = TextEditingController();
   final TextEditingController tratamiento = TextEditingController();
   final TextEditingController medicacion = TextEditingController();
-  final TextEditingController veterinario = TextEditingController();
+  final TextEditingController responsable = TextEditingController();
 
   DateTime? fechaEvaluacion;
   DateTime? proximaRevision;
@@ -37,10 +37,9 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
     super.initState();
     if (widget.evaluation != null) {
       diagnostico.text = widget.evaluation!.diagnostico;
-      sintomas.text = widget.evaluation!.sintomasObservados ?? '';
-      tratamiento.text = widget.evaluation!.tratamientoAdministrado ?? '';
-      medicacion.text = widget.evaluation!.medicacionRecetada ?? '';
-      veterinario.text = widget.evaluation!.veterinario ?? '';
+      sintomas.text = widget.evaluation!.sintomas ?? '';
+      medicacion.text = widget.evaluation!.medicacion ?? '';
+      responsable.text = widget.evaluation!.responsable ?? '';
       fechaEvaluacion = widget.evaluation!.fechaEvaluacion;
       proximaRevision = widget.evaluation!.proximaRevision;
     }
@@ -73,10 +72,9 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
     final evaluation = Evaluation(
       nombreAnimal: widget.animal.nombre,
       diagnostico: diagnostico.text,
-      sintomasObservados: sintomas.text,
-      tratamientoAdministrado: tratamiento.text,
-      medicacionRecetada: medicacion.text,
-      veterinario: veterinario.text,
+      sintomas: sintomas.text,
+      medicacion: medicacion.text,
+      responsable: responsable.text,
       fechaEvaluacion: fechaEvaluacion,
       proximaRevision: proximaRevision,
     );
@@ -147,7 +145,7 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
                         _buildTextField(
                             'Tratamiento Administrado', tratamiento),
                         _buildTextField('Medicación Recetada', medicacion),
-                        _buildTextField('Veterinario a Cargo', veterinario),
+                        _buildTextField('responsable a Cargo', responsable),
                         const SizedBox(height: 10),
                         _buildDateTimeRow(
                           'Fecha de Evaluación',

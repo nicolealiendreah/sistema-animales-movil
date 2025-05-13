@@ -60,7 +60,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
       fechaTraslado: _fechaTraslado ?? DateTime.now(),
     );
 
-    print('🔼 Enviando Transfer: ${transfer.toJson()}');
+    print('Enviando Transfer: ${transfer.toJson()}');
 
     try {
       await _service.create(transfer);
@@ -68,10 +68,10 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Traslado registrado')),
       );
-      Navigator.pop(context, true); // 👈 para refrescar
+      Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
-      print('❌ Error: $e');
+      print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );

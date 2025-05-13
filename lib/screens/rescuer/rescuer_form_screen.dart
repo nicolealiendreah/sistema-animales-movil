@@ -21,30 +21,30 @@ class _RescuerFormScreenState extends State<RescuerFormScreen> {
   final TextEditingController _ubicacionController = TextEditingController();
   final TextEditingController _fechaController = TextEditingController();
 
-  DateTime? _fechaRescate;
+  DateTime? _fechaRescatista;
 
-  Future<void> _selectFechaRescate(BuildContext context) async {
+  Future<void> _selectfechaRescatista(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _fechaRescate ?? DateTime.now(),
+      initialDate: _fechaRescatista ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
     if (picked != null) {
       setState(() {
-        _fechaRescate = picked;
+        _fechaRescatista = picked;
         _fechaController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
   }
 
   Future<void> _guardarRescatista() async {
-    if (_formKey.currentState!.validate() && _fechaRescate != null) {
+    if (_formKey.currentState!.validate() && _fechaRescatista != null) {
       final nuevo = Rescuer(
         nombre: _nombreController.text,
         telefono: _telefonoController.text,
-        fechaRescate: _fechaRescate!,
-        ubicacionRescate: _ubicacionController.text,
+        fechaRescatista: _fechaRescatista!,
+        ubicacionRescatista: _ubicacionController.text,
       );
 
       await _rescuerService.create(nuevo);
@@ -115,7 +115,7 @@ class _RescuerFormScreenState extends State<RescuerFormScreen> {
                         ),
                         const SizedBox(height: 16),
                         GestureDetector(
-                          onTap: () => _selectFechaRescate(context),
+                          onTap: () => _selectfechaRescatista(context),
                           child: AbsorbPointer(
                             child: CustomFormTextField(
                               hintText: 'Seleccionar fecha de Nacimiento',

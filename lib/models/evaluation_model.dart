@@ -3,10 +3,9 @@ class Evaluation {
   final String? animalId;
   final String nombreAnimal;
   final String diagnostico;
-  final String? sintomasObservados;
-  final String? tratamientoAdministrado;
-  final String? medicacionRecetada;
-  final String? veterinario;
+  final String? sintomas;
+  final String? medicacion;
+  final String? responsable;
   final DateTime? fechaEvaluacion;
   final DateTime? proximaRevision;
 
@@ -15,10 +14,9 @@ class Evaluation {
     this.animalId,
     required this.nombreAnimal,
     required this.diagnostico,
-    this.sintomasObservados,
-    this.tratamientoAdministrado,
-    this.medicacionRecetada,
-    this.veterinario,
+    this.sintomas,
+    this.medicacion,
+    this.responsable,
     this.fechaEvaluacion,
     this.proximaRevision,
   });
@@ -29,10 +27,9 @@ class Evaluation {
       animalId: json['animalId'],
       nombreAnimal: json['animal']?['nombre'] ?? json['nombreAnimal'],
       diagnostico: json['diagnostico'],
-      sintomasObservados: json['sintomasObservados'],
-      tratamientoAdministrado: json['tratamientoAdministrado'],
-      medicacionRecetada: json['medicacionRecetada'],
-      veterinario: json['veterinario'],
+      sintomas: json['sintomas'],
+      medicacion: json['medicacion'],
+      responsable: json['responsable'],
       fechaEvaluacion: json['fechaEvaluacion'] != null
           ? DateTime.parse(json['fechaEvaluacion'])
           : null,
@@ -46,10 +43,9 @@ class Evaluation {
     return {
       'nombreAnimal': nombreAnimal,
       'diagnostico': diagnostico,
-      'sintomasObservados': sintomasObservados,
-      'tratamientoAdministrado': tratamientoAdministrado,
-      'medicacionRecetada': medicacionRecetada,
-      'veterinario': veterinario,
+      'sintomas': sintomas,
+      'medicacion': medicacion,
+      'responsable': responsable,
       'fechaEvaluacion': fechaEvaluacion?.toIso8601String(),
       'proximaRevision': proximaRevision?.toIso8601String(),
     };
