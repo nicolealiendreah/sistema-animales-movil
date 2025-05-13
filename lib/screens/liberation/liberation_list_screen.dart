@@ -142,7 +142,7 @@ class _LiberationListScreenState extends State<LiberationListScreen> {
                                 }
                               },
                               icon: const Icon(Icons.add),
-                              label: const Text('Agregar/Editar Gestión'),
+                              label: const Text('Agregar Liberación'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: Colors.white,

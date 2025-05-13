@@ -39,26 +39,6 @@ class _LiberationFormScreenState extends State<LiberationFormScreen> {
     });
   }
 
-  Future<void> _loadLiberacion(String nombreAnimal) async {
-    try {
-      final list = await _liberacionService.getAll();
-      final match = list.firstWhere((l) => l.nombreAnimal == nombreAnimal);
-      setState(() {
-        _liberacion = match;
-        ubicacionLiberacion.text = match.ubicacionLiberacion;
-        observaciones.text = match.observaciones;
-        _fechaLiberacion = DateTime.parse(match.fechaLiberacion);
-      });
-    } catch (_) {
-      setState(() {
-        _liberacion = null;
-        ubicacionLiberacion.clear();
-        observaciones.clear();
-        _fechaLiberacion = null;
-      });
-    }
-  }
-
   Future<void> _pickFechaLiberacion() async {
     final picked = await showDatePicker(
       context: context,
@@ -114,7 +94,8 @@ class _LiberationFormScreenState extends State<LiberationFormScreen> {
           Column(
             children: [
               Container(
-                padding: const EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 16),
+                padding: const EdgeInsets.only(
+                    top: 50, left: 20, right: 20, bottom: 16),
                 color: AppColors.primary,
                 child: Row(
                   children: [
@@ -123,7 +104,8 @@ class _LiberationFormScreenState extends State<LiberationFormScreen> {
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8),
-                    const Text('Registrar Liberación', style: AppTextStyles.heading),
+                    const Text('Registrar Liberación',
+                        style: AppTextStyles.heading),
                   ],
                 ),
               ),
@@ -149,8 +131,13 @@ class _LiberationFormScreenState extends State<LiberationFormScreen> {
                           }).toList(),
                           onChanged: (animal) {
                             if (animal != null) {
-                              setState(() => _selectedAnimal = animal);
-                              _loadLiberacion(animal.animal.nombre);
+                              setState(() {
+                                _selectedAnimal = animal;
+                                _liberacion = null;
+                                ubicacionLiberacion.clear();
+                                observaciones.clear();
+                                _fechaLiberacion = null;
+                              });
                             }
                           },
                           decoration: const InputDecoration(
@@ -161,8 +148,10 @@ class _LiberationFormScreenState extends State<LiberationFormScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        _buildField('Ubicación de liberación', ubicacionLiberacion),
-                        _buildField('Observaciones', observaciones, maxLines: 3),
+                        _buildField(
+                            'Ubicación de liberación', ubicacionLiberacion),
+                        _buildField('Observaciones', observaciones,
+                            maxLines: 3),
                         const SizedBox(height: 12),
                         const Align(
                           alignment: Alignment.centerLeft,

@@ -198,7 +198,7 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                         const SizedBox(height: 12),
                         const Align(
                           alignment: Alignment.centerLeft,
-                          child: Text('Fecha de rescate/liberación',
+                          child: Text('Fecha de adopcion:',
                               style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
                         Row(
@@ -206,11 +206,6 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                             TextButton(
                               onPressed: _pickDateTime,
                               child: Text(_formatDate(_fechaAdopcion),
-                                  style: const TextStyle(color: Colors.blue)),
-                            ),
-                            TextButton(
-                              onPressed: _pickDateTime,
-                              child: Text(_formatTime(_fechaAdopcion),
                                   style: const TextStyle(color: Colors.blue)),
                             ),
                           ],

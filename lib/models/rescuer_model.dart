@@ -4,6 +4,7 @@ class Rescuer {
   final String telefono;
   final DateTime fechaRescatista;
   final String ubicacionRescatista;
+  
 
   Rescuer({
     this.id,

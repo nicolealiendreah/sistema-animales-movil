@@ -7,6 +7,7 @@ import 'package:sistema_animales/screens/liberation/liberation_form_screen.dart'
 import 'package:sistema_animales/screens/liberation/liberation_list_screen.dart';
 import 'package:sistema_animales/screens/report/report_screen.dart';
 import 'package:sistema_animales/screens/rescuer/rescuer_form_screen.dart';
+import 'package:sistema_animales/screens/veterinarian/veterinarian_form_screen.dart';
 import '../screens/auth/splash_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
@@ -19,6 +20,7 @@ class AppRoutes {
   static const String animals = '/animals';
   static const String animalForm = '/animal-form';
   static const String rescatistaForm = '/rescatista-form';
+  static const String veterinarioForm = '/veterinario-form';
   static const String geolocation = '/geolocation';
   static const String adoptionList = '/adoption-list';
   static const String adoptionForm = '/adoption-form';
@@ -33,6 +35,7 @@ class AppRoutes {
     animals: (_) => AnimalListScreen(),
     animalForm: (_) => const AnimalFormScreen(),
     rescatistaForm: (_) => const RescuerFormScreen(),
+    veterinarioForm: (_) => const VeterinarioFormScreen(),
     geolocation: (_) => const GeolocationScreen(),
     adoptionList: (_) => const AdoptionListScreen(),
     liberacionList: (_) => const LiberationListScreen(),

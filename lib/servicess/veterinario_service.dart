@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'package:sistema_animales/models/veterinarian_model.dart';
 import '../core/env.dart';
-import '../models/veterinario_model.dart';
 import 'api_service.dart';
 
 class VeterinarioService {

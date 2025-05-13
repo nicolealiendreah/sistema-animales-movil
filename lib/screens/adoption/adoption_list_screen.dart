@@ -183,7 +183,7 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                 }
                               },
                               icon: const Icon(Icons.add),
-                              label: const Text('Agregar/Editar Gestión'),
+                              label: const Text('Agregar Adopcion'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: Colors.white,

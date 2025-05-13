@@ -34,14 +34,16 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
 
   @override
   void initState() {
-    super.initState();
-    if (widget.evaluation != null) {
-      diagnostico.text = widget.evaluation!.diagnostico;
-      sintomas.text = widget.evaluation!.sintomas ?? '';
-      medicacion.text = widget.evaluation!.medicacion ?? '';
-      responsable.text = widget.evaluation!.responsable ?? '';
-      fechaEvaluacion = widget.evaluation!.fechaEvaluacion;
-      proximaRevision = widget.evaluation!.proximaRevision;
+    @override
+    void initState() {
+      super.initState();
+      diagnostico.clear();
+      sintomas.clear();
+      tratamiento.clear();
+      medicacion.clear();
+      responsable.clear();
+      fechaEvaluacion = null;
+      proximaRevision = null;
     }
   }
 

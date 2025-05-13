@@ -200,32 +200,33 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
       ),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const SizedBox(height: 10),
           FloatingActionButton(
-            heroTag: 'addRescuer',
-            onPressed: () async {
-              final result =
-                  await Navigator.pushNamed(context, AppRoutes.rescatistaForm);
-              if (result == true) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Rescatista registrado exitosamente')),
-                );
-              }
-            },
+            heroTag: 'veterinario',
+            onPressed: () =>
+                Navigator.pushNamed(context, AppRoutes.veterinarioForm),
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            child: const Icon(Icons.medical_services),
+            tooltip: 'Registrar Veterinario',
+           
+          ),
+
+          const SizedBox(height: 12),
+          FloatingActionButton(
+            heroTag: 'rescatista',
+            onPressed: () =>
+                Navigator.pushNamed(context, AppRoutes.rescatistaForm),
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
             child: const Icon(Icons.person_add),
+            tooltip: 'Registrar Rescatista',
           ),
-            
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           FloatingActionButton(
-            heroTag: 'addAnimal',
+            heroTag: 'animal',
             onPressed: () async {
               final rescatistas = await _rescuerService.getAll();
-
               if (rescatistas.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -237,15 +238,14 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                 final result =
                     await Navigator.pushNamed(context, AppRoutes.animalForm);
                 if (result == true) {
-                  setState(() {
-                    _futureAnimals = _animalService.getAll();
-                  });
+                  setState(() => _futureAnimals = _animalService.getAll());
                 }
               }
             },
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
             child: const Icon(Icons.add),
+            tooltip: 'Registrar Animal',
           ),
         ],
       ),
