@@ -209,9 +209,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
             foregroundColor: Colors.white,
             child: const Icon(Icons.medical_services),
             tooltip: 'Registrar Veterinario',
-           
           ),
-
           const SizedBox(height: 12),
           FloatingActionButton(
             heroTag: 'rescatista',
@@ -238,7 +236,12 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                 final result =
                     await Navigator.pushNamed(context, AppRoutes.animalForm);
                 if (result == true) {
-                  setState(() => _futureAnimals = _animalService.getAll());
+                  final animals =
+                      await _animalService.getAll();
+                  setState(() {
+                    _futureAnimals =
+                        Future.value(animals);
+                  });
                 }
               }
             },

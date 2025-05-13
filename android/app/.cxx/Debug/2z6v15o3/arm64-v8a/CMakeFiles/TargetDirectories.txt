@@ -1,0 +1,2 @@
+C:/Users/Nicole/Documents/Universidad/Proyecto2-2025/sistema-adopcion-movil/sistema_animales/android/app/.cxx/Debug/2z6v15o3/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/Nicole/Documents/Universidad/Proyecto2-2025/sistema-adopcion-movil/sistema_animales/android/app/.cxx/Debug/2z6v15o3/arm64-v8a/CMakeFiles/rebuild_cache.dir

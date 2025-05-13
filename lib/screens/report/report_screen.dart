@@ -16,7 +16,8 @@ class ReportScreen extends StatelessWidget {
           Column(
             children: [
               Container(
-                padding: const EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 16),
+                padding: const EdgeInsets.only(
+                    top: 50, left: 20, right: 20, bottom: 16),
                 color: AppColors.primary,
                 child: Row(
                   children: [
@@ -25,7 +26,8 @@ class ReportScreen extends StatelessWidget {
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8),
-                    const Text('Reportes Automáticos', style: AppTextStyles.heading),
+                    const Text('Reportes Automáticos',
+                        style: AppTextStyles.heading),
                   ],
                 ),
               ),
@@ -40,12 +42,15 @@ class ReportScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(16),
-                          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+                          boxShadow: [
+                            BoxShadow(color: Colors.black12, blurRadius: 4)
+                          ],
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Período del reporte Rango de Fechas de Rescate',
+                            const Text(
+                                'Período del reporte Rango de Fechas de Rescate',
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                             const SizedBox(height: 16),
                             Image.asset('assets/mock_graphic.png'),
@@ -59,14 +64,19 @@ class ReportScreen extends StatelessWidget {
                                   width: 150,
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey.shade300),
+                                    border:
+                                        Border.all(color: Colors.grey.shade300),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Column(
                                     children: const [
-                                      Text('86%', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                                      Text('86%',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20)),
                                       SizedBox(height: 4),
-                                      Text('Animales rescatados', textAlign: TextAlign.center),
+                                      Text('Animales rescatados',
+                                          textAlign: TextAlign.center),
                                     ],
                                   ),
                                 );

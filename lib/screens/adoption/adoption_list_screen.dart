@@ -84,7 +84,7 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.pop(context, true),
                     ),
                     const SizedBox(width: 8),
                     const Text('Historial de Adopciones',
@@ -178,8 +178,8 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                 final result = await Navigator.pushNamed(
                                     context, AppRoutes.adoptionForm);
                                 if (result == true && _selectedAnimal != null) {
-                                  _loadAdoptionData(
-                                      _selectedAnimal!.animal.id!);
+                                  _loadAdoptionData(_selectedAnimal!
+                                      .animal.nombre);
                                 }
                               },
                               icon: const Icon(Icons.add),

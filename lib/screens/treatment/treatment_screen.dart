@@ -148,7 +148,7 @@ class _TreatmentDetailScreenState extends State<TreatmentDetailScreen> {
                                       _buildRow('Tratamiento:',
                                           _treatment?.tratamiento),
                                       _buildRow(
-                                          'Duración:', _treatment?.duracion),
+                                          'Duración del Tratamiento:', _treatment?.duracion),
                                       _buildRow('Responsable:',
                                           _treatment?.responsable),
                                       _buildRow('Observaciones:',
