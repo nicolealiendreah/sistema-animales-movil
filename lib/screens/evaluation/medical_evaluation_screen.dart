@@ -158,7 +158,7 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
                                           _evaluation?.sintomas),
                                       _buildRow('Medicación recetada:',
                                           _evaluation?.medicacion),
-                                      _buildRow('responsable a cargo:',
+                                      _buildRow('Responsable a cargo:',
                                           _evaluation?.responsable),
                                       const SizedBox(height: 12),
                                       const Text('Fecha de evaluación:',

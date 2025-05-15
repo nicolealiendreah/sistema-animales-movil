@@ -3,7 +3,13 @@ import 'package:intl/intl.dart';
 import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/models/animal_model.dart';
 import 'package:sistema_animales/models/tratamiento_model.dart';
+import 'package:sistema_animales/models/veterinarian_model.dart';
 import 'package:sistema_animales/servicess/tratamiento_service.dart';
+import 'package:sistema_animales/servicess/veterinario_service.dart';
+
+List<Veterinario> _veterinarios = [];
+Veterinario? _selectedVeterinario;
+final _veterinarioService = VeterinarioService();
 
 class TreatmentFormScreen extends StatefulWidget {
   final Animal animal;
@@ -25,6 +31,23 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
 
   DateTime? fechaTratamiento;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadVeterinarios();
+  }
+
+  Future<void> _loadVeterinarios() async {
+    try {
+      final list = await _veterinarioService.getAll();
+      setState(() {
+        _veterinarios = list;
+      });
+    } catch (e) {
+      print('Error al cargar veterinarios: $e');
+    }
+  }
+
   Future<void> _pickDate(BuildContext context) async {
     final date = await showDatePicker(
       context: context,
@@ -44,7 +67,7 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
       nombreAnimal: widget.animal.nombre,
       tratamiento: tratamiento.text,
       fechaTratamiento: fechaTratamiento,
-      responsable: responsable.text,
+      responsable: _selectedVeterinario?.nombre ?? '',
       observaciones: observaciones.text,
       duracion: duracion.text,
     );
@@ -108,7 +131,27 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
                     child: Column(
                       children: [
                         _buildTextField('Tratamiento', tratamiento),
-                        _buildTextField('Responsable', responsable),
+                        DropdownButtonFormField<Veterinario>(
+                          value: _selectedVeterinario,
+                          items: _veterinarios.map((v) {
+                            return DropdownMenuItem(
+                              value: v,
+                              child: Text(v.nombre),
+                            );
+                          }).toList(),
+                          onChanged: (v) {
+                            setState(() => _selectedVeterinario = v);
+                          },
+                          decoration: const InputDecoration(
+                            labelText: 'Veterinario responsable',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) => value == null
+                              ? 'Seleccione un veterinario'
+                              : null,
+                        ),
                         _buildTextField('Observaciones', observaciones),
                         _buildTextField('Duración', duracion),
                         const SizedBox(height: 10),

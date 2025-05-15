@@ -29,7 +29,7 @@ class Evaluation {
       diagnostico: json['diagnostico'],
       sintomas: json['sintomas'],
       medicacion: json['medicacion'],
-      responsable: json['responsable'],
+      responsable: json['responsableNombre'],
       fechaEvaluacion: json['fechaEvaluacion'] != null
           ? DateTime.parse(json['fechaEvaluacion'])
           : null,
@@ -45,7 +45,7 @@ class Evaluation {
       'diagnostico': diagnostico,
       'sintomas': sintomas,
       'medicacion': medicacion,
-      'responsable': responsable,
+      'responsableNombre': responsable, 
       'fechaEvaluacion': fechaEvaluacion?.toIso8601String(),
       'proximaRevision': proximaRevision?.toIso8601String(),
     };

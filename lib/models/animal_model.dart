@@ -12,6 +12,7 @@ class Animal {
   final String? frecuenciaRecomendada;
   final DateTime? fechaRescate;
   final String? ubicacionRescate;
+  final String? detallesRescate;
   final String? nombreRescatista;
   final String? telefonoRescatista;
 
@@ -29,6 +30,7 @@ class Animal {
     this.frecuenciaRecomendada,
     this.fechaRescate,
     this.ubicacionRescate,
+    this.detallesRescate,
     this.nombreRescatista,
     this.telefonoRescatista,
   });
@@ -50,6 +52,7 @@ class Animal {
           ? DateTime.parse(json['fechaRescate'])
           : null,
       ubicacionRescate: json['ubicacionRescate'],
+      detallesRescate: json['detallesRescate'],
       nombreRescatista: json['nombreRescatista'],
       telefonoRescatista: json['telefonoRescatista'],
     );
@@ -69,6 +72,7 @@ class Animal {
       'frecuenciaRecomendada': frecuenciaRecomendada,
       'fechaRescate': fechaRescate?.toIso8601String(),
       'ubicacionRescate': ubicacionRescate,
+      'detallesRescate': detallesRescate,
       'nombreRescatista': nombreRescatista,
       'telefonoRescatista': telefonoRescatista,
     };

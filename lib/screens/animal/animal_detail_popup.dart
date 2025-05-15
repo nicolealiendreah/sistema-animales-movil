@@ -46,6 +46,7 @@ class AnimalDetailPopup extends StatelessWidget {
                 : 'Sin fecha',
           ),
           _buildRow('Ubicación del rescate:', animal.ubicacionRescate ?? ''),
+          _buildRow('Detalles del rescate:', animal.detallesRescate ?? ''),
           const SizedBox(height: 16),
           Center(
             child: Container(

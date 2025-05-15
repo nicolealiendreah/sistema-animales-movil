@@ -27,9 +27,9 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   final TextEditingController tipoAlimentacion = TextEditingController();
   final TextEditingController cantidadRecomendada = TextEditingController();
   final TextEditingController frecuenciaRecomendada = TextEditingController();
-  final TextEditingController fechaRescateController =
-      TextEditingController();
+  final TextEditingController fechaRescateController = TextEditingController();
   final TextEditingController ubicacionRescate = TextEditingController();
+  final TextEditingController detalleRescate = TextEditingController();
 
   DateTime? _fechaRescate;
   String? selectedTipo;
@@ -39,6 +39,7 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   List<Rescuer> rescatistas = [];
   DateTime? selectedFechaRescate;
   String? selectedUbicacionRescate;
+  String? selectedDetalleRescate;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -50,8 +51,7 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
     if (picked != null) {
       setState(() {
         _fechaRescate = picked;
-        fechaRescateController.text =
-            DateFormat('yyyy-MM-dd').format(picked);
+        fechaRescateController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
   }
@@ -94,6 +94,7 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
       "frecuenciaRecomendada": frecuenciaRecomendada.text,
       "fechaRescate": _fechaRescate?.toIso8601String(),
       "ubicacionRescate": ubicacionRescate.text,
+      "detallesRescate": detalleRescate.text,
       "nombreRescatista": selectedRescuer.nombre,
       "telefonoRescatista": selectedTelefono,
     };
@@ -257,6 +258,12 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                             icon: Icons.location_on,
                             validator: _requiredValidator),
                         const SizedBox(height: 16),
+                        CustomFormTextField(
+                            hintText: 'Detalle de rescate',
+                            controller: detalleRescate,
+                            icon: Icons.details,
+                            validator: _requiredValidator),
+                        const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
                           value: selectedRescatista,
                           decoration: const InputDecoration(
@@ -273,7 +280,8 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                               selectedRescatista = value;
                               selectedTelefono = resc.telefono;
                               selectedFechaRescate = resc.fechaRescatista;
-                              selectedUbicacionRescate = resc.ubicacionRescatista;
+                              selectedUbicacionRescate =
+                                  resc.ubicacionRescatista;
                             });
                           },
                           validator: (value) =>

@@ -3,7 +3,13 @@ import 'package:intl/intl.dart';
 import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/models/animal_model.dart';
 import 'package:sistema_animales/models/evaluation_model.dart';
+import 'package:sistema_animales/models/veterinarian_model.dart';
 import 'package:sistema_animales/servicess/evaluation_service.dart';
+import 'package:sistema_animales/servicess/veterinario_service.dart';
+
+List<Veterinario> _veterinarios = [];
+Veterinario? _selectedVeterinario;
+final _veterinarioService = VeterinarioService();
 
 class EvaluationFormScreen extends StatefulWidget {
   final Animal animal;
@@ -34,16 +40,25 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
 
   @override
   void initState() {
-    @override
-    void initState() {
-      super.initState();
-      diagnostico.clear();
-      sintomas.clear();
-      tratamiento.clear();
-      medicacion.clear();
-      responsable.clear();
-      fechaEvaluacion = null;
-      proximaRevision = null;
+    super.initState();
+    _loadVeterinarios();
+    diagnostico.clear();
+    sintomas.clear();
+    tratamiento.clear();
+    medicacion.clear();
+    responsable.clear();
+    fechaEvaluacion = null;
+    proximaRevision = null;
+  }
+
+  Future<void> _loadVeterinarios() async {
+    try {
+      final list = await _veterinarioService.getAll();
+      setState(() {
+        _veterinarios = list;
+      });
+    } catch (e) {
+      print('Error al cargar veterinarios: $e');
     }
   }
 
@@ -76,7 +91,7 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
       diagnostico: diagnostico.text,
       sintomas: sintomas.text,
       medicacion: medicacion.text,
-      responsable: responsable.text,
+      responsable: _selectedVeterinario?.nombre ?? '',
       fechaEvaluacion: fechaEvaluacion,
       proximaRevision: proximaRevision,
     );
@@ -147,7 +162,29 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
                         _buildTextField(
                             'Tratamiento Administrado', tratamiento),
                         _buildTextField('Medicación Recetada', medicacion),
-                        _buildTextField('responsable a Cargo', responsable),
+                        DropdownButtonFormField<Veterinario>(
+                          value: _selectedVeterinario,
+                          items: _veterinarios.map((v) {
+                            return DropdownMenuItem(
+                              value: v,
+                              child: Text(v.nombre),
+                            );
+                          }).toList(),
+                          onChanged: (v) {
+                            setState(() {
+                              _selectedVeterinario = v;
+                            });
+                          },
+                          decoration: const InputDecoration(
+                            labelText: 'Veterinario responsable',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) => value == null
+                              ? 'Seleccione un veterinario'
+                              : null,
+                        ),
                         const SizedBox(height: 10),
                         _buildDateTimeRow(
                           'Fecha de Evaluación',

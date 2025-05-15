@@ -29,7 +29,7 @@ class Tratamiento {
       fechaTratamiento: json['fechaTratamiento'] != null
           ? DateTime.parse(json['fechaTratamiento'])
           : null,
-      responsable: json['responsable'] ?? '',
+      responsable: json['responsableNombre'] ?? '',
       observaciones: json['observaciones'] ?? '',
       duracion: json['duracion'] ?? '',
     );
@@ -41,7 +41,7 @@ class Tratamiento {
       'nombreAnimal': nombreAnimal,
       'tratamiento': tratamiento,
       'fechaTratamiento': fechaTratamiento?.toIso8601String(),
-      'responsable': responsable,
+      'responsableNombre': responsable, 
       'observaciones': observaciones,
       'duracion': duracion,
     };
