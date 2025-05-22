@@ -66,7 +66,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Flecha arriba alineada a la izquierda
                     Align(
                       alignment: Alignment.centerLeft,
                       child: IconButton(
@@ -78,34 +77,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     const Text(
-                      'Create an Account',
+                      'Create una Cuenta',
                       style: AppTextStyles.heading,
                     ),
                     const SizedBox(height: 24),
 
                     CustomTextField(
-                      hintText: 'First Name',
+                      hintText: 'Primer Nombre',
                       icon: Icons.person_outline,
                       controller: firstNameController,
                     ),
                     const SizedBox(height: 12),
 
                     CustomTextField(
-                      hintText: 'Last Name',
+                      hintText: 'Apellido',
                       icon: Icons.person_outline,
                       controller: lastNameController,
                     ),
                     const SizedBox(height: 12),
 
                     CustomTextField(
-                      hintText: 'Username',
+                      hintText: 'Usuario',
                       icon: Icons.account_circle_outlined,
                       controller: usernameController,
                     ),
                     const SizedBox(height: 12),
 
                     CustomTextField(
-                      hintText: 'Password',
+                      hintText: 'Contraseña',
                       icon: Icons.lock_outline,
                       controller: passwordController,
                       obscure: true,
@@ -113,7 +112,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 12),
 
                     CustomTextField(
-                      hintText: 'Email',
+                      hintText: 'Correo Electronico',
                       icon: Icons.email_outlined,
                       controller: emailController,
                     ),
@@ -132,7 +131,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       onPressed: isLoading ? null : _register,
                       child: isLoading
                           ? const CircularProgressIndicator()
-                          : const Text('REGISTER'),
+                          : const Text('REGISTRAR'),
                     ),
                     const SizedBox(height: 32),
                     Image.asset('assets/vet_with_dog.png', height: 180),

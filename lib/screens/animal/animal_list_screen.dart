@@ -119,7 +119,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search',
+                    hintText: 'Buscar animal',
                     prefixIcon: const Icon(Icons.search),
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.close),

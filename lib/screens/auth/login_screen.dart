@@ -54,13 +54,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     Image.asset('assets/paw_logo.png', height: 150),
                     const SizedBox(height: 32),
                     CustomTextField(
-                      hintText: 'EMAIL',
+                      hintText: 'CORREO ELECTRONICO',
                       icon: Icons.email_outlined,
                       controller: emailController,
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
-                      hintText: 'PASSWORD',
+                      hintText: 'CONTRASEÑA',
                       icon: Icons.lock_outline,
                       controller: passwordController,
                       obscure: true,
@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: isLoading ? null : _login,
                       child: isLoading
                           ? const CircularProgressIndicator()
-                          : const Text('LOGIN'),
+                          : const Text('INICIAR SESION'),
                     ),
                     const SizedBox(height: 12),
                     TextButton(
@@ -87,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.pushNamed(context, AppRoutes.register);
                       },
                       child: const Text(
-                        'Create an Account',
+                        'Create una cuenta',
                         style: TextStyle(color: AppColors.white),
                       ),
                     ),
