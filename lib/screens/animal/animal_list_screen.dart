@@ -145,8 +145,36 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (_filteredAnimals.isEmpty) {
-                      return const Center(
-                          child: Text('No se encontraron animales'));
+                      // Mostrar 4 placeholders vacíos
+                      return GridView.builder(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 0.7,
+                        ),
+                        itemCount: 4,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.4),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.white70),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'Sin datos',
+                                style: TextStyle(
+                                    color: Colors.black54,
+                                    fontStyle: FontStyle.italic),
+                              ),
+                            ),
+                          );
+                        },
+                      );
                     } else {
                       return GridView.builder(
                         padding: const EdgeInsets.symmetric(
@@ -236,11 +264,9 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                 final result =
                     await Navigator.pushNamed(context, AppRoutes.animalForm);
                 if (result == true) {
-                  final animals =
-                      await _animalService.getAll();
+                  final animals = await _animalService.getAll();
                   setState(() {
-                    _futureAnimals =
-                        Future.value(animals);
+                    _futureAnimals = Future.value(animals);
                   });
                 }
               }

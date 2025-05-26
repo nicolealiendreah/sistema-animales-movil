@@ -20,13 +20,13 @@ class CustomTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       obscureText: obscure,
-      style: const TextStyle(color: AppColors.white),
+      style: const TextStyle(color: Colors.black), 
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: AppTextStyles.inputHint,
-        prefixIcon: Icon(icon, color: AppColors.white),
+        hintStyle: const TextStyle(color: Colors.black54),
+        prefixIcon: Icon(icon, color: Colors.black),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.2),
+        fillColor: Colors.white, 
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: AppColors.border),
           borderRadius: BorderRadius.circular(12),

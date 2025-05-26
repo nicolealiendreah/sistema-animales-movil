@@ -19,19 +19,29 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
 
   Future<void> _login() async {
-    setState(() => isLoading = true);
     final email = emailController.text.trim();
     final password = passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, completa todos los campos')),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
 
     final success = await _userService.login(email, password);
 
     setState(() => isLoading = false);
 
+    if (!mounted) return;
+
     if (success) {
       Navigator.pushReplacementNamed(context, AppRoutes.animals);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Email o contraseña incorrectos')),
+        const SnackBar(content: Text('Credenciales incorrectas')),
       );
     }
   }
@@ -53,19 +63,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Image.asset('assets/paw_logo.png', height: 150),
                     const SizedBox(height: 32),
+
                     CustomTextField(
-                      hintText: 'correo electronico',
+                      hintText: 'Correo electrónico',
                       icon: Icons.email_outlined,
                       controller: emailController,
                     ),
                     const SizedBox(height: 16),
+
                     CustomTextField(
-                      hintText: 'contraseña',
+                      hintText: 'Contraseña',
                       icon: Icons.lock_outline,
                       controller: passwordController,
                       obscure: true,
                     ),
                     const SizedBox(height: 32),
+
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.white,
@@ -79,18 +92,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: isLoading ? null : _login,
                       child: isLoading
                           ? const CircularProgressIndicator()
-                          : const Text('INICIAR SESION'),
+                          : const Text('INICIAR SESIÓN'),
                     ),
+
                     const SizedBox(height: 12),
+
                     TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, AppRoutes.register);
                       },
                       child: const Text(
-                        'Create una cuenta',
-                        style: TextStyle(color: AppColors.white),
+                        'Crear una cuenta',
+                        style: TextStyle(color: AppColors.textDark),
                       ),
                     ),
+
                     const SizedBox(height: 32),
                     Image.asset('assets/vet_with_dog.png', height: 180),
                   ],
