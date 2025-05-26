@@ -54,13 +54,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     Image.asset('assets/paw_logo.png', height: 150),
                     const SizedBox(height: 32),
                     CustomTextField(
-                      hintText: 'CORREO ELECTRONICO',
+                      hintText: 'correo electronico',
                       icon: Icons.email_outlined,
                       controller: emailController,
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
-                      hintText: 'CONTRASEÑA',
+                      hintText: 'contraseña',
                       icon: Icons.lock_outline,
                       controller: passwordController,
                       obscure: true,
