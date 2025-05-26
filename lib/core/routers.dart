@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sistema_animales/screens/adoption/adoption_form_screen.dart';
 import 'package:sistema_animales/screens/animal/animal_form_screen.dart';
 import 'package:sistema_animales/screens/animal/animal_list_screen.dart';
+import 'package:sistema_animales/screens/geolocation/geolocation_form.dart';
 import 'package:sistema_animales/screens/geolocation/geolocation_screen.dart';
 import 'package:sistema_animales/screens/liberation/liberation_form_screen.dart';
 import 'package:sistema_animales/screens/liberation/liberation_list_screen.dart';
@@ -22,6 +23,7 @@ class AppRoutes {
   static const String rescatistaForm = '/rescatista-form';
   static const String veterinarioForm = '/veterinario-form';
   static const String geolocation = '/geolocation';
+  static const String geolocationForm = '/geolocation-form';
   static const String adoptionList = '/adoption-list';
   static const String adoptionForm = '/adoption-form';
   static const String liberacionList = '/liberation-list';
@@ -37,11 +39,11 @@ class AppRoutes {
     rescatistaForm: (_) => const RescuerFormScreen(),
     veterinarioForm: (_) => const VeterinarioFormScreen(),
     geolocation: (_) => const GeolocationScreen(),
+    geolocationForm: (_) => const GeolocationFormScreen(),
     adoptionList: (_) => const AdoptionListScreen(),
+    adoptionForm: (_) => const AdoptionFormScreen(),
     liberacionList: (_) => const LiberationListScreen(),
     liberacionForm: (_) => const LiberationFormScreen(),
-    adoptionForm: (_) => const AdoptionFormScreen(),
     report: (_) => const ReportScreen(),
-
   };
 }
