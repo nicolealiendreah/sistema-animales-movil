@@ -6,6 +6,7 @@ import 'package:sistema_animales/screens/geolocation/geolocation_form.dart';
 import 'package:sistema_animales/screens/geolocation/geolocation_screen.dart';
 import 'package:sistema_animales/screens/liberation/liberation_form_screen.dart';
 import 'package:sistema_animales/screens/liberation/liberation_list_screen.dart';
+import 'package:sistema_animales/screens/report/report_screen%20copy.dart';
 import 'package:sistema_animales/screens/report/report_screen.dart';
 import 'package:sistema_animales/screens/rescuer/rescuer_form_screen.dart';
 import 'package:sistema_animales/screens/veterinarian/veterinarian_form_screen.dart';

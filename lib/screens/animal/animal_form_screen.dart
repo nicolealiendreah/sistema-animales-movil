@@ -40,6 +40,8 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   DateTime? selectedFechaRescate;
   String? selectedUbicacionRescate;
   String? selectedDetalleRescate;
+  String? selectedEstadoSalud;
+  String? selectedFrecuenciaRecomendada;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -87,11 +89,11 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
       "raza": raza.text,
       "sexo": selectedSexo,
       "edad": int.tryParse(edad.text),
-      "estadoSalud": estadoSalud.text,
+      "estadoSalud": selectedEstadoSalud,
       "tipo": selectedTipo,
       "tipoAlimentacion": tipoAlimentacion.text,
       "cantidadRecomendada": cantidadRecomendada.text,
-      "frecuenciaRecomendada": frecuenciaRecomendada.text,
+      "frecuenciaRecomendada": selectedFrecuenciaRecomendada,
       "fechaRescate": _fechaRescate?.toIso8601String(),
       "ubicacionRescate": ubicacionRescate.text,
       "detallesRescate": detalleRescate.text,
@@ -201,11 +203,22 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                             icon: Icons.cake,
                             validator: _requiredValidator),
                         const SizedBox(height: 16),
-                        CustomFormTextField(
-                            hintText: 'Estado de Salud',
-                            controller: estadoSalud,
-                            icon: Icons.health_and_safety,
-                            validator: _requiredValidator),
+                        DropdownButtonFormField<String>(
+                          value: selectedEstadoSalud,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.health_and_safety),
+                            labelText: 'Estado de Salud',
+                          ),
+                          items: ['Excelente', 'Bueno', 'Regular', 'Crítico']
+                              .map((estado) => DropdownMenuItem(
+                                  value: estado, child: Text(estado)))
+                              .toList(),
+                          onChanged: (value) =>
+                              setState(() => selectedEstadoSalud = value),
+                          validator: (value) => value == null
+                              ? 'Seleccione un estado de salud'
+                              : null,
+                        ),
                         const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
                           value: selectedTipo,
@@ -234,11 +247,27 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                             icon: Icons.line_weight,
                             validator: _requiredValidator),
                         const SizedBox(height: 16),
-                        CustomFormTextField(
-                            hintText: 'Frecuencia recomendada',
-                            controller: frecuenciaRecomendada,
-                            icon: Icons.schedule,
-                            validator: _requiredValidator),
+                        DropdownButtonFormField<String>(
+                          value: selectedFrecuenciaRecomendada,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.schedule),
+                            labelText: 'Frecuencia Recomendada',
+                          ),
+                          items: [
+                            '1 vez al día',
+                            '2 veces al día',
+                            'Cada 2 días',
+                            'Semanal',
+                          ]
+                              .map((f) =>
+                                  DropdownMenuItem(value: f, child: Text(f)))
+                              .toList(),
+                          onChanged: (value) => setState(
+                              () => selectedFrecuenciaRecomendada = value),
+                          validator: (value) => value == null
+                              ? 'Seleccione una frecuencia'
+                              : null,
+                        ),
                         const SizedBox(height: 16),
                         GestureDetector(
                           onTap: () => _selectDate(context),

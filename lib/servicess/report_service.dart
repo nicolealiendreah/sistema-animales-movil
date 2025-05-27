@@ -17,16 +17,17 @@ class ReportService {
   }
 
   Future<Map<String, dynamic>> getBySpecies() =>
-      _getData('/reportes/por-especie');
+      _getData('/api/reportes/por-especie');
 
-  Future<Map<String, dynamic>> getByType() => _getData('/reportes/por-tipo');
+  Future<Map<String, dynamic>> getByType() =>
+      _getData('/api/reportes/por-tipo');
 
   Future<Map<String, dynamic>> getLiberationsPerMonth() =>
-      _getData('/reportes/liberaciones-por-mes');
+      _getData('/api/reportes/liberaciones-por-mes');
 
   Future<Map<String, dynamic>> getEvaluationsPerAnimal() =>
-      _getData('/reportes/evaluaciones-por-animal');
+      _getData('/api/reportes/evaluaciones-por-animal');
 
   Future<Map<String, dynamic>> getTransfersPerAnimal() =>
-      _getData('/reportes/traslados-por-animal');
+      _getData('/api/reportes/traslados-por-animal');
 }

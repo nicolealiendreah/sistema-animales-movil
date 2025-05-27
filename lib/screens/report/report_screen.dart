@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/screens/shared/pantalla_nav.dart';
 
@@ -106,4 +106,4 @@ class ReportScreen extends StatelessWidget {
       bottomNavigationBar: PantallaNav(context: context),
     );
   }
-}
+}*/

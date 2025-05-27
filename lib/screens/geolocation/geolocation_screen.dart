@@ -3,6 +3,7 @@ import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/core/routers.dart';
 import 'package:sistema_animales/models/geolocalizacion_model.dart';
 import 'package:sistema_animales/servicess/geolocalizacion_service.dart';
+import 'package:geocoding/geocoding.dart';
 
 class GeolocationScreen extends StatefulWidget {
   const GeolocationScreen({super.key});
@@ -14,6 +15,7 @@ class GeolocationScreen extends StatefulWidget {
 class _GeolocationScreenState extends State<GeolocationScreen> {
   final GeolocalizacionService _geoService = GeolocalizacionService();
   List<Geolocalizacion> _ubicaciones = [];
+  List<String> _direcciones = [];
 
   @override
   void initState() {
@@ -24,8 +26,22 @@ class _GeolocationScreenState extends State<GeolocationScreen> {
   Future<void> _cargarGeolocalizaciones() async {
     try {
       final data = await _geoService.getAll();
+
+      // Generar dirección estimada por cada ubicación
+      final dirList = await Future.wait(data.map((e) async {
+        try {
+          final placemarks = await placemarkFromCoordinates(e.latitud, e.longitud);
+          if (placemarks.isNotEmpty) {
+            final p = placemarks.first;
+            return '${p.street ?? ''}, ${p.locality ?? ''}';
+          }
+        } catch (_) {}
+        return 'Ubicación desconocida';
+      }));
+
       setState(() {
         _ubicaciones = data;
+        _direcciones = dirList;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -45,8 +61,7 @@ class _GeolocationScreenState extends State<GeolocationScreen> {
           Column(
             children: [
               Container(
-                padding: const EdgeInsets.only(
-                    top: 50, left: 20, right: 20, bottom: 16),
+                padding: const EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 16),
                 color: AppColors.primary,
                 child: Row(
                   children: [
@@ -73,13 +88,11 @@ class _GeolocationScreenState extends State<GeolocationScreen> {
                     children: [
                       const Text(
                         'Historial de ubicaciones',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const SizedBox(height: 8),
                       if (_ubicaciones.isEmpty)
-                        const Center(
-                            child: Text('No hay registros de geolocalización.'))
+                        const Center(child: Text('No hay registros de geolocalización.'))
                       else
                         Container(
                           width: double.infinity,
@@ -89,41 +102,57 @@ class _GeolocationScreenState extends State<GeolocationScreen> {
                           ),
                           child: Table(
                             border: TableBorder.all(color: Colors.black26),
+                            columnWidths: const {
+                              0: FlexColumnWidth(1.5),
+                              1: FlexColumnWidth(2),
+                              2: FlexColumnWidth(3),
+                            },
                             children: [
                               const TableRow(
-                                decoration:
-                                    BoxDecoration(color: AppColors.primary),
+                                decoration: BoxDecoration(color: AppColors.primary),
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.all(8.0),
                                     child: Text('Fecha',
                                         style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold)),
+                                            color: Colors.white, fontWeight: FontWeight.bold)),
                                   ),
                                   Padding(
                                     padding: EdgeInsets.all(8.0),
                                     child: Text('Descripción',
                                         style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold)),
+                                            color: Colors.white, fontWeight: FontWeight.bold)),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text('Ubicación Estimada',
+                                        style: TextStyle(
+                                            color: Colors.white, fontWeight: FontWeight.bold)),
                                   ),
                                 ],
                               ),
-                              ..._ubicaciones.map((e) => TableRow(children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(e.fechaRegistro
-                                              ?.toLocal()
-                                              .toString()
-                                              .split(' ')[0] ??
-                                          ''),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(e.descripcion ?? ''),
-                                    ),
-                                  ]))
+                              ...List.generate(_ubicaciones.length, (i) {
+                                final ubicacion = _ubicaciones[i];
+                                final direccion = _direcciones.length > i ? _direcciones[i] : '-';
+                                return TableRow(children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(ubicacion.fechaRegistro
+                                            ?.toLocal()
+                                            .toString()
+                                            .split(' ')[0] ??
+                                        ''),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(ubicacion.descripcion ?? ''),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(direccion),
+                                  ),
+                                ]);
+                              }),
                             ],
                           ),
                         ),
@@ -131,8 +160,7 @@ class _GeolocationScreenState extends State<GeolocationScreen> {
                       Center(
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.pushNamed(
-                                    context, AppRoutes.geolocationForm)
+                            Navigator.pushNamed(context, AppRoutes.geolocationForm)
                                 .then((value) {
                               if (value == true) _cargarGeolocalizaciones();
                             });
@@ -140,8 +168,8 @@ class _GeolocationScreenState extends State<GeolocationScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: AppColors.primary,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 100, vertical: 14),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 100, vertical: 14),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
                           ),
