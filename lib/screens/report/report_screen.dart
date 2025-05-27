@@ -84,9 +84,8 @@ class _ReportScreenState extends State<ReportScreen> {
                           radius: 70,
                           titleStyle: const TextStyle(
                               fontSize: 12, fontWeight: FontWeight.bold),
-                          color: Colors
-                              .primaries[entries.indexOf(e) %
-                                  Colors.primaries.length]
+                          color: Colors.primaries[
+                                  entries.indexOf(e) % Colors.primaries.length]
                               .withOpacity(0.9),
                         );
                       }).toList(),
