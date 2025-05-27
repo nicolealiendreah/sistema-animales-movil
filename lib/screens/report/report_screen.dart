@@ -1,9 +1,173 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:sistema_animales/core/constants.dart';
+import 'package:sistema_animales/servicess/report_service.dart';
 import 'package:sistema_animales/screens/shared/pantalla_nav.dart';
 
-class ReportScreen extends StatelessWidget {
+class ReportScreen extends StatefulWidget {
   const ReportScreen({super.key});
+
+  @override
+  State<ReportScreen> createState() => _ReportScreenState();
+}
+
+class _ReportScreenState extends State<ReportScreen> {
+  final ReportService _reportService = ReportService();
+
+  Map<String, dynamic> porEspecie = {};
+  Map<String, dynamic> porTipo = {};
+  Map<String, dynamic> liberacionesPorMes = {};
+  Map<String, dynamic> evaluacionesPorAnimal = {};
+  Map<String, dynamic> trasladosPorAnimal = {};
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarReportes();
+  }
+
+  Future<void> _cargarReportes() async {
+    try {
+      porEspecie = await _reportService.getBySpecies();
+      porTipo = await _reportService.getByType();
+      liberacionesPorMes = await _reportService.getLiberationsPerMonth();
+      evaluacionesPorAnimal = await _reportService.getEvaluationsPerAnimal();
+      trasladosPorAnimal = await _reportService.getTransfersPerAnimal();
+    } catch (e) {
+      print('Error al cargar reportes: $e');
+    }
+
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Widget _buildChartCard(String title, Map<String, dynamic> data) {
+    final entries = data.entries.toList()
+      ..sort((a, b) => (b.value as int).compareTo(a.value as int));
+    final total = entries.fold<int>(0, (sum, e) => sum + (e.value as int));
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const SizedBox(height: 16),
+          data.isEmpty
+              ? const Text('Sin datos disponibles',
+                  style: TextStyle(color: Colors.grey))
+              : SizedBox(
+                  height: 200,
+                  child: PieChart(
+                    PieChartData(
+                      sections: entries.map((e) {
+                        final percent =
+                            total == 0 ? 0 : (e.value / total) * 100;
+                        return PieChartSectionData(
+                          title: percent < 1
+                              ? ''
+                              : '${e.key}\n${percent.toStringAsFixed(1)}%',
+                          value: (e.value as num).toDouble(),
+                          radius: 70,
+                          titleStyle: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold),
+                          color: Colors
+                              .primaries[entries.indexOf(e) %
+                                  Colors.primaries.length]
+                              .withOpacity(0.9),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBarChartCard(String title, Map<String, dynamic> data) {
+    final entries = data.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key)); // orden cronológico
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 200,
+            child: BarChart(
+              BarChartData(
+                barGroups: entries.asMap().entries.map((entry) {
+                  final i = entry.key;
+                  final e = entry.value;
+                  return BarChartGroupData(
+                    x: i,
+                    barRods: [
+                      BarChartRodData(
+                        toY: (e.value as num).toDouble(),
+                        width: 16,
+                        color: Colors.blueAccent,
+                      ),
+                    ],
+                    showingTooltipIndicators: [0],
+                  );
+                }).toList(),
+                titlesData: FlTitlesData(
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, _) {
+                        final index = value.toInt();
+                        if (index >= 0 && index < entries.length) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              entries[index].key.substring(5), // MM
+                              style: const TextStyle(fontSize: 10),
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: true),
+                  ),
+                ),
+                borderData: FlBorderData(show: false),
+                gridData: FlGridData(show: false),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,72 +196,25 @@ class ReportScreen extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 4)
-                          ],
-                        ),
+                child: isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : SingleChildScrollView(
+                        padding: const EdgeInsets.all(20),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            const Text(
-                                'Período del reporte Rango de Fechas de Rescate',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 16),
-                            Image.asset('assets/mock_graphic.png'),
-                            const SizedBox(height: 20),
-                            Wrap(
-                              alignment: WrapAlignment.spaceBetween,
-                              runSpacing: 16,
-                              spacing: 16,
-                              children: List.generate(4, (index) {
-                                return Container(
-                                  width: 150,
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    border:
-                                        Border.all(color: Colors.grey.shade300),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Column(
-                                    children: const [
-                                      Text('86%',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20)),
-                                      SizedBox(height: 4),
-                                      Text('Animales rescatados',
-                                          textAlign: TextAlign.center),
-                                    ],
-                                  ),
-                                );
-                              }),
-                            )
+                            _buildChartCard('Cantidad por especie', porEspecie),
+                            _buildChartCard(
+                                'Cantidad por tipo de animal', porTipo),
+                            _buildBarChartCard(
+                                'Liberaciones por mes', liberacionesPorMes),
+                            _buildChartCard('Evaluaciones por animal',
+                                evaluacionesPorAnimal),
+                            _buildChartCard(
+                                'Traslados por animal', trasladosPorAnimal),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.buttonText,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: const Text('GUARDAR REPORTES'),
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ],
           ),
@@ -106,4 +223,4 @@ class ReportScreen extends StatelessWidget {
       bottomNavigationBar: PantallaNav(context: context),
     );
   }
-}*/
+}
