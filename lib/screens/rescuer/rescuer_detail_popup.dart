@@ -17,10 +17,13 @@ class RescuerDetailPopup extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: const [
-              Icon(Icons.arrow_back),
-              SizedBox(width: 8),
-              Text(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
+              ),
+              const SizedBox(width: 8),
+              const Text(
                 'Rescatista',
                 style: TextStyle(
                   fontSize: 20,
@@ -38,22 +41,35 @@ class RescuerDetailPopup extends StatelessWidget {
               rescuer.fechaRescatista != null
                   ? rescuer.fechaRescatista!.toIso8601String().split('T').first
                   : 'Sin fecha'),
-                  
-          _buildRow('Ubicación del Rescatista:', rescuer.ubicacionRescatista),
+          _buildRow('Ubicación del Rescatista:', rescuer.geolocalizacion?.descripcion ?? 'Sin ubicación'),
           const SizedBox(height: 16),
           Center(
-            child: Container(
-              height: 100,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.image, size: 40, color: Colors.grey),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: rescuer.imagen != null
+                  ? Image.network(
+                      'http://localhost:5000/uploads/${rescuer.imagen}',
+                      height: 150,
+                      width: 150,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 150,
+                        width: 150,
+                        color: Colors.grey.shade200,
+                        child: const Icon(Icons.image_not_supported,
+                            size: 40, color: Colors.grey),
+                      ),
+                    )
+                  : Container(
+                      height: 150,
+                      width: 150,
+                      color: Colors.grey.shade200,
+                      child:
+                          const Icon(Icons.image, size: 40, color: Colors.grey),
+                    ),
             ),
           ),
           const SizedBox(height: 16),
-        
           const SizedBox(height: 16),
           Align(
             alignment: Alignment.center,

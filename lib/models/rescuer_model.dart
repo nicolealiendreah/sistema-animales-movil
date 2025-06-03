@@ -1,17 +1,20 @@
+import 'geolocalizacion_model.dart';
+
 class Rescuer {
   final String? id;
   final String nombre;
   final String telefono;
   final DateTime fechaRescatista;
-  final String ubicacionRescatista;
-  
+  final Geolocalizacion? geolocalizacion;
+  final String? imagen;
 
   Rescuer({
     this.id,
     required this.nombre,
     required this.telefono,
     required this.fechaRescatista,
-    required this.ubicacionRescatista,
+    this.geolocalizacion,
+    this.imagen,
   });
 
   factory Rescuer.fromJson(Map<String, dynamic> json) {
@@ -20,7 +23,10 @@ class Rescuer {
       nombre: json['nombre'],
       telefono: json['telefono'],
       fechaRescatista: DateTime.parse(json['fechaRescatista']),
-      ubicacionRescatista: json['ubicacionRescatista'],
+      geolocalizacion: json['geolocalizacion'] != null
+          ? Geolocalizacion.fromJson(json['geolocalizacion'])
+          : null,
+      imagen: json['imagen'],
     );
   }
 
@@ -29,7 +35,9 @@ class Rescuer {
       'nombre': nombre,
       'telefono': telefono,
       'fechaRescatista': fechaRescatista.toIso8601String(),
-      'ubicacionRescatista': ubicacionRescatista,
+      'latitud': geolocalizacion?.latitud,
+      'longitud': geolocalizacion?.longitud,
+      'descripcion': geolocalizacion?.descripcion,
     };
   }
 }

@@ -6,6 +6,8 @@ import 'package:sistema_animales/servicess/animal_service.dart';
 import 'package:sistema_animales/servicess/rescuer_service.dart';
 import 'package:sistema_animales/widgets/custom_form_text_field.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class AnimalFormScreen extends StatefulWidget {
   const AnimalFormScreen({super.key});
@@ -18,6 +20,8 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _service = AnimalService();
   final _rescuerService = RescuerService();
+  XFile? _pickedImage;
+  final ImagePicker _picker = ImagePicker();
 
   final TextEditingController nombre = TextEditingController();
   final TextEditingController especie = TextEditingController();
@@ -80,8 +84,17 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
       return;
     }
 
-    final selectedRescuer =
-        rescatistas.firstWhere((r) => r.nombre == selectedRescatista);
+    final selectedRescuer = rescatistas.firstWhere(
+      (r) => r.nombre == selectedRescatista,
+      orElse: () => throw Exception('Rescatista no encontrado'),
+    );
+
+    if (selectedRescuer.nombre.isEmpty || selectedRescuer.telefono.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Faltan datos del rescatista')),
+    );
+    return;
+  }
 
     final data = {
       "nombre": nombre.text,
@@ -98,10 +111,10 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
       "ubicacionRescate": ubicacionRescate.text,
       "detallesRescate": detalleRescate.text,
       "nombreRescatista": selectedRescuer.nombre,
-      "telefonoRescatista": selectedTelefono,
+      "telefonoRescatista": selectedRescuer.telefono,
     };
 
-    final success = await _service.create(data);
+    final success = await _service.create(data, imageFile: _pickedImage);
 
     if (!mounted) return;
 
@@ -293,6 +306,39 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                             icon: Icons.details,
                             validator: _requiredValidator),
                         const SizedBox(height: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Imagen del Animal'),
+                            const SizedBox(height: 8),
+                            GestureDetector(
+                              onTap: () async {
+                                final picked = await _picker.pickImage(
+                                    source: ImageSource.gallery);
+                                if (picked != null) {
+                                  setState(() {
+                                    _pickedImage = picked;
+                                  });
+                                }
+                              },
+                              child: Container(
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade200,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.grey),
+                                ),
+                                child: _pickedImage != null
+                                    ? Image.file(File(_pickedImage!.path),
+                                        fit: BoxFit.cover)
+                                    : const Center(
+                                        child:
+                                            Icon(Icons.add_a_photo, size: 40)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
                           value: selectedRescatista,
                           decoration: const InputDecoration(
@@ -310,7 +356,7 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                               selectedTelefono = resc.telefono;
                               selectedFechaRescate = resc.fechaRescatista;
                               selectedUbicacionRescate =
-                                  resc.ubicacionRescatista;
+                                  resc.geolocalizacion?.descripcion;
                             });
                           },
                           validator: (value) =>

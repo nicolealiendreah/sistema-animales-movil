@@ -49,14 +49,29 @@ class AnimalDetailPopup extends StatelessWidget {
           _buildRow('Detalles del rescate:', animal.detallesRescate ?? ''),
           const SizedBox(height: 16),
           Center(
-            child: Container(
-              height: 90,
-              width: 90,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.image, size: 40, color: Colors.grey),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: animal.imagen != null
+                  ? Image.network(
+                      'http://localhost:5000/uploads/${animal.imagen}',
+                      height: 120,
+                      width: 120,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 120,
+                        width: 120,
+                        color: Colors.grey.shade200,
+                        child: const Icon(Icons.image_not_supported,
+                            size: 40, color: Colors.grey),
+                      ),
+                    )
+                  : Container(
+                      height: 120,
+                      width: 120,
+                      color: Colors.grey.shade200,
+                      child:
+                          const Icon(Icons.image, size: 40, color: Colors.grey),
+                    ),
             ),
           ),
           const SizedBox(height: 16),

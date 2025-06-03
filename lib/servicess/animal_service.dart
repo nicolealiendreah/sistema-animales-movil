@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 import '../core/env.dart';
 import '../models/animal_rescatista_model.dart';
 
@@ -37,24 +40,35 @@ class AnimalService {
     }
   }
 
-  Future<bool> create(Map<String, dynamic> data) async {
-    final res = await http.post(
-      Uri.parse(baseUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
+  Future<bool> create(Map<String, dynamic> data, {XFile? imageFile}) async {
+  final uri = Uri.parse(baseUrl);
+  final request = http.MultipartRequest('POST', uri);
 
-    if (res.statusCode == 201 || res.statusCode == 200) {
-      return true;
+  print('Enviando campos:');
+  data.forEach((key, value) {
+    if (value != null) {
+      print('$key: $value');
+      request.fields[key] = value.toString();
     }
+  });
 
-    if (res.statusCode == 500 &&
-        res.body.contains('Rescatista validation failed')) {
-      return true;
-    }
-
-    return false;
+  if (imageFile != null) {
+    request.files.add(await http.MultipartFile.fromPath(
+      'imagen',
+      imageFile.path,
+      filename: basename(imageFile.path),
+    ));
   }
+
+  final response = await request.send();
+
+  if (response.statusCode == 201) return true;
+
+  final error = await response.stream.bytesToString();
+  print('❌ Error al crear animal: $error');
+  return false;
+}
+
 
   Future<void> update(String id, Map<String, dynamic> data) async {
     final response = await http.put(

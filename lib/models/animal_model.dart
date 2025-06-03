@@ -15,6 +15,7 @@ class Animal {
   final String? detallesRescate;
   final String? nombreRescatista;
   final String? telefonoRescatista;
+  final String? imagen;
 
   Animal({
     this.id,
@@ -33,6 +34,7 @@ class Animal {
     this.detallesRescate,
     this.nombreRescatista,
     this.telefonoRescatista,
+    this.imagen,
   });
 
   factory Animal.fromJson(Map<String, dynamic> json) {
@@ -53,8 +55,9 @@ class Animal {
           : null,
       ubicacionRescate: json['ubicacionRescate'],
       detallesRescate: json['detallesRescate'],
-      nombreRescatista: json['nombreRescatista'],
+      nombreRescatista: json['nombre'],
       telefonoRescatista: json['telefonoRescatista'],
+      imagen: json['imagen'],
     );
   }
 

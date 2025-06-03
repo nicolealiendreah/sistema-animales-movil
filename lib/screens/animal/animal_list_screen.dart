@@ -154,7 +154,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          childAspectRatio: 0.7,
+                          mainAxisExtent: 280,
                         ),
                         itemCount: 4,
                         itemBuilder: (context, index) {
@@ -184,7 +184,8 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          childAspectRatio: 0.7,
+                          mainAxisExtent:
+                              310,
                         ),
                         itemCount: _filteredAnimals.length,
                         itemBuilder: (context, index) {
