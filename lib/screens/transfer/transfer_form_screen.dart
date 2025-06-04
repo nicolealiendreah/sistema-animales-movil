@@ -4,6 +4,9 @@ import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/models/animal_model.dart';
 import 'package:sistema_animales/models/transfer_model.dart';
 import 'package:sistema_animales/servicess/transfer_service.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 
 class TransferFormScreen extends StatefulWidget {
   final Animal animal;
@@ -25,6 +28,11 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
   final TextEditingController _observaciones = TextEditingController();
 
   DateTime? _fechaTraslado;
+  LatLng? _posicionAnterior;
+  LatLng? _posicionNueva;
+
+  MapController _mapAnterior = MapController();
+  MapController _mapNueva = MapController();
 
   Future<void> _pickDateTime() async {
     final date = await showDatePicker(
@@ -47,17 +55,29 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _cargarUbicacionInicial();
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
     final transfer = Transfer(
       nombreAnimal: widget.animal.nombre,
       ubicacionAnterior: _ubicacionAnterior.text,
-      ubicacionNueva: _ubicacionNueva.text,
       motivo: _motivo.text,
       observaciones: _observaciones.text,
       responsable: _responsable.text,
       fechaTraslado: _fechaTraslado ?? DateTime.now(),
+      latitudAnterior: _posicionAnterior?.latitude,
+      longitudAnterior: _posicionAnterior?.longitude,
+      latitudNueva: _posicionNueva?.latitude,
+      longitudNueva: _posicionNueva?.longitude,
+      descripcion: _ubicacionNueva.text.isNotEmpty
+          ? _ubicacionNueva.text
+          : 'Ubicación seleccionada',
     );
 
     print('Enviando Transfer: ${transfer.toJson()}');
@@ -76,6 +96,24 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
         SnackBar(content: Text('Error: $e')),
       );
     }
+  }
+
+  Future<void> _cargarUbicacionInicial() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.deniedForever ||
+        permission == LocationPermission.denied) return;
+
+    final position = await Geolocator.getCurrentPosition();
+
+    if (!mounted) return;
+
+    setState(() {
+      _posicionAnterior = LatLng(position.latitude, position.longitude);
+    });
   }
 
   String _formatDate(DateTime? date) =>
@@ -122,8 +160,95 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        _buildField('Ubicación Anterior', _ubicacionAnterior),
-                        _buildField('Ubicación Nueva', _ubicacionNueva),
+                        const Text('Ubicación Anterior (toque el mapa):',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        SizedBox(
+                          height: 200,
+                          child: FlutterMap(
+                            mapController: _mapAnterior,
+                            options: MapOptions(
+                              initialCenter: _posicionAnterior ??
+                                  LatLng(-17.7832, -63.1817),
+                              initialZoom: 15,
+                              onTap: (_, point) {
+                                setState(() {
+                                  _posicionAnterior = point;
+                                });
+                              },
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                subdomains: ['a', 'b', 'c'],
+                              ),
+                              if (_posicionAnterior != null)
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      width: 40,
+                                      height: 40,
+                                      point: _posicionAnterior!,
+                                      child: const Icon(Icons.location_pin,
+                                          size: 40, color: Colors.blue),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          _posicionAnterior != null
+                              ? 'Lat: ${_posicionAnterior!.latitude.toStringAsFixed(5)} - Lng: ${_posicionAnterior!.longitude.toStringAsFixed(5)}'
+                              : 'Toque el mapa para seleccionar una ubicación anterior.',
+                          style: const TextStyle(color: Colors.black54),
+                        ),
+                        const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text('Ubicación Nueva (toque en el mapa):',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          height: 200,
+                          child: FlutterMap(
+                            mapController: _mapNueva,
+                            options: MapOptions(
+                              initialCenter:
+                                  _posicionNueva ?? LatLng(-17.7832, -63.1817),
+                              initialZoom: 15,
+                              onTap: (tapPos, point) {
+                                setState(() => _posicionNueva = point);
+                              },
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                subdomains: ['a', 'b', 'c'],
+                              ),
+                              if (_posicionNueva != null)
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      width: 40,
+                                      height: 40,
+                                      point: _posicionNueva!,
+                                      child: const Icon(Icons.location_pin,
+                                          size: 40, color: Colors.red),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _posicionNueva != null
+                              ? 'Lat: ${_posicionNueva!.latitude.toStringAsFixed(5)} - Lng: ${_posicionNueva!.longitude.toStringAsFixed(5)}'
+                              : 'Toque el mapa para seleccionar una ubicación.',
+                          style: const TextStyle(color: Colors.black54),
+                        ),
                         _buildField('Motivo Traslado', _motivo),
                         _buildField('Responsable del Traslado', _responsable),
                         _buildField('Observaciones', _observaciones),

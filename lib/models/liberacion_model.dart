@@ -5,6 +5,9 @@ class Liberacion {
   final String ubicacionLiberacion;
   final String fechaLiberacion;
   final String observaciones;
+  final double? latitud;
+  final double? longitud;
+  final String? descripcion;
 
   Liberacion({
     required this.id,
@@ -13,6 +16,9 @@ class Liberacion {
     required this.ubicacionLiberacion,
     required this.fechaLiberacion,
     required this.observaciones,
+    this.latitud,
+    this.longitud,
+    this.descripcion,
   });
 
   factory Liberacion.fromJson(Map<String, dynamic> json) {
@@ -20,9 +26,12 @@ class Liberacion {
       id: json['id'],
       animalId: json['animalId'],
       nombreAnimal: json['animal']?['nombre'] ?? json['nombreAnimal'],
-      ubicacionLiberacion: json['ubicacionLiberacion'],
+      ubicacionLiberacion: json['ubicacionLiberacion'] ?? '',
       fechaLiberacion: json['fechaLiberacion'],
       observaciones: json['observaciones'],
+      latitud: json['latitud']?.toDouble(),
+      longitud: json['longitud']?.toDouble(),
+      descripcion: json['descripcion'],
     );
   }
 
@@ -32,6 +41,9 @@ class Liberacion {
       'ubicacionLiberacion': ubicacionLiberacion,
       'fechaLiberacion': fechaLiberacion,
       'observaciones': observaciones,
+      'latitud': latitud,
+      'longitud': longitud,
+      'descripcion': descripcion,
     };
   }
 }

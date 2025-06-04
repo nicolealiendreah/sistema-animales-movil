@@ -5,6 +5,9 @@ import 'package:sistema_animales/models/animal_rescatista_model.dart';
 import 'package:sistema_animales/models/liberacion_model.dart';
 import 'package:sistema_animales/servicess/animal_service.dart';
 import 'package:sistema_animales/servicess/liberacion_service.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 
 class LiberationFormScreen extends StatefulWidget {
   const LiberationFormScreen({super.key});
@@ -25,11 +28,30 @@ class _LiberationFormScreenState extends State<LiberationFormScreen> {
   final TextEditingController ubicacionLiberacion = TextEditingController();
   final TextEditingController observaciones = TextEditingController();
   DateTime? _fechaLiberacion;
+  LatLng? _selectedPosition;
+  final MapController _mapController = MapController();
 
+  @override
   @override
   void initState() {
     super.initState();
     _loadAnimals();
+    _cargarUbicacionInicial();
+  }
+
+  Future<void> _cargarUbicacionInicial() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) return;
+
+    final position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _selectedPosition = LatLng(position.latitude, position.longitude);
+    });
   }
 
   Future<void> _loadAnimals() async {
@@ -62,9 +84,15 @@ class _LiberationFormScreenState extends State<LiberationFormScreen> {
         id: _liberacion?.id ?? '',
         animalId: _selectedAnimal!.animal.id!,
         nombreAnimal: _selectedAnimal!.animal.nombre,
-        ubicacionLiberacion: ubicacionLiberacion.text,
+        ubicacionLiberacion:
+            ubicacionLiberacion.text,
         fechaLiberacion: _fechaLiberacion?.toIso8601String() ?? '',
         observaciones: observaciones.text,
+        latitud: _selectedPosition?.latitude,
+        longitud: _selectedPosition?.longitude,
+        descripcion: ubicacionLiberacion.text.isNotEmpty
+            ? ubicacionLiberacion.text
+            : 'Ubicación seleccionada',
       );
 
       try {
@@ -148,8 +176,54 @@ class _LiberationFormScreenState extends State<LiberationFormScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        _buildField(
-                            'Ubicación de liberación', ubicacionLiberacion),
+                        const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text('Ubicación de liberación en el mapa:',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          height: 200,
+                          child: FlutterMap(
+                            mapController: _mapController,
+                            options: MapOptions(
+                              initialCenter: _selectedPosition ??
+                                  LatLng(-17.7832, -63.1817),
+                              initialZoom: 15,
+                              onTap: (tapPosition, point) {
+                                setState(() {
+                                  _selectedPosition = point;
+                                });
+                              },
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                subdomains: ['a', 'b', 'c'],
+                              ),
+                              if (_selectedPosition != null)
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      width: 40,
+                                      height: 40,
+                                      point: _selectedPosition!,
+                                      child: const Icon(Icons.location_pin,
+                                          size: 40, color: Colors.red),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _selectedPosition != null
+                              ? 'Lat: ${_selectedPosition!.latitude.toStringAsFixed(5)} - Lng: ${_selectedPosition!.longitude.toStringAsFixed(5)}'
+                              : 'Toque el mapa para seleccionar una ubicación.',
+                          style: const TextStyle(color: Colors.black54),
+                        ),
                         _buildField('Observaciones', observaciones,
                             maxLines: 3),
                         const SizedBox(height: 12),

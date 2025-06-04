@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:sistema_animales/models/geolocalizacion_model.dart';
 import 'package:sistema_animales/servicess/api_service.dart';
-import 'package:http/http.dart' as http;
 
 class GeolocalizacionService {
   final ApiService _apiService = ApiService();
@@ -24,9 +23,6 @@ class GeolocalizacionService {
 
   Future<bool> create(Geolocalizacion geo) async {
     final response = await _apiService.post(endpoint, geo.toJson());
-
-    print('STATUS: ${response.statusCode}');
-    print('BODY: ${response.body}');
 
     return response.statusCode == 200 || response.statusCode == 201;
   }

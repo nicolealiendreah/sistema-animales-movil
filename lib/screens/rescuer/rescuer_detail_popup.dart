@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_animales/core/constants.dart';
+import 'package:sistema_animales/core/env.dart';
 import 'package:sistema_animales/models/rescuer_model.dart';
-import 'package:sistema_animales/servicess/rescuer_service.dart';
 import 'package:sistema_animales/widgets/modal_card.dart';
-import 'package:intl/intl.dart';
 
 class RescuerDetailPopup extends StatelessWidget {
   final Rescuer rescuer;
-
+  
   const RescuerDetailPopup({super.key, required this.rescuer});
 
   @override
@@ -41,16 +40,16 @@ class RescuerDetailPopup extends StatelessWidget {
               rescuer.fechaRescatista != null
                   ? rescuer.fechaRescatista!.toIso8601String().split('T').first
                   : 'Sin fecha'),
-          _buildRow('Ubicación del Rescatista:', rescuer.geolocalizacion?.descripcion ?? 'Sin ubicación'),
+          _buildRow('Ubicación del Rescatista:',
+              rescuer.geolocalizacion?.descripcion ?? 'Sin ubicación'),
           const SizedBox(height: 16),
           Center(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: rescuer.imagen != null
                   ? Image.network(
-                      'http://localhost:5000/uploads/${rescuer.imagen}',
-                      height: 150,
-                      width: 150,
+                      '$baseImageUrl/${rescuer.imagen}',
+                      height: 100,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Container(
                         height: 150,

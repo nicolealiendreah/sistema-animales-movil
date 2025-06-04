@@ -2,9 +2,7 @@ import 'dart:convert';
 import '../core/env.dart';
 import '../models/rescuer_model.dart';
 import 'package:http/http.dart' as http;
-import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
 import 'package:http_parser/http_parser.dart';
 
 class RescuerService {
@@ -56,7 +54,7 @@ class RescuerService {
         'imagen',
         bytes,
         filename: 'rescatista_${DateTime.now().millisecondsSinceEpoch}.jpg',
-        contentType: MediaType('image', 'jpeg'), // 👈 MIME type forzado
+        contentType: MediaType('image', 'jpeg'),
       ));
     }
 

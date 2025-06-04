@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/core/routers.dart';
-import 'package:sistema_animales/models/animal_model.dart';
 import 'package:sistema_animales/models/animal_rescatista_model.dart';
 import 'package:sistema_animales/screens/animal/animal_detail_popup.dart';
 import 'package:sistema_animales/screens/rescuer/rescuer_detail_popup.dart';

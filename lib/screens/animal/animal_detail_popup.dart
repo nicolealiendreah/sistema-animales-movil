@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sistema_animales/core/env.dart';
 import 'package:sistema_animales/screens/evaluation/medical_evaluation_screen.dart';
 import 'package:sistema_animales/screens/geolocation/geolocation_screen.dart';
 import 'package:sistema_animales/screens/transfer/transfer_list_screen.dart';
@@ -53,13 +54,12 @@ class AnimalDetailPopup extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               child: animal.imagen != null
                   ? Image.network(
-                      'http://localhost:5000/uploads/${animal.imagen}',
-                      height: 120,
-                      width: 120,
+                      '$baseImageUrl/${animal.imagen}',
+                      height: 100,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Container(
-                        height: 120,
-                        width: 120,
+                        height: 150,
+                        width: 150,
                         color: Colors.grey.shade200,
                         child: const Icon(Icons.image_not_supported,
                             size: 40, color: Colors.grey),

@@ -27,7 +27,6 @@ class _GeolocationScreenState extends State<GeolocationScreen> {
     try {
       final data = await _geoService.getAll();
 
-      // Generar dirección estimada por cada ubicación
       final dirList = await Future.wait(data.map((e) async {
         try {
           final placemarks = await placemarkFromCoordinates(e.latitud, e.longitud);

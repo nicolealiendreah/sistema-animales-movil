@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_animales/core/constants.dart';
-import 'package:sistema_animales/models/animal_model.dart';
 import 'package:sistema_animales/models/rescuer_model.dart';
 import 'package:sistema_animales/servicess/animal_service.dart';
 import 'package:sistema_animales/servicess/rescuer_service.dart';
@@ -8,6 +7,9 @@ import 'package:sistema_animales/widgets/custom_form_text_field.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 
 class AnimalFormScreen extends StatefulWidget {
   const AnimalFormScreen({super.key});
@@ -32,7 +34,6 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   final TextEditingController cantidadRecomendada = TextEditingController();
   final TextEditingController frecuenciaRecomendada = TextEditingController();
   final TextEditingController fechaRescateController = TextEditingController();
-  final TextEditingController ubicacionRescate = TextEditingController();
   final TextEditingController detalleRescate = TextEditingController();
 
   DateTime? _fechaRescate;
@@ -46,6 +47,8 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   String? selectedDetalleRescate;
   String? selectedEstadoSalud;
   String? selectedFrecuenciaRecomendada;
+  LatLng? _selectedPosition;
+  MapController _mapController = MapController();
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -70,9 +73,28 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   }
 
   @override
+  @override
   void initState() {
     super.initState();
     _loadRescatistas();
+    _cargarUbicacionInicial();
+  }
+
+  Future<void> _cargarUbicacionInicial() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.deniedForever ||
+        permission == LocationPermission.denied) {
+      return;
+    }
+
+    final position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _selectedPosition = LatLng(position.latitude, position.longitude);
+    });
   }
 
   Future<void> _submit() async {
@@ -83,6 +105,12 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
       );
       return;
     }
+    if (selectedRescatista == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Seleccione un rescatista')),
+      );
+      return;
+    }
 
     final selectedRescuer = rescatistas.firstWhere(
       (r) => r.nombre == selectedRescatista,
@@ -90,11 +118,11 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
     );
 
     if (selectedRescuer.nombre.isEmpty || selectedRescuer.telefono.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Faltan datos del rescatista')),
-    );
-    return;
-  }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Faltan datos del rescatista')),
+      );
+      return;
+    }
 
     final data = {
       "nombre": nombre.text,
@@ -108,11 +136,16 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
       "cantidadRecomendada": cantidadRecomendada.text,
       "frecuenciaRecomendada": selectedFrecuenciaRecomendada,
       "fechaRescate": _fechaRescate?.toIso8601String(),
-      "ubicacionRescate": ubicacionRescate.text,
       "detallesRescate": detalleRescate.text,
       "nombreRescatista": selectedRescuer.nombre,
       "telefonoRescatista": selectedRescuer.telefono,
+      "fechaRescatista": selectedFechaRescate?.toIso8601String(),
+      "latitud": _selectedPosition?.latitude,
+      "longitud": _selectedPosition?.longitude,
+      "descripcion": selectedUbicacionRescate ?? "Ubicación seleccionada"
     };
+    print(
+        "✅ Enviado: ${data['nombreRescatista']} - ${data['telefonoRescatista']}");
 
     final success = await _service.create(data, imageFile: _pickedImage);
 
@@ -294,11 +327,45 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        CustomFormTextField(
-                            hintText: 'Ubicación de rescate',
-                            controller: ubicacionRescate,
-                            icon: Icons.location_on,
-                            validator: _requiredValidator),
+                        const SizedBox(height: 16),
+                        Text('Ubicación del Rescate (toque el mapa):',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          height: 200,
+                          child: FlutterMap(
+                            mapController: _mapController,
+                            options: MapOptions(
+                              initialCenter: _selectedPosition ??
+                                  LatLng(-17.7832, -63.1817),
+                              initialZoom: 15,
+                              onTap: (tapPosition, point) {
+                                setState(() {
+                                  _selectedPosition = point;
+                                });
+                              },
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                subdomains: ['a', 'b', 'c'],
+                              ),
+                              if (_selectedPosition != null)
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      width: 40,
+                                      height: 40,
+                                      point: _selectedPosition!,
+                                      child: const Icon(Icons.location_pin,
+                                          size: 40, color: Colors.red),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
                         const SizedBox(height: 16),
                         CustomFormTextField(
                             hintText: 'Detalle de rescate',
@@ -363,20 +430,14 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                               value == null ? 'Seleccione un rescatista' : null,
                         ),
                         const SizedBox(height: 16),
-                        DropdownButtonFormField<String>(
-                          value: selectedTelefono,
+                        TextFormField(
+                          readOnly: true,
                           decoration: const InputDecoration(
                             prefixIcon: Icon(Icons.phone),
                             labelText: 'Teléfono del Rescatista',
                           ),
-                          items: rescatistas
-                              .map((r) => DropdownMenuItem(
-                                  value: r.telefono, child: Text(r.telefono)))
-                              .toList(),
-                          onChanged: (value) =>
-                              setState(() => selectedTelefono = value),
-                          validator: (value) =>
-                              value == null ? 'Seleccione un teléfono' : null,
+                          controller: TextEditingController(
+                              text: selectedTelefono ?? ''),
                         ),
                         const SizedBox(height: 24),
                         ElevatedButton(

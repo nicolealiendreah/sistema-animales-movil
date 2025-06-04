@@ -5,7 +5,6 @@ import 'package:sistema_animales/models/animal_model.dart';
 import 'package:sistema_animales/models/transfer_model.dart';
 import 'package:sistema_animales/servicess/transfer_service.dart';
 import 'transfer_form_screen.dart';
-import 'package:collection/collection.dart';
 
 class TransferListScreen extends StatefulWidget {
   final Animal animal;
@@ -18,7 +17,6 @@ class TransferListScreen extends StatefulWidget {
 
 class _TransferListScreenState extends State<TransferListScreen> {
   final TransferService _transferService = TransferService();
-  Transfer? _transfer;
   bool _isLoading = true;
   String? _error;
   List<Transfer> _transfers = [];
@@ -136,8 +134,15 @@ class _TransferListScreenState extends State<TransferListScreen> {
                                       children: [
                                         _buildRow('Ubicación anterior:',
                                             t.ubicacionAnterior),
-                                        _buildRow('Ubicación nueva:',
-                                            t.ubicacionNueva),
+                                        _buildRow(
+                                          'Ubicación nueva:',
+                                          t.descripcion?.isNotEmpty == true
+                                              ? t.descripcion!
+                                              : (t.latitud != null &&
+                                                      t.longitud != null
+                                                  ? 'Lat: ${t.latitud!.toStringAsFixed(5)}, Lng: ${t.longitud!.toStringAsFixed(5)}'
+                                                  : '-'),
+                                        ),
                                         _buildRow(
                                             'Motivo del traslado:', t.motivo),
                                         _buildRow(

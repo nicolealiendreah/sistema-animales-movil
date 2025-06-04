@@ -68,7 +68,8 @@ class _LiberationListScreenState extends State<LiberationListScreen> {
           Column(
             children: [
               Container(
-                padding: const EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 16),
+                padding: const EdgeInsets.only(
+                    top: 50, left: 20, right: 20, bottom: 16),
                 color: AppColors.primary,
                 child: Row(
                   children: [
@@ -77,7 +78,8 @@ class _LiberationListScreenState extends State<LiberationListScreen> {
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8),
-                    const Text('Historial de Liberaciones', style: AppTextStyles.heading),
+                    const Text('Historial de Liberaciones',
+                        style: AppTextStyles.heading),
                   ],
                 ),
               ),
@@ -93,15 +95,20 @@ class _LiberationListScreenState extends State<LiberationListScreen> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(12),
-                                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black12, blurRadius: 6)
+                                ],
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text('Nombre del animal:',
-                                      style: TextStyle(fontWeight: FontWeight.bold)),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
                                   DropdownButtonFormField<AnimalRescatista>(
-                                    decoration: const InputDecoration(border: UnderlineInputBorder()),
+                                    decoration: const InputDecoration(
+                                        border: UnderlineInputBorder()),
                                     value: _selectedAnimal,
                                     hint: const Text('Seleccionar animal'),
                                     items: _animals
@@ -122,23 +129,28 @@ class _LiberationListScreenState extends State<LiberationListScreen> {
                                   ),
                                   const SizedBox(height: 20),
                                   const Text('Fecha de liberación:',
-                                      style: TextStyle(fontWeight: FontWeight.bold)),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
                                   Text(
                                     _formatDate(_liberacion?.fechaLiberacion),
                                     style: const TextStyle(color: Colors.blue),
                                   ),
                                   const SizedBox(height: 20),
-                                  _buildRow('Ubicación:', _liberacion?.ubicacionLiberacion),
-                                  _buildRow('Observaciones:', _liberacion?.observaciones),
+                                  _buildRow(
+                                      'Ubicación:', _liberacion?.descripcion),
+                                  _buildRow('Observaciones:',
+                                      _liberacion?.observaciones),
                                 ],
                               ),
                             ),
                             const SizedBox(height: 24),
                             ElevatedButton.icon(
                               onPressed: () async {
-                                final result = await Navigator.pushNamed(context, AppRoutes.liberacionForm);
+                                final result = await Navigator.pushNamed(
+                                    context, AppRoutes.liberacionForm);
                                 if (result == true && _selectedAnimal != null) {
-                                  _loadLiberacion(_selectedAnimal!.animal.nombre);
+                                  _loadLiberacion(
+                                      _selectedAnimal!.animal.nombre);
                                 }
                               },
                               icon: const Icon(Icons.add),
@@ -146,7 +158,8 @@ class _LiberationListScreenState extends State<LiberationListScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 14, horizontal: 24),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -168,8 +181,14 @@ class _LiberationListScreenState extends State<LiberationListScreen> {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Expanded(flex: 4, child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(flex: 6, child: Text(value?.isNotEmpty == true ? value! : '-', style: const TextStyle(color: Colors.black54))),
+          Expanded(
+              flex: 4,
+              child: Text(label,
+                  style: const TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(
+              flex: 6,
+              child: Text(value?.isNotEmpty == true ? value! : '-',
+                  style: const TextStyle(color: Colors.black54))),
         ],
       ),
     );

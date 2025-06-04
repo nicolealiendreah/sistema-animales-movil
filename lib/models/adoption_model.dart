@@ -8,6 +8,9 @@ class Adoption {
   final String? direccionAdoptante;
   final String? observaciones;
   final DateTime fechaAdopcion;
+  final double? latitud;
+  final double? longitud;
+  final String? descripcion;
 
   Adoption({
     this.id,
@@ -19,6 +22,9 @@ class Adoption {
     this.direccionAdoptante,
     this.observaciones,
     required this.fechaAdopcion,
+    this.latitud,
+    this.longitud,
+    this.descripcion,
   });
 
   factory Adoption.fromJson(Map<String, dynamic> json) {
@@ -32,6 +38,9 @@ class Adoption {
       direccionAdoptante: json['direccionAdoptante'],
       observaciones: json['observaciones'],
       fechaAdopcion: DateTime.parse(json['fechaAdopcion']),
+      latitud: json['latitud']?.toDouble(),
+      longitud: json['longitud']?.toDouble(),
+      descripcion: json['descripcion'],
     );
   }
 
@@ -44,6 +53,9 @@ class Adoption {
       'direccionAdoptante': direccionAdoptante,
       'observaciones': observaciones,
       'fechaAdopcion': fechaAdopcion.toIso8601String(),
+      'latitud': latitud,
+      'longitud': longitud,
+      'descripcion': descripcion,
     };
   }
 }

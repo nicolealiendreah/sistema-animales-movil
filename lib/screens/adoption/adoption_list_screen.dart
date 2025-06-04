@@ -3,10 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/core/routers.dart';
 import 'package:sistema_animales/models/adoption_model.dart';
-import 'package:sistema_animales/models/animal_model.dart';
 import 'package:sistema_animales/servicess/adoption_service.dart';
 import 'package:sistema_animales/servicess/animal_service.dart';
 import 'package:sistema_animales/models/animal_rescatista_model.dart';
+import 'package:geocoding/geocoding.dart';
 
 class AdoptionListScreen extends StatefulWidget {
   const AdoptionListScreen({super.key});
@@ -24,6 +24,7 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
   Adoption? _adoption;
 
   bool _isLoading = true;
+  String? _direccionEstimacion;
 
   @override
   void initState() {
@@ -50,12 +51,34 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
       final adoptions = await _adoptionService.getAll();
       final match = adoptions.firstWhere((a) => a.nombreAnimal == nombreAnimal);
 
+      String? direccion = match.direccionAdoptante;
+
+      // Si no hay dirección, intenta estimar
+      if ((direccion == null || direccion.trim().isEmpty) &&
+          match.latitud != null &&
+          match.longitud != null) {
+        try {
+          final placemarks =
+              await placemarkFromCoordinates(match.latitud!, match.longitud!);
+          if (placemarks.isNotEmpty) {
+            final p = placemarks.first;
+            direccion = '${p.street ?? ''}, ${p.locality ?? ''}';
+          } else {
+            direccion = 'Ubicación estimada no disponible';
+          }
+        } catch (_) {
+          direccion = 'Ubicación estimada no disponible';
+        }
+      }
+
       setState(() {
         _adoption = match;
+        _direccionEstimacion = direccion;
       });
     } catch (_) {
       setState(() {
         _adoption = null;
+        _direccionEstimacion = null;
       });
     }
   }
@@ -166,7 +189,7 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                   _buildRow('Contacto del adoptante:',
                                       _adoption?.contactoAdoptante),
                                   _buildRow('Dirección del adoptante:',
-                                      _adoption?.direccionAdoptante),
+                                      _direccionEstimacion),
                                   _buildRow('Observaciones:',
                                       _adoption?.observaciones),
                                 ],
@@ -178,8 +201,8 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                 final result = await Navigator.pushNamed(
                                     context, AppRoutes.adoptionForm);
                                 if (result == true && _selectedAnimal != null) {
-                                  _loadAdoptionData(_selectedAnimal!
-                                      .animal.nombre);
+                                  _loadAdoptionData(
+                                      _selectedAnimal!.animal.nombre);
                                 }
                               },
                               icon: const Icon(Icons.add),

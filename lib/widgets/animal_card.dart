@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sistema_animales/core/env.dart';
 import '../core/constants.dart';
 import '../models/animal_model.dart';
 
@@ -39,18 +40,17 @@ class AnimalCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 child: animal.imagen != null
                     ? Image.network(
-                        'http://localhost:5000/uploads/${animal.imagen}',
-                        height: 120,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          height: 120,
-                          color: Colors.grey.shade200,
-                          child: const Center(
-                            child: Icon(Icons.pets, color: Colors.grey),
-                          ),
-                        ),
-                      )
+                      '$baseImageUrl/${animal.imagen}',
+                      height: 100,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 150,
+                        width: 150,
+                        color: Colors.grey.shade200,
+                        child: const Icon(Icons.image_not_supported,
+                            size: 40, color: Colors.grey),
+                      ),
+                    )
                     : Container(
                         height: 120,
                         color: Colors.grey.shade200,

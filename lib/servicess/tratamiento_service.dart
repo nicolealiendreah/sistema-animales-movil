@@ -1,5 +1,4 @@
 import 'dart:convert';
-import '../core/env.dart';
 import '../models/tratamiento_model.dart';
 import 'api_service.dart';
 

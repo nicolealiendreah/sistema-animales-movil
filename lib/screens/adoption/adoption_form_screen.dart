@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/models/adoption_model.dart';
-import 'package:sistema_animales/models/animal_model.dart';
 import 'package:sistema_animales/servicess/adoption_service.dart';
 import 'package:sistema_animales/servicess/animal_service.dart';
 import 'package:sistema_animales/models/animal_rescatista_model.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 
 class AdoptionFormScreen extends StatefulWidget {
   const AdoptionFormScreen({super.key});
@@ -23,6 +25,8 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
   AnimalRescatista? _selectedAnimal;
   Adoption? _adoption;
   DateTime? _fechaAdopcion;
+  LatLng? _selectedPosition;
+  MapController _mapController = MapController();
 
   final TextEditingController estado = TextEditingController();
   final TextEditingController nombreAdoptante = TextEditingController();
@@ -34,6 +38,24 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
   void initState() {
     super.initState();
     _loadAnimals();
+    _cargarUbicacionInicial();
+  }
+
+  Future<void> _cargarUbicacionInicial() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.deniedForever ||
+        permission == LocationPermission.denied) {
+      return;
+    }
+
+    final position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _selectedPosition = LatLng(position.latitude, position.longitude);
+    });
   }
 
   Future<void> _loadAnimals() async {
@@ -107,6 +129,11 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
         direccionAdoptante: direccionAdoptante.text,
         observaciones: observaciones.text,
         fechaAdopcion: _fechaAdopcion ?? DateTime.now(),
+        latitud: _selectedPosition?.latitude,
+        longitud: _selectedPosition?.longitude,
+        descripcion: direccionAdoptante.text.isNotEmpty
+            ? direccionAdoptante.text
+            : 'Ubicación seleccionada',
       );
 
       try {
@@ -191,8 +218,49 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                         _buildField('Nombre del adoptante', nombreAdoptante),
                         _buildField(
                             'Contacto del adoptante', contactoAdoptante),
-                        _buildField(
-                            'Dirección del adoptante', direccionAdoptante),
+                        const SizedBox(height: 12),
+                        const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                              'Ubicación del adoptante (toque el mapa):',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          height: 200,
+                          child: FlutterMap(
+                            mapController: _mapController,
+                            options: MapOptions(
+                              initialCenter: _selectedPosition ??
+                                  LatLng(-17.7832, -63.1817),
+                              initialZoom: 15,
+                              onTap: (tapPosition, point) {
+                                setState(() {
+                                  _selectedPosition = point;
+                                });
+                              },
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                subdomains: ['a', 'b', 'c'],
+                              ),
+                              if (_selectedPosition != null)
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      width: 40,
+                                      height: 40,
+                                      point: _selectedPosition!,
+                                      child: const Icon(Icons.location_pin,
+                                          size: 40, color: Colors.red),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
                         _buildField('Observaciones', observaciones,
                             maxLines: 3),
                         const SizedBox(height: 12),
