@@ -57,6 +57,14 @@ class _LiberationListScreenState extends State<LiberationListScreen> {
     return date != null ? DateFormat.yMMMd().format(date) : '-';
   }
 
+  String _getUbicacionText() {
+    if (_liberacion == null) {
+      return '';
+    }
+    final desc = _liberacion!.descripcion;
+    return (desc != null && desc.isNotEmpty) ? desc : 'Ubicacion Seleccionada';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,8 +144,7 @@ class _LiberationListScreenState extends State<LiberationListScreen> {
                                     style: const TextStyle(color: Colors.blue),
                                   ),
                                   const SizedBox(height: 20),
-                                  _buildRow(
-                                      'Ubicación:', _liberacion?.descripcion),
+                                  _buildRow('Ubicación:', _getUbicacionText()),
                                   _buildRow('Observaciones:',
                                       _liberacion?.observaciones),
                                 ],

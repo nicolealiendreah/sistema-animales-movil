@@ -7,13 +7,9 @@ class Transfer {
   final String? observaciones;
   final String? responsable;
   final DateTime fechaTraslado;
-
-  // Geolocalización nueva
   final double? latitud;
   final double? longitud;
   final String? descripcion;
-
-  // Geolocalización anterior
   final double? latitudAnterior;
   final double? longitudAnterior;
   final double? latitudNueva;

@@ -89,6 +89,14 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
   String _formatTime(DateTime? date) =>
       date != null ? DateFormat.jm().format(date) : '-';
 
+  String _getDireccionText() {
+    if (_adoption == null) {
+      return '';
+    }
+    final desc = _adoption!.direccionAdoptante;
+    return (desc != null && desc.isNotEmpty) ? desc : 'Ubicación Seleccionada';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -189,7 +197,7 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                   _buildRow('Contacto del adoptante:',
                                       _adoption?.contactoAdoptante),
                                   _buildRow('Dirección del adoptante:',
-                                      _direccionEstimacion),
+                                      _getDireccionText()),
                                   _buildRow('Observaciones:',
                                       _adoption?.observaciones),
                                 ],

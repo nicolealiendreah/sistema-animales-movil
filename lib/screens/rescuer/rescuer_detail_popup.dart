@@ -41,7 +41,7 @@ class RescuerDetailPopup extends StatelessWidget {
                   ? rescuer.fechaRescatista!.toIso8601String().split('T').first
                   : 'Sin fecha'),
           _buildRow('Ubicación del Rescatista:',
-              rescuer.geolocalizacion?.descripcion ?? 'Sin ubicación'),
+              rescuer.geolocalizacion?.descripcion ?? 'Ubicacion Seleccionada'),
           const SizedBox(height: 16),
           Center(
             child: ClipRRect(

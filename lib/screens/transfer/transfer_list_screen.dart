@@ -75,6 +75,14 @@ class _TransferListScreenState extends State<TransferListScreen> {
     );
   }
 
+  String _getUbicacionNuevaText(Transfer t) {
+    return 'Ubicación seleccionada';
+  }
+
+  String _getUbicacionAnteriorText(Transfer t) {
+    return 'Ubicación seleccionada';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,6 +124,8 @@ class _TransferListScreenState extends State<TransferListScreen> {
                             child: Column(
                               children: [
                                 ..._transfers.map((t) {
+                                  print(
+                                      'Transfer: ${t.descripcion} | ${t.latitudNueva} | ${t.longitudNueva}');
                                   return Container(
                                     margin: const EdgeInsets.only(bottom: 20),
                                     padding: const EdgeInsets.all(16),
@@ -133,16 +143,9 @@ class _TransferListScreenState extends State<TransferListScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         _buildRow('Ubicación anterior:',
-                                            t.ubicacionAnterior),
-                                        _buildRow(
-                                          'Ubicación nueva:',
-                                          t.descripcion?.isNotEmpty == true
-                                              ? t.descripcion!
-                                              : (t.latitud != null &&
-                                                      t.longitud != null
-                                                  ? 'Lat: ${t.latitud!.toStringAsFixed(5)}, Lng: ${t.longitud!.toStringAsFixed(5)}'
-                                                  : '-'),
-                                        ),
+                                            _getUbicacionAnteriorText(t)),
+                                        _buildRow('Ubicación nueva:',
+                                            _getUbicacionNuevaText(t)),
                                         _buildRow(
                                             'Motivo del traslado:', t.motivo),
                                         _buildRow(
