@@ -144,7 +144,6 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (_filteredAnimals.isEmpty) {
-                      // Mostrar 4 placeholders vacíos
                       return GridView.builder(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
@@ -153,24 +152,37 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          mainAxisExtent: 280,
+                          mainAxisExtent: 350,
                         ),
-                        itemCount: 4,
+                        itemCount: _filteredAnimals.length,
                         itemBuilder: (context, index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.4),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: Colors.white70),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Sin datos',
-                                style: TextStyle(
-                                    color: Colors.black54,
-                                    fontStyle: FontStyle.italic),
-                              ),
-                            ),
+                          final item = _filteredAnimals[index];
+
+                          return AnimalCard(
+                            animal: item.animal,
+                            onDetails: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) =>
+                                    AnimalDetailPopup(animal: item.animal),
+                              );
+                            },
+                            onRescuer: () {
+                              final rescuer = item.rescuer;
+                              if (rescuer != null) {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) =>
+                                      RescuerDetailPopup(rescuer: rescuer),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Este animal no tiene rescatista registrado')),
+                                );
+                              }
+                            },
                           );
                         },
                       );
@@ -183,8 +195,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          mainAxisExtent:
-                              310,
+                          mainAxisExtent: 350,
                         ),
                         itemCount: _filteredAnimals.length,
                         itemBuilder: (context, index) {

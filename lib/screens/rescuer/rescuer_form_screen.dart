@@ -9,7 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sistema_animales/models/geolocalizacion_model.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as latlng;
-
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 
 class RescuerFormScreen extends StatefulWidget {
@@ -20,19 +20,18 @@ class RescuerFormScreen extends StatefulWidget {
 }
 
 class _RescuerFormScreenState extends State<RescuerFormScreen> {
+  XFile? _pickedImage;
+  DateTime? _fechaRescatista;
+  latlng.LatLng? _selectedPosition;
+  bool _isMapReady = false;
+
   final _formKey = GlobalKey<FormState>();
   final _rescuerService = RescuerService();
-  XFile? _pickedImage;
   final ImagePicker _picker = ImagePicker();
-
   final TextEditingController _nombreController = TextEditingController();
   final TextEditingController _telefonoController = TextEditingController();
   final TextEditingController _ubicacionController = TextEditingController();
   final TextEditingController _fechaController = TextEditingController();
-
-  DateTime? _fechaRescatista;
-  latlng.LatLng? _selectedPosition;
-  bool _isMapReady = false;
   final MapController _mapController = MapController();
 
   Future<void> _selectfechaRescatista(BuildContext context) async {
@@ -126,20 +125,27 @@ class _RescuerFormScreenState extends State<RescuerFormScreen> {
   }
 
   Future<void> _cargarUbicacionInicial() async {
-    final permiso = await Geolocator.requestPermission();
-    if (permiso == LocationPermission.denied ||
-        permiso == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Permiso de ubicación denegado')),
-      );
-      return;
-    }
+    try {
+      final permiso = await Geolocator.requestPermission();
+      if (permiso == LocationPermission.denied ||
+          permiso == LocationPermission.deniedForever) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Permiso de ubicación denegado')),
+        );
+        return;
+      }
 
-    final posicion = await Geolocator.getCurrentPosition();
-    setState(() {
-      _selectedPosition = latlng.LatLng(posicion.latitude, posicion.longitude);
-      _isMapReady = true;
-    });
+      final posicion = await Geolocator.getCurrentPosition();
+      setState(() {
+        _selectedPosition =
+            latlng.LatLng(posicion.latitude, posicion.longitude);
+        _isMapReady = true;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al obtener ubicación: $e')),
+      );
+    }
   }
 
   @override
@@ -193,7 +199,19 @@ class _RescuerFormScreenState extends State<RescuerFormScreen> {
                           hintText: 'Teléfono',
                           controller: _telefonoController,
                           icon: Icons.phone,
-                          validator: _requiredValidator,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Este campo es obligatorio';
+                            }
+                            if (!RegExp(r'^\d+$').hasMatch(value)) {
+                              return 'Solo se permiten números';
+                            }
+                            return null;
+                          },
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                         ),
                         const SizedBox(height: 16),
                         GestureDetector(
@@ -208,125 +226,85 @@ class _RescuerFormScreenState extends State<RescuerFormScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        const Text('Seleccione la ubicación en el mapa:',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        _isMapReady
-                            ? Container(
-                                height: 250,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: FlutterMap(
-                                  mapController: _mapController,
-                                  options: MapOptions(
-                                    initialCenter: _selectedPosition!,
-                                    initialZoom: 15,
-                                    onTap: (tapPosition, point) {
-                                      setState(() {
-                                        _selectedPosition = point;
-                                      });
-                                    },
-                                  ),
-                                  children: [
-                                    TileLayer(
-                                      urlTemplate:
-                                          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                      subdomains: ['a', 'b', 'c'],
-                                    ),
-                                    if (_selectedPosition != null)
-                                      MarkerLayer(
-                                        markers: [
-                                          Marker(
-                                            width: 40,
-                                            height: 40,
-                                            point: _selectedPosition!,
-                                            child: const Icon(
-                                                Icons.location_pin,
-                                                size: 40,
-                                                color: Colors.red),
-                                          ),
-                                        ],
-                                      ),
-                                  ],
-                                ))
-                            : const Center(child: CircularProgressIndicator()),
-                        const SizedBox(height: 8),
-                        Text(
-                          _selectedPosition != null
-                              ? '📍 Lat: ${_selectedPosition!.latitude.toStringAsFixed(5)} - Lng: ${_selectedPosition!.longitude.toStringAsFixed(5)}'
-                              : 'Toque el mapa para seleccionar una ubicación.',
-                          style: const TextStyle(color: Colors.black54),
-                        ),
-                        const SizedBox(height: 16),
-                        const SizedBox(height: 8),
-                        ElevatedButton.icon(
-                          onPressed: () async {
-                            final permiso = await Geolocator.checkPermission();
-                            if (permiso == LocationPermission.denied ||
-                                permiso == LocationPermission.deniedForever) {
-                              final nuevoPermiso =
-                                  await Geolocator.requestPermission();
-                              if (nuevoPermiso == LocationPermission.denied ||
-                                  nuevoPermiso ==
-                                      LocationPermission.deniedForever) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'Permiso de ubicación denegado')),
-                                );
-                                return;
-                              }
-                            }
-
-                            final posicion =
-                                await Geolocator.getCurrentPosition();
-                            final nuevaPos = latlng.LatLng(
-                                posicion.latitude, posicion.longitude);
-
-                            setState(() {
-                              _selectedPosition = nuevaPos;
-                            });
-
-                            _mapController.move(nuevaPos, 15);
-                          },
-                          icon: const Icon(Icons.my_location),
-                          label: const Text('Usar mi ubicación actual'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
+                        const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Ubicación del rescatista:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          height: 200,
+                          child: FlutterMap(
+                            mapController: _mapController,
+                            options: MapOptions(
+                              initialCenter: _selectedPosition ??
+                                  latlng.LatLng(-17.7832, -63.1817),
+                              initialZoom: 15,
+                              onTap: (tapPosition, point) {
+                                setState(() {
+                                  _selectedPosition = point;
+                                });
+                              },
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                subdomains: ['a', 'b', 'c'],
+                              ),
+                              if (_selectedPosition != null)
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      width: 40,
+                                      height: 40,
+                                      point: _selectedPosition!,
+                                      child: const Icon(Icons.location_pin,
+                                          size: 40, color: Colors.red),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const SizedBox(height: 16),
+                        const SizedBox(height: 8),
                         const Text('Imagen del Rescatista',
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
                         GestureDetector(
                           onTap: () async {
-                            final picked = await _picker.pickImage(
-                                source: ImageSource.gallery);
+                            try {
+                              final picked = await _picker.pickImage(
+                                  source: ImageSource.gallery);
+                              if (picked != null) {
+                                final path = picked.path;
+                                final ext = path.split('.').last.toLowerCase();
+                                const allowed = ['jpg', 'jpeg', 'png', 'gif'];
 
-                            if (picked != null) {
-                              final path = picked.path;
-                              final ext = path.split('.').last.toLowerCase();
-                              const allowed = ['jpg', 'jpeg', 'png', 'gif'];
+                                if (!allowed.contains(ext)) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Solo se permiten imágenes JPG, PNG o GIF')),
+                                  );
+                                  return;
+                                }
 
-                              print('📁 Imagen seleccionada: $path');
-                              print('📎 Extensión: $ext');
-
-                              if (!allowed.contains(ext)) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'Solo se permiten imágenes JPG, PNG o GIF')),
-                                );
-                                return;
+                                setState(() {
+                                  _pickedImage = picked;
+                                });
                               }
-
-                              setState(() {
-                                _pickedImage = picked;
-                              });
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                        'Error al seleccionar imagen: $e')),
+                              );
                             }
                           },
                           child: Container(

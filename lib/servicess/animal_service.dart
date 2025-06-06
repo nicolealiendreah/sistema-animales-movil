@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:http_parser/http_parser.dart';
-import 'package:path/path.dart';
 import '../core/env.dart';
 import '../models/animal_rescatista_model.dart';
 

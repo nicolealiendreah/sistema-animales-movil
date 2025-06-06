@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomFormTextField extends StatelessWidget {
   final String hintText;
   final IconData icon;
   final TextEditingController controller;
   final bool obscure;
-  final String? Function(String?)? validator; 
+  final String? Function(String?)? validator;
+  final TextInputType keyboardType; 
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomFormTextField({
     Key? key,
@@ -14,6 +17,8 @@ class CustomFormTextField extends StatelessWidget {
     required this.controller,
     this.obscure = false,
     this.validator,
+    this.keyboardType = TextInputType.text, 
+    this.inputFormatters,
   }) : super(key: key);
 
   @override
@@ -22,6 +27,8 @@ class CustomFormTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscure,
       validator: validator,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
       style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
         hintText: hintText,

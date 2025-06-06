@@ -120,7 +120,16 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
       date != null ? DateFormat.jm().format(date) : '-';
 
   Future<void> _submit() async {
-    if (_formKey.currentState!.validate() && _selectedAnimal != null) {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (_selectedAnimal == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Debe seleccionar un animal')),
+      );
+      return;
+    }
+
+    try {
       final adoption = Adoption(
         nombreAnimal: _selectedAnimal!.animal.nombre,
         estado: estado.text,
@@ -136,19 +145,17 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
             : 'Ubicación seleccionada',
       );
 
-      try {
-        await _adoptionService.create(adoption);
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Adopción guardada')),
-        );
-        Navigator.pop(context, true);
-      } catch (e) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al guardar: $e')),
-        );
-      }
+      await _adoptionService.create(adoption);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Adopción guardada')),
+      );
+      Navigator.pop(context, true);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al guardar: $e')),
+      );
     }
   }
 
@@ -214,10 +221,42 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        _buildField('Estado actual', estado),
-                        _buildField('Nombre del adoptante', nombreAdoptante),
                         _buildField(
-                            'Contacto del adoptante', contactoAdoptante),
+                          'Estado actual',
+                          estado,
+                          validator: (value) {
+                            const validStates = [
+                              'Adoptado',
+                              'En seguimiento',
+                              'Pendiente'
+                            ];
+                            if (value == null || value.isEmpty)
+                              return 'Campo requerido';
+                            if (!validStates.contains(value))
+                              return 'Estado no válido';
+                            return null;
+                          },
+                        ),
+                        _buildField(
+                          'Nombre del adoptante',
+                          nombreAdoptante,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty)
+                              return 'Campo requerido';
+                            return null;
+                          },
+                        ),
+                        _buildField(
+                          'Contacto del adoptante',
+                          contactoAdoptante,
+                          validator: (value) {
+                            if (value == null || value.isEmpty)
+                              return 'Campo requerido';
+                            if (!RegExp(r'^\d+$').hasMatch(value))
+                              return 'Solo se permiten números';
+                            return null;
+                          },
+                        ),
                         const SizedBox(height: 12),
                         const Align(
                           alignment: Alignment.centerLeft,
@@ -300,8 +339,12 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
     );
   }
 
-  Widget _buildField(String label, TextEditingController controller,
-      {int maxLines = 1}) {
+  Widget _buildField(
+    String label,
+    TextEditingController controller, {
+    int maxLines = 1,
+    String? Function(String?)? validator, // <-- Añadido aquí
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
@@ -312,12 +355,14 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
           TextFormField(
             controller: controller,
             maxLines: maxLines,
-            validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
+            validator: validator ??
+                (value) => value!.isEmpty ? 'Campo requerido' : null,
             decoration: InputDecoration(
               fillColor: Colors.white,
               filled: true,
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
         ],
