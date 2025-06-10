@@ -75,6 +75,7 @@ class AnimalService {
     print('Error al crear animal: $error');
     return false;
   }
+
   Future<void> update(String id, Map<String, dynamic> data) async {
     final response = await http.put(
       Uri.parse('$baseUrl/$id'),

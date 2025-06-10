@@ -62,7 +62,7 @@ class _LiberationListScreenState extends State<LiberationListScreen> {
       return '';
     }
     final desc = _liberacion!.descripcion;
-    return (desc != null && desc.isNotEmpty) ? desc : 'Ubicacion Seleccionada';
+    return (desc != null && desc.isNotEmpty) ? desc : 'Ubicación Seleccionada';
   }
 
   @override
@@ -73,105 +73,283 @@ class _LiberationListScreenState extends State<LiberationListScreen> {
         fit: StackFit.expand,
         children: [
           Image.asset('assets/background2.jpg', fit: BoxFit.cover),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.3),
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.1),
+                ],
+              ),
+            ),
+          ),
           Column(
             children: [
               Container(
                 padding: const EdgeInsets.only(
-                    top: 50, left: 20, right: 20, bottom: 16),
-                color: AppColors.primary,
+                    top: 50, left: 20, right: 20, bottom: 20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.primary,
+                      AppColors.primary.withOpacity(0.9),
+                    ],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
                 child: Row(
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
+                    Container(
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_ios_rounded,
+                            color: Colors.white, size: 22),
+                        onPressed: () => Navigator.pop(context),
+                      ),
                     ),
-                    const SizedBox(width: 8),
-                    const Text('Historial de Liberaciones',
-                        style: AppTextStyles.heading),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Historial de Liberaciones',
+                              style: AppTextStyles.heading),
+                          Text(
+                            'Consulta y registra las liberaciones',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
               Expanded(
                 child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.primary),
+                              strokeWidth: 3,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Cargando información...',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     : SingleChildScrollView(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(24),
                         child: Column(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                      color: Colors.black12, blurRadius: 6)
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 10),
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 40,
+                                    offset: const Offset(0, 20),
+                                  ),
                                 ],
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('Nombre del animal:',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  DropdownButtonFormField<AnimalRescatista>(
-                                    decoration: const InputDecoration(
-                                        border: UnderlineInputBorder()),
-                                    value: _selectedAnimal,
-                                    hint: const Text('Seleccionar animal'),
-                                    items: _animals
-                                        .map((ar) => DropdownMenuItem(
-                                              value: ar,
-                                              child: Text(ar.animal.nombre),
-                                            ))
-                                        .toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedAnimal = value;
-                                        _liberacion = null;
-                                      });
-                                      if (value != null) {
-                                        _loadLiberacion(value.animal.nombre);
-                                      }
-                                    },
-                                  ),
-                                  const SizedBox(height: 20),
-                                  const Text('Fecha de liberación:',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  Text(
-                                    _formatDate(_liberacion?.fechaLiberacion),
-                                    style: const TextStyle(color: Colors.blue),
-                                  ),
-                                  const SizedBox(height: 20),
-                                  _buildRow('Ubicación:', _getUbicacionText()),
-                                  _buildRow('Observaciones:',
-                                      _liberacion?.observaciones),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            ElevatedButton.icon(
-                              onPressed: () async {
-                                final result = await Navigator.pushNamed(
-                                    context, AppRoutes.liberacionForm);
-                                if (result == true && _selectedAnimal != null) {
-                                  _loadLiberacion(
-                                      _selectedAnimal!.animal.nombre);
-                                }
-                              },
-                              icon: const Icon(Icons.add),
-                              label: const Text('Agregar Liberación'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 14, horizontal: 24),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                              child: Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(8),
+                                          child: Icon(
+                                            Icons.pets_rounded,
+                                            color: AppColors.primary,
+                                            size: 20,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          'Seleccionar Animal',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey[800],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.grey[300]!),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: DropdownButtonFormField<
+                                          AnimalRescatista>(
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 16, vertical: 12),
+                                          hintText: 'Seleccionar animal',
+                                          hintStyle: TextStyle(
+                                              color: Colors.grey[500]),
+                                        ),
+                                        value: _selectedAnimal,
+                                        icon: Icon(
+                                            Icons.keyboard_arrow_down_rounded,
+                                            color: AppColors.primary),
+                                        items: _animals
+                                            .map((ar) => DropdownMenuItem(
+                                                  value: ar,
+                                                  child: Text(
+                                                    ar.animal.nombre,
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedAnimal = value;
+                                            _liberacion = null;
+                                          });
+                                          if (value != null) {
+                                            _loadLiberacion(
+                                                value.animal.nombre);
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    if (_selectedAnimal != null) ...[
+                                      const SizedBox(height: 32),
+                                      Container(
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[50],
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          border: Border.all(
+                                              color: Colors.grey[200]!),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            _buildModernInfoRow(
+                                              Icons.calendar_today_rounded,
+                                              'Fecha de liberación',
+                                              _formatDate(
+                                                  _liberacion?.fechaLiberacion),
+                                            ),
+                                            const SizedBox(height: 16),
+                                            _buildModernInfoRow(
+                                              Icons.location_on_rounded,
+                                              'Ubicación',
+                                              _getUbicacionText(),
+                                            ),
+                                            const SizedBox(height: 16),
+                                            _buildModernInfoRow(
+                                              Icons.note_alt_rounded,
+                                              'Observaciones',
+                                              _liberacion?.observaciones,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ],
                                 ),
                               ),
-                            )
+                            ),
+                            const SizedBox(height: 32),
+                            Container(
+                              width: double.infinity,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppColors.primary,
+                                    AppColors.primary.withOpacity(0.8)
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.primary.withOpacity(0.3),
+                                    blurRadius: 15,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(16),
+                                  onTap: () async {
+                                    final result = await Navigator.pushNamed(
+                                        context, AppRoutes.liberacionForm);
+                                    if (result == true &&
+                                        _selectedAnimal != null) {
+                                      _loadLiberacion(
+                                          _selectedAnimal!.animal.nombre);
+                                    }
+                                  },
+                                  child: Center(
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(4),
+                                          child: const Icon(
+                                            Icons.add_rounded,
+                                            color: Colors.white,
+                                            size: 20,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        const Text(
+                                          'Agregar Liberación',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -183,21 +361,49 @@ class _LiberationListScreenState extends State<LiberationListScreen> {
     );
   }
 
-  Widget _buildRow(String label, String? value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Expanded(
-              flex: 4,
-              child: Text(label,
-                  style: const TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(
-              flex: 6,
-              child: Text(value?.isNotEmpty == true ? value! : '-',
-                  style: const TextStyle(color: Colors.black54))),
-        ],
-      ),
+  Widget _buildModernInfoRow(IconData icon, String label, String? value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            icon,
+            color: AppColors.primary,
+            size: 16,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[600],
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value?.isNotEmpty == true ? value! : '-',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[800],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

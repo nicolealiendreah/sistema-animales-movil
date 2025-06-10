@@ -26,7 +26,7 @@ class CustomTextField extends StatelessWidget {
         hintStyle: const TextStyle(color: Colors.black54),
         prefixIcon: Icon(icon, color: Colors.black),
         filled: true,
-        fillColor: Colors.white, 
+        fillColor: Colors.white.withOpacity(0.2),
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: AppColors.border),
           borderRadius: BorderRadius.circular(12),

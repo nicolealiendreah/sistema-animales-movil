@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/models/rescuer_model.dart';
 import 'package:sistema_animales/servicess/animal_service.dart';
@@ -24,6 +25,7 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   final _rescuerService = RescuerService();
   XFile? _pickedImage;
   final ImagePicker _picker = ImagePicker();
+  bool _ubicacionSeleccionadaPorUsuario = false;
 
   final TextEditingController nombre = TextEditingController();
   final TextEditingController especie = TextEditingController();
@@ -98,67 +100,75 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Por favor, complete todos los campos obligatorios')),
+    try {
+      if (!_formKey.currentState!.validate()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content:
+                  Text('Por favor, complete todos los campos obligatorios')),
+        );
+        return;
+      }
+
+      if (_pickedImage == null) {
+        throw 'Debe seleccionar una imagen del animal';
+      }
+
+      final extension = _pickedImage!.path.split('.').last.toLowerCase();
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+      if (!allowedExtensions.contains(extension)) {
+        throw 'Solo se permiten imágenes JPG, PNG o GIF';
+      }
+
+      if (_selectedPosition == null || !_ubicacionSeleccionadaPorUsuario) {
+        throw 'Debe seleccionar manualmente una ubicación en el mapa';
+      }
+
+      if (selectedRescatista == null) {
+        throw 'Seleccione un rescatista';
+      }
+
+      final selectedRescuer = rescatistas.firstWhere(
+        (r) => r.nombre == selectedRescatista,
+        orElse: () => throw Exception('Rescatista no encontrado'),
       );
-      return;
-    }
-    if (selectedRescatista == null) {
+
+      final data = {
+        "nombre": nombre.text,
+        "especie": especie.text,
+        "raza": raza.text,
+        "sexo": selectedSexo,
+        "edad": int.tryParse(edad.text),
+        "estadoSalud": selectedEstadoSalud,
+        "tipo": selectedTipo,
+        "tipoAlimentacion": tipoAlimentacion.text,
+        "cantidadRecomendada": cantidadRecomendada.text,
+        "frecuenciaRecomendada": selectedFrecuenciaRecomendada,
+        "fechaRescate": _fechaRescate?.toIso8601String(),
+        "detallesRescate": detalleRescate.text,
+        "nombreRescatista": selectedRescuer.nombre,
+        "telefonoRescatista": selectedRescuer.telefono,
+        "fechaRescatista": selectedFechaRescate?.toIso8601String(),
+        "latitud": _selectedPosition?.latitude,
+        "longitud": _selectedPosition?.longitude,
+        "descripcion": selectedUbicacionRescate ?? "Ubicación seleccionada"
+      };
+
+      final success = await _service.create(data, imageFile: _pickedImage);
+
+      if (!mounted) return;
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Animal registrado exitosamente')),
+        );
+        Navigator.pop(context, true);
+      } else {
+        throw 'Error al registrar animal';
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Seleccione un rescatista')),
-      );
-      return;
-    }
-
-    final selectedRescuer = rescatistas.firstWhere(
-      (r) => r.nombre == selectedRescatista,
-      orElse: () => throw Exception('Rescatista no encontrado'),
-    );
-
-    if (selectedRescuer.nombre.isEmpty || selectedRescuer.telefono.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Faltan datos del rescatista')),
-      );
-      return;
-    }
-
-    final data = {
-      "nombre": nombre.text,
-      "especie": especie.text,
-      "raza": raza.text,
-      "sexo": selectedSexo,
-      "edad": int.tryParse(edad.text),
-      "estadoSalud": selectedEstadoSalud,
-      "tipo": selectedTipo,
-      "tipoAlimentacion": tipoAlimentacion.text,
-      "cantidadRecomendada": cantidadRecomendada.text,
-      "frecuenciaRecomendada": selectedFrecuenciaRecomendada,
-      "fechaRescate": _fechaRescate?.toIso8601String(),
-      "detallesRescate": detalleRescate.text,
-      "nombreRescatista": selectedRescuer.nombre,
-      "telefonoRescatista": selectedRescuer.telefono,
-      "fechaRescatista": selectedFechaRescate?.toIso8601String(),
-      "latitud": _selectedPosition?.latitude,
-      "longitud": _selectedPosition?.longitude,
-      "descripcion": selectedUbicacionRescate ?? "Ubicación seleccionada"
-    };
-    print(
-        "✅ Enviado: ${data['nombreRescatista']} - ${data['telefonoRescatista']}");
-
-    final success = await _service.create(data, imageFile: _pickedImage);
-
-    if (!mounted) return;
-
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Animal registrado exitosamente')),
-      );
-      Navigator.pop(context, true);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al registrar animal')),
+        SnackBar(content: Text(e.toString())),
       );
     }
   }
@@ -168,6 +178,28 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
       return 'Este campo es obligatorio';
     }
     return null;
+  }
+
+  InputDecoration buildFieldDecoration(IconData icon, String label) {
+    return InputDecoration(
+      filled: true,
+      fillColor: Colors.white,
+      prefixIcon: Icon(icon, color: Colors.black),
+      labelText: label,
+      labelStyle: const TextStyle(color: Colors.black54),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.black38),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.black38),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.black),
+      ),
+    );
   }
 
   @override
@@ -230,9 +262,8 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                         const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
                           value: selectedSexo,
-                          decoration: const InputDecoration(
-                              prefixIcon: Icon(Icons.transgender),
-                              labelText: 'Sexo'),
+                          decoration:
+                              buildFieldDecoration(Icons.transgender, 'Sexo'),
                           items: ['Macho', 'Hembra']
                               .map((sexo) => DropdownMenuItem(
                                   value: sexo, child: Text(sexo)))
@@ -244,17 +275,20 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                         ),
                         const SizedBox(height: 16),
                         CustomFormTextField(
-                            hintText: 'Edad',
-                            controller: edad,
-                            icon: Icons.cake,
-                            validator: _requiredValidator),
+                          hintText: 'Edad',
+                          controller: edad,
+                          icon: Icons.cake,
+                          validator: _requiredValidator,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                        ),
                         const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
                           value: selectedEstadoSalud,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.health_and_safety),
-                            labelText: 'Estado de Salud',
-                          ),
+                          decoration: buildFieldDecoration(
+                              Icons.health_and_safety, 'Estado de Salud'),
                           items: ['Excelente', 'Bueno', 'Regular', 'Crítico']
                               .map((estado) => DropdownMenuItem(
                                   value: estado, child: Text(estado)))
@@ -268,9 +302,8 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                         const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
                           value: selectedTipo,
-                          decoration: const InputDecoration(
-                              prefixIcon: Icon(Icons.category),
-                              labelText: 'Tipo del Animal'),
+                          decoration: buildFieldDecoration(
+                              Icons.category, 'Tipo del Animal'),
                           items: ['Silvestre', 'Doméstico']
                               .map((tipo) => DropdownMenuItem(
                                   value: tipo, child: Text(tipo)))
@@ -295,10 +328,8 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                         const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
                           value: selectedFrecuenciaRecomendada,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.schedule),
-                            labelText: 'Frecuencia Recomendada',
-                          ),
+                          decoration: buildFieldDecoration(
+                              Icons.schedule, 'Frecuencia Recomendada'),
                           items: [
                             '1 vez al día',
                             '2 veces al día',
@@ -342,6 +373,7 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                               onTap: (tapPosition, point) {
                                 setState(() {
                                   _selectedPosition = point;
+                                  _ubicacionSeleccionadaPorUsuario = true;
                                 });
                               },
                             ),
@@ -408,16 +440,16 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                         const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
                           value: selectedRescatista,
-                          decoration: const InputDecoration(
-                              prefixIcon: Icon(Icons.person),
-                              labelText: 'Nombre del Rescatista'),
+                          decoration: buildFieldDecoration(
+                              Icons.person, 'Nombre del Rescatista'),
                           items: rescatistas
                               .map((r) => DropdownMenuItem(
                                   value: r.nombre, child: Text(r.nombre)))
                               .toList(),
                           onChanged: (value) {
-                            final resc = rescatistas
-                                .firstWhere((r) => r.nombre == value);
+                            final resc = rescatistas.firstWhere(
+                                (r) => r.nombre == value,
+                                orElse: () => rescatistas.first);
                             setState(() {
                               selectedRescatista = value;
                               selectedTelefono = resc.telefono;
@@ -432,12 +464,11 @@ class _AnimalFormScreenState extends State<AnimalFormScreen> {
                         const SizedBox(height: 16),
                         TextFormField(
                           readOnly: true,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.phone),
-                            labelText: 'Teléfono del Rescatista',
-                          ),
                           controller: TextEditingController(
                               text: selectedTelefono ?? ''),
+                          decoration: buildFieldDecoration(
+                              Icons.phone, 'Teléfono del Rescatista'),
+                          style: const TextStyle(color: Colors.black),
                         ),
                         const SizedBox(height: 24),
                         ElevatedButton(

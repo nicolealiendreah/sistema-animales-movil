@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color primary = Color(0xFF43A047); // Verde fuerte (botones)
-  static const Color background = Color(0xFFA5D6A7); // Verde claro (pantallas login/register)
+  static const Color primary = Color(0xFF43A047); //(botones)
+  static const Color background = Color(0xFFA5D6A7); //(pantallas login/register)
   static const Color white = Colors.white;
   static const Color textLight = Colors.white;
   static const Color textDark = Colors.black87;
   static const Color border = Colors.white;
-  static const Color buttonText = Color(0xFF1B5E20); // Verde oscuro
+  static const Color buttonText = Color(0xFF1B5E20);
 }
 
 class AppPadding {

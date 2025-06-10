@@ -31,18 +31,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => isLoading = true);
 
-    final success = await _userService.login(email, password);
+    try {
+      final success = await _userService.login(email, password);
 
-    setState(() => isLoading = false);
+      if (!mounted) return;
 
-    if (!mounted) return;
-
-    if (success) {
-      Navigator.pushReplacementNamed(context, AppRoutes.animals);
-    } else {
+      if (success) {
+        Navigator.pushReplacementNamed(context, AppRoutes.animals);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Credenciales incorrectas')),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Credenciales incorrectas')),
+        SnackBar(content: Text('Ocurrió un error: $e')),
       );
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
 
@@ -61,16 +69,31 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset('assets/paw_logo.png', height: 150),
+                    Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF4CAF50).withOpacity(0.3),
+                            blurRadius: 15,
+                            spreadRadius: 3,
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: Image.asset('assets/paw_logo.png',
+                            fit: BoxFit.cover),
+                      ),
+                    ),
                     const SizedBox(height: 32),
-
                     CustomTextField(
                       hintText: 'Correo electrónico',
                       icon: Icons.email_outlined,
                       controller: emailController,
                     ),
                     const SizedBox(height: 16),
-
                     CustomTextField(
                       hintText: 'Contraseña',
                       icon: Icons.lock_outline,
@@ -78,12 +101,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       obscure: true,
                     ),
                     const SizedBox(height: 32),
-
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.white,
                         foregroundColor: AppColors.buttonText,
-                        padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 80, vertical: 16),
                         elevation: 4,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -94,9 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ? const CircularProgressIndicator()
                           : const Text('INICIAR SESIÓN'),
                     ),
-
                     const SizedBox(height: 12),
-
                     TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, AppRoutes.register);
@@ -106,7 +127,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(color: AppColors.textDark),
                       ),
                     ),
-
                     const SizedBox(height: 32),
                     Image.asset('assets/vet_with_dog.png', height: 180),
                   ],

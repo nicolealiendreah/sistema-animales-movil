@@ -17,7 +17,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final UserService _userService = UserService();
 
@@ -64,7 +65,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (!_isValidEmail(email)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Correo inválido. Por favor, utiliza un correo de Gmail, Outlook, Hotmail o Yahoo.')),
+        const SnackBar(
+            content: Text(
+                'Correo inválido. Por favor, utiliza un correo de Gmail, Outlook, Hotmail o Yahoo.')),
       );
       return;
     }
@@ -72,7 +75,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!_isPasswordSecure(password)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('La contraseña debe tener mínimo 8 caracteres, mayúscula, minúscula, número y símbolo')),
+            content: Text(
+                'La contraseña debe tener mínimo 8 caracteres, mayúscula, minúscula, número y símbolo')),
       );
       return;
     }
@@ -86,29 +90,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     setState(() => isLoading = true);
 
-    final user = User(
-      name: firstNameController.text.trim(),
-      lastName: lastNameController.text.trim(),
-      username: usernameController.text.trim(),
-      email: email,
-      password: password,
-    );
-
-    final success = await _userService.register(user);
-
-    setState(() => isLoading = false);
-
-    if (!mounted) return;
-
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Registro exitoso')),
+    try {
+      final user = User(
+        name: firstNameController.text.trim(),
+        lastName: lastNameController.text.trim(),
+        username: usernameController.text.trim(),
+        email: email,
+        password: password,
       );
-      Navigator.pushReplacementNamed(context, AppRoutes.animals);
-    } else {
+
+      final success = await _userService.register(user);
+
+      if (!mounted) return;
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registro exitoso')),
+        );
+        Navigator.pushReplacementNamed(context, AppRoutes.animals);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ocurrió un error. Intenta nuevamente')),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ocurrió un error. Intenta nuevamente')),
+        SnackBar(content: Text('Error inesperado: $e')),
       );
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
 
@@ -132,7 +144,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: IconButton(
                         icon: const Icon(Icons.arrow_back, color: Colors.white),
                         onPressed: () {
-                          Navigator.pushReplacementNamed(context, AppRoutes.login);
+                          Navigator.pushReplacementNamed(
+                              context, AppRoutes.login);
                         },
                       ),
                     ),
@@ -141,28 +154,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: AppTextStyles.heading,
                     ),
                     const SizedBox(height: 24),
-
                     CustomTextField(
                       hintText: 'Primer Nombre',
                       icon: Icons.person_outline,
                       controller: firstNameController,
                     ),
                     const SizedBox(height: 12),
-
                     CustomTextField(
                       hintText: 'Apellido',
                       icon: Icons.person_outline,
                       controller: lastNameController,
                     ),
                     const SizedBox(height: 12),
-
                     CustomTextField(
                       hintText: 'Usuario',
                       icon: Icons.account_circle_outlined,
                       controller: usernameController,
                     ),
                     const SizedBox(height: 12),
-
                     CustomTextField(
                       hintText: 'Contraseña',
                       icon: Icons.lock_outline,
@@ -170,7 +179,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       obscure: true,
                     ),
                     const SizedBox(height: 12),
-
                     CustomTextField(
                       hintText: 'Confirmar Contraseña',
                       icon: Icons.lock_outline,
@@ -178,19 +186,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       obscure: true,
                     ),
                     const SizedBox(height: 12),
-
                     CustomTextField(
                       hintText: 'Correo Electrónico',
                       icon: Icons.email_outlined,
                       controller: emailController,
                     ),
                     const SizedBox(height: 24),
-
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.white,
                         foregroundColor: AppColors.buttonText,
-                        padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 100, vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),

@@ -59,7 +59,7 @@ class _GeolocationFormScreenState extends State<GeolocationFormScreen> {
           ? '${placemarks.first.street}, ${placemarks.first.locality}'
           : 'Ubicación desconocida';
 
-      print('📍 Dirección estimada: $direccion');
+      print('Dirección estimada: $direccion');
 
       final geo = Geolocalizacion(
         id: '',

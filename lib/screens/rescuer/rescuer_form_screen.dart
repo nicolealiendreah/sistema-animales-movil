@@ -24,6 +24,7 @@ class _RescuerFormScreenState extends State<RescuerFormScreen> {
   DateTime? _fechaRescatista;
   latlng.LatLng? _selectedPosition;
   bool _isMapReady = false;
+  bool _ubicacionSeleccionadaPorUsuario = false;
 
   final _formKey = GlobalKey<FormState>();
   final _rescuerService = RescuerService();
@@ -44,69 +45,73 @@ class _RescuerFormScreenState extends State<RescuerFormScreen> {
     if (picked != null) {
       setState(() {
         _fechaRescatista = picked;
-        _fechaController.text = DateFormat('yyyy-MM-dd').format(picked);
+        _fechaController.text = DateFormat('dd-MM-yyyy').format(picked);
       });
     }
   }
 
   Future<void> _guardarRescatista() async {
-    if (!_formKey.currentState!.validate() || _fechaRescatista == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Complete todos los campos obligatorios')),
-      );
-      return;
-    }
-
-    if (_pickedImage == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Debe seleccionar una imagen del rescatista')),
-      );
-      return;
-    }
-
-    final allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-    final extension = _pickedImage!.path.split('.').last.toLowerCase();
-
-    if (!allowedExtensions.contains(extension)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Solo se permiten imágenes JPG, PNG o GIF')),
-      );
-      return;
-    }
-
-    if (_selectedPosition == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Debe seleccionar una ubicación en el mapa')),
-      );
-      return;
-    }
-
-    final geo = Geolocalizacion(
-      id: '',
-      latitud: _selectedPosition!.latitude,
-      longitud: _selectedPosition!.longitude,
-      descripcion: _ubicacionController.text.isNotEmpty
-          ? _ubicacionController.text
-          : 'Ubicación seleccionada',
-    );
-
-    final nuevo = Rescuer(
-      nombre: _nombreController.text,
-      telefono: _telefonoController.text,
-      fechaRescatista: _fechaRescatista!,
-      geolocalizacion: geo,
-    );
-
     try {
+      if (!_formKey.currentState!.validate() || _fechaRescatista == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Complete todos los campos obligatorios')),
+        );
+        return;
+      }
+
+      if (_pickedImage == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Debe seleccionar una imagen del rescatista')),
+        );
+        return;
+      }
+
+      final allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+      final extension = _pickedImage!.path.split('.').last.toLowerCase();
+
+      if (!allowedExtensions.contains(extension)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Solo se permiten imágenes JPG, PNG o GIF')),
+        );
+        return;
+      }
+
+      if (_selectedPosition == null || !_ubicacionSeleccionadaPorUsuario) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Debe seleccionar una ubicación en el mapa')),
+        );
+        return;
+      }
+
+      final geo = Geolocalizacion(
+        id: '',
+        latitud: _selectedPosition!.latitude,
+        longitud: _selectedPosition!.longitude,
+        descripcion: _ubicacionController.text.isNotEmpty
+            ? _ubicacionController.text
+            : 'Ubicación seleccionada',
+      );
+
+      final nuevo = Rescuer(
+        nombre: _nombreController.text,
+        telefono: _telefonoController.text,
+        fechaRescatista: _fechaRescatista!,
+        geolocalizacion: geo,
+      );
+
       await _rescuerService.create(nuevo, imageFile: _pickedImage);
+
       if (!mounted) return;
+
       Navigator.pop(context, true);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al registrar: $e')),
+        SnackBar(content: Text('Error inesperado: $e')),
       );
     }
   }
@@ -245,6 +250,7 @@ class _RescuerFormScreenState extends State<RescuerFormScreen> {
                               onTap: (tapPosition, point) {
                                 setState(() {
                                   _selectedPosition = point;
+                                  _ubicacionSeleccionadaPorUsuario = true;
                                 });
                               },
                             ),

@@ -343,7 +343,7 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
     String label,
     TextEditingController controller, {
     int maxLines = 1,
-    String? Function(String?)? validator, // <-- Añadido aquí
+    String? Function(String?)? validator,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),

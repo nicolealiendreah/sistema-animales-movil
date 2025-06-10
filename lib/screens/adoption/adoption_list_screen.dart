@@ -53,7 +53,6 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
 
       String? direccion = match.direccionAdoptante;
 
-      // Si no hay dirección, intenta estimar
       if ((direccion == null || direccion.trim().isEmpty) &&
           match.latitud != null &&
           match.longitud != null) {
@@ -97,6 +96,19 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
     return (desc != null && desc.isNotEmpty) ? desc : 'Ubicación Seleccionada';
   }
 
+  Color _getStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'adoptado':
+        return Colors.green;
+      case 'en proceso':
+        return Colors.orange;
+      case 'pendiente':
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,105 +117,315 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
         fit: StackFit.expand,
         children: [
           Image.asset('assets/background2.jpg', fit: BoxFit.cover),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.3),
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.1),
+                ],
+              ),
+            ),
+          ),
           Column(
             children: [
               Container(
                 padding: const EdgeInsets.only(
-                    top: 50, left: 20, right: 20, bottom: 16),
-                color: AppColors.primary,
+                    top: 50, left: 20, right: 20, bottom: 20),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.95),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
                 child: Row(
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.pop(context, true),
+                    Container(
+                      
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () => Navigator.pop(context, true),
+                      ),
                     ),
-                    const SizedBox(width: 8),
-                    const Text('Historial de Adopciones',
-                        style: AppTextStyles.heading),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Historial de Adopciones',
+                              style: AppTextStyles.heading),
+                          Text(
+                            'Gestiona y consulta las adopciones',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
               Expanded(
                 child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.primary),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Cargando adopciones...',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.8),
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     : SingleChildScrollView(
                         padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 6,
-                                  )
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 5),
+                                  ),
                                 ],
                               ),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Nombre del animal:',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  DropdownButtonFormField<AnimalRescatista>(
-                                    decoration: const InputDecoration(
-                                      border: UnderlineInputBorder(),
+                                  Container(
+                                    padding: const EdgeInsets.all(24),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary.withOpacity(0.05),
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        topRight: Radius.circular(20),
+                                      ),
                                     ),
-                                    value: _selectedAnimal,
-                                    hint: const Text('Seleccionar animal'),
-                                    items: _animals
-                                        .map((ar) => DropdownMenuItem(
-                                              value: ar,
-                                              child: Text(ar.animal.nombre),
-                                            ))
-                                        .toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedAnimal = value;
-                                        _adoption = null;
-                                      });
-                                      if (value != null) {
-                                        _loadAdoptionData(value.animal.nombre);
-                                      }
-                                    },
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.pets,
+                                              color: AppColors.primary,
+                                              size: 24,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            const Text(
+                                              'Seleccionar Animal',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: Border.all(
+                                              color: Colors.grey.shade300,
+                                            ),
+                                          ),
+                                          child: DropdownButtonFormField<AnimalRescatista>(
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                              contentPadding: EdgeInsets.symmetric(
+                                                horizontal: 16,
+                                                vertical: 12,
+                                              ),
+                                            ),
+                                            value: _selectedAnimal,
+                                            hint: const Text('Seleccionar animal'),
+                                            items: _animals
+                                                .map((ar) => DropdownMenuItem(
+                                                      value: ar,
+                                                      child: Text(ar.animal.nombre),
+                                                    ))
+                                                .toList(),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _selectedAnimal = value;
+                                                _adoption = null;
+                                              });
+                                              if (value != null) {
+                                                _loadAdoptionData(value.animal.nombre);
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  const SizedBox(height: 20),
-                                  const Text('Fecha de Adopcion',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        _formatDate(_adoption?.fechaAdopcion),
-                                        style:
-                                            const TextStyle(color: Colors.blue),
+                                  
+                                  if (_adoption != null)
+                                    Padding(
+                                      padding: const EdgeInsets.all(24),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                              color: _getStatusColor(_adoption?.estado)
+                                                  .withOpacity(0.1),
+                                              borderRadius: BorderRadius.circular(12),
+                                              border: Border.all(
+                                                color: _getStatusColor(_adoption?.estado)
+                                                    .withOpacity(0.3),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        'Fecha de Adopción',
+                                                        style: TextStyle(
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Colors.grey.shade600,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 4),
+                                                      Row(
+                                                        children: [
+                                                          Icon(
+                                                            Icons.calendar_today,
+                                                            size: 16,
+                                                            color: Colors.grey.shade600,
+                                                          ),
+                                                          const SizedBox(width: 4),
+                                                          Text(
+                                                            _formatDate(_adoption?.fechaAdopcion),
+                                                            style: const TextStyle(
+                                                              fontWeight: FontWeight.w600,
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(width: 8),
+                                                          Icon(
+                                                            Icons.access_time,
+                                                            size: 16,
+                                                            color: Colors.grey.shade600,
+                                                          ),
+                                                          const SizedBox(width: 4),
+                                                          Text(
+                                                            _formatTime(_adoption?.fechaAdopcion),
+                                                            style: const TextStyle(
+                                                              fontWeight: FontWeight.w600,
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 6,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: _getStatusColor(_adoption?.estado),
+                                                    borderRadius: BorderRadius.circular(20),
+                                                  ),
+                                                  child: Text(
+                                                    _adoption?.estado ?? 'Sin estado',
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          
+                                          const SizedBox(height: 20),
+                                          
+                                          _buildModernInfoCard(
+                                            'Información del Adoptante',
+                                            Icons.person,
+                                            [
+                                              _buildInfoRow(
+                                                'Nombre',
+                                                _adoption?.nombreAdoptante,
+                                                Icons.person_outline,
+                                              ),
+                                              _buildInfoRow(
+                                                'Contacto',
+                                                _adoption?.contactoAdoptante,
+                                                Icons.phone,
+                                              ),
+                                              _buildInfoRow(
+                                                'Dirección',
+                                                _getDireccionText(),
+                                                Icons.location_on,
+                                              ),
+                                            ],
+                                          ),
+                                          
+                                          const SizedBox(height: 16),
+                                          
+                                          if (_adoption?.observaciones?.isNotEmpty == true)
+                                            _buildModernInfoCard(
+                                              'Observaciones',
+                                              Icons.note,
+                                              [
+                                                Container(
+                                                  width: double.infinity,
+                                                  padding: const EdgeInsets.all(12),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.grey.shade50,
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  child: Text(
+                                                    _adoption?.observaciones ?? '',
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      height: 1.4,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                        ],
                                       ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        _formatTime(_adoption?.fechaAdopcion),
-                                        style:
-                                            const TextStyle(color: Colors.blue),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  _buildRow(
-                                      'Estado actual:', _adoption?.estado),
-                                  _buildRow('Nombre del adoptante:',
-                                      _adoption?.nombreAdoptante),
-                                  _buildRow('Contacto del adoptante:',
-                                      _adoption?.contactoAdoptante),
-                                  _buildRow('Dirección del adoptante:',
-                                      _getDireccionText()),
-                                  _buildRow('Observaciones:',
-                                      _adoption?.observaciones),
+                                    ),
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 24),
+                            
+                            const SizedBox(height: 32),
+                            
                             ElevatedButton.icon(
                               onPressed: () async {
                                 final result = await Navigator.pushNamed(
@@ -213,18 +435,25 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                       _selectedAnimal!.animal.nombre);
                                 }
                               },
-                              icon: const Icon(Icons.add),
-                              label: const Text('Agregar Adopcion'),
+                              icon: const Icon(Icons.add, size: 24),
+                              label: const Text(
+                                'Agregar Nueva Adopción',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 14, horizontal: 24),
+                                minimumSize: const Size(double.infinity, 56),
+                                elevation: 8,
+                                shadowColor: AppColors.primary.withOpacity(0.3),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -236,21 +465,69 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
     );
   }
 
-  Widget _buildRow(String label, String? value) {
+  Widget _buildModernInfoCard(String title, IconData icon, List<Widget> children) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: AppColors.primary, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String? value, IconData icon) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
+          Icon(
+            icon,
+            size: 16,
+            color: Colors.grey.shade600,
+          ),
+          const SizedBox(width: 8),
           Expanded(
-            flex: 4,
-            child: Text(label,
-                style: const TextStyle(fontWeight: FontWeight.bold)),
+            flex: 3,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade700,
+                fontSize: 14,
+              ),
+            ),
           ),
           Expanded(
-            flex: 6,
+            flex: 5,
             child: Text(
-              value?.isNotEmpty == true ? value! : '-',
-              style: const TextStyle(color: Colors.black54),
+              value?.isNotEmpty == true ? value! : 'No especificado',
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],

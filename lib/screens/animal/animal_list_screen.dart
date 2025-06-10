@@ -92,11 +92,23 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
               Container(
                 padding: const EdgeInsets.only(
                     top: 50, left: 20, right: 20, bottom: 16),
-                color: AppColors.primary,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset('assets/paw_logo.png', height: 45),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(40),
+                      child: Image.asset('assets/paw_logo.png', height: 45),
+                    ),
                     const Text('Lista de Animales',
                         style: AppTextStyles.heading),
                     IconButton(
@@ -114,24 +126,38 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
               ),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Buscar animal',
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        _searchController.clear();
-                      },
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Buscar animal...',
+                      hintStyle: const TextStyle(color: Colors.black54),
+                      prefixIcon: const Icon(Icons.search, color: Colors.black),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.close, color: Colors.black),
+                        onPressed: () => _searchController.clear(),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.95),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 14),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.9),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                    style: const TextStyle(color: Colors.black),
                   ),
                 ),
               ),
@@ -150,9 +176,9 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          mainAxisExtent: 350,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          mainAxisExtent: 360,
                         ),
                         itemCount: _filteredAnimals.length,
                         itemBuilder: (context, index) {
@@ -193,9 +219,9 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          mainAxisExtent: 350,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          mainAxisExtent: 360,
                         ),
                         itemCount: _filteredAnimals.length,
                         itemBuilder: (context, index) {
@@ -246,6 +272,9 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                 Navigator.pushNamed(context, AppRoutes.veterinarioForm),
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            elevation: 5,
             child: const Icon(Icons.medical_services),
             tooltip: 'Registrar Veterinario',
           ),
@@ -256,6 +285,9 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                 Navigator.pushNamed(context, AppRoutes.rescatistaForm),
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            elevation: 5,
             child: const Icon(Icons.person_add),
             tooltip: 'Registrar Rescatista',
           ),
@@ -284,6 +316,9 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
             },
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            elevation: 5,
             child: const Icon(Icons.add),
             tooltip: 'Registrar Animal',
           ),
