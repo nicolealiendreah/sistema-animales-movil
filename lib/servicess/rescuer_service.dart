@@ -4,6 +4,7 @@ import '../models/rescuer_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:sistema_animales/utils/geolocation_helper.dart';
 
 class RescuerService {
   final String baseUrl = '$apiUrl/api/rescatistas';
@@ -13,10 +14,23 @@ class RescuerService {
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
       final List data = body['postgres'];
-      return data.map((e) => Rescuer.fromJson(e)).toList();
+
+      final lista = data.map((e) => Rescuer.fromJson(e)).toList();
+
+      for (final r in lista) {
+        if (r.geolocalizacion != null) {
+          await traducirCoordenadasAGoogleMaps(r.geolocalizacion!);
+          print('[OK] Rescatista ${r.nombre} -> ${r.geolocalizacion?.descripcion}');
+
+        }
+      }
+      
+
+      return lista;
     } else {
       throw Exception('Error al obtener rescatistas');
     }
+    
   }
 
   Future<Rescuer> getById(String id) async {

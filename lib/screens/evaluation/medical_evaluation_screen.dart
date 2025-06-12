@@ -225,10 +225,10 @@ class _MedicalEvaluationScreenState extends State<MedicalEvaluationScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
+                  Colors.black.withOpacity(0.3),
+                  Colors.transparent,
                   Colors.black.withOpacity(0.1),
-                  Colors.white.withOpacity(0.9),
                 ],
-                stops: const [0.0, 0.4],
               ),
             ),
           ),

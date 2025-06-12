@@ -46,9 +46,7 @@ class AnimalDetailPopup extends StatelessWidget {
                 ),
               ),
             ),
-            
             const SizedBox(height: 20),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
@@ -58,38 +56,67 @@ class AnimalDetailPopup extends StatelessWidget {
                   const SizedBox(height: 12),
                   _buildInfoCard([
                     _buildInfoRow('Nombre', animal.nombre, Icons.badge),
-                    _buildInfoRow('Especie', animal.especie ?? 'No especificado', Icons.category),
-                    _buildInfoRow('Raza', animal.raza ?? 'No especificado', Icons.pets),
-                    _buildInfoRow('Sexo', animal.sexo ?? 'No especificado', Icons.wc),
-                    _buildInfoRow('Edad', animal.edad?.toString() ?? 'No especificado', Icons.calendar_today),
-                    _buildInfoRow('Estado de Salud', animal.estadoSalud ?? 'No especificado', Icons.health_and_safety),
+                    _buildInfoRow('Especie',
+                        animal.especie ?? 'No especificado', Icons.category),
+                    _buildInfoRow(
+                        'Raza', animal.raza ?? 'No especificado', Icons.pets),
+                    _buildInfoRow(
+                        'Sexo', animal.sexo ?? 'No especificado', Icons.wc),
+                    _buildInfoRow(
+                        'Edad',
+                        animal.edad?.toString() ?? 'No especificado',
+                        Icons.calendar_today),
+                    _buildInfoRow(
+                        'Estado de Salud',
+                        animal.estadoSalud ?? 'No especificado',
+                        Icons.health_and_safety),
                   ]),
-
                   const SizedBox(height: 20),
-
-                  _buildSectionTitle('Cuidado y Alimentación', Icons.restaurant),
+                  _buildSectionTitle(
+                      'Cuidado y Alimentación', Icons.restaurant),
                   const SizedBox(height: 12),
                   _buildInfoCard([
-                    _buildInfoRow('Tipo', animal.tipo ?? 'No especificado', Icons.type_specimen),
-                    _buildInfoRow('Tipo de alimentación', animal.tipoAlimentacion ?? 'No especificado', Icons.dining),
-                    _buildInfoRow('Cantidad recomendada', animal.cantidadRecomendada ?? 'No especificado', Icons.straighten),
-                    _buildInfoRow('Frecuencia recomendada', animal.frecuenciaRecomendada ?? 'No especificado', Icons.schedule),
+                    _buildInfoRow('Tipo', animal.tipo ?? 'No especificado',
+                        Icons.type_specimen),
+                    _buildInfoRow(
+                        'Tipo de alimentación',
+                        animal.tipoAlimentacion ?? 'No especificado',
+                        Icons.dining),
+                    _buildInfoRow(
+                        'Cantidad recomendada',
+                        animal.cantidadRecomendada ?? 'No especificado',
+                        Icons.straighten),
+                    _buildInfoRow(
+                        'Frecuencia recomendada',
+                        animal.frecuenciaRecomendada ?? 'No especificado',
+                        Icons.schedule),
                   ]),
-
                   const SizedBox(height: 20),
-
-                  _buildSectionTitle('Información de Rescate', Icons.location_on),
+                  _buildSectionTitle(
+                      'Información de Rescate', Icons.location_on),
                   const SizedBox(height: 12),
                   _buildInfoCard([
-                    _buildInfoRow('Fecha del Rescate', 
-                      animal.fechaRescate != null
-                          ? animal.fechaRescate!.toIso8601String().split('T').first
-                          : 'Sin fecha', 
-                      Icons.event),
-                    _buildInfoRow('Ubicación del rescate', animal.ubicacionRescate ?? 'No especificado', Icons.place),
-                    _buildInfoRow('Detalles del rescate', animal.detallesRescate ?? 'No especificado', Icons.description),
+                    _buildInfoRow(
+                        'Fecha del Rescate',
+                        animal.fechaRescate != null
+                            ? animal.fechaRescate!
+                                .toIso8601String()
+                                .split('T')
+                                .first
+                            : 'Sin fecha',
+                        Icons.event),
+                    _buildInfoRow(
+                      'Ubicación del rescate',
+                      animal.geolocalizacion?.descripcion ??
+                          animal.ubicacionRescate ??
+                          'No especificado',
+                      Icons.place,
+                    ),
+                    _buildInfoRow(
+                        'Detalles del rescate',
+                        animal.detallesRescate ?? 'No especificado',
+                        Icons.description),
                   ]),
-
                   const SizedBox(height: 20),
                   _buildSectionTitle('Imagen', Icons.photo),
                   const SizedBox(height: 12),
@@ -113,7 +140,8 @@ class AnimalDetailPopup extends StatelessWidget {
                                 height: 200,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) => Container(
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
                                   height: 200,
                                   width: double.infinity,
                                   color: Colors.grey.shade100,
@@ -121,7 +149,8 @@ class AnimalDetailPopup extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(Icons.image_not_supported,
-                                          size: 48, color: Colors.grey.shade400),
+                                          size: 48,
+                                          color: Colors.grey.shade400),
                                       const SizedBox(height: 8),
                                       Text(
                                         'Error al cargar imagen',
@@ -157,9 +186,7 @@ class AnimalDetailPopup extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 24),
-
                   Column(
                     children: [
                       SizedBox(
@@ -193,9 +220,7 @@ class AnimalDetailPopup extends StatelessWidget {
                           ),
                         ),
                       ),
-                      
                       const SizedBox(height: 12),
-                      
                       SizedBox(
                         width: double.infinity,
                         height: 56,
@@ -227,9 +252,7 @@ class AnimalDetailPopup extends StatelessWidget {
                           ),
                         ),
                       ),
-                      
                       const SizedBox(height: 12),
-                      
                       SizedBox(
                         width: double.infinity,
                         height: 56,
@@ -246,11 +269,13 @@ class AnimalDetailPopup extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => TransferListScreen(animal: animal),
+                                builder: (context) =>
+                                    TransferListScreen(animal: animal),
                               ),
                             );
                           },
-                          icon: const Icon(Icons.transfer_within_a_station, size: 20),
+                          icon: const Icon(Icons.transfer_within_a_station,
+                              size: 20),
                           label: const Text(
                             'Historial de Traslados',
                             style: TextStyle(
@@ -262,7 +287,6 @@ class AnimalDetailPopup extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 20),
                 ],
               ),

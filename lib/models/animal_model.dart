@@ -1,3 +1,5 @@
+import 'package:sistema_animales/models/geolocalizacion_model.dart';
+
 class Animal {
   final String? id;
   final String nombre;
@@ -16,6 +18,7 @@ class Animal {
   final String? nombreRescatista;
   final String? telefonoRescatista;
   final String? imagen;
+  final Geolocalizacion? geolocalizacion;
 
   Animal({
     this.id,
@@ -35,6 +38,7 @@ class Animal {
     this.nombreRescatista,
     this.telefonoRescatista,
     this.imagen,
+    this.geolocalizacion,
   });
 
   factory Animal.fromJson(Map<String, dynamic> json) {
@@ -58,6 +62,9 @@ class Animal {
       nombreRescatista: json['nombre'],
       telefonoRescatista: json['telefonoRescatista'],
       imagen: json['imagen'],
+      geolocalizacion: json['geolocalizacion'] != null
+          ? Geolocalizacion.fromJson(json['geolocalizacion'])
+          : null,
     );
   }
 
@@ -78,6 +85,7 @@ class Animal {
       'detallesRescate': detallesRescate,
       'nombreRescatista': nombreRescatista,
       'telefonoRescatista': telefonoRescatista,
+      'geolocalizacion': geolocalizacion?.toJson(),
     };
   }
 }

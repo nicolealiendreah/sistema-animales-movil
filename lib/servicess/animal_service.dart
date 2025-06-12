@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http_parser/http_parser.dart';
 import '../core/env.dart';
 import '../models/animal_rescatista_model.dart';
+import 'package:sistema_animales/utils/geolocation_helper.dart';
 
 class AnimalService {
   final String baseUrl = '$apiUrl/api/animales';
@@ -15,10 +16,19 @@ class AnimalService {
       final postgres = body['postgres'];
 
       if (postgres is List) {
-        return postgres
+        final lista = postgres
             .map((registro) =>
                 AnimalRescatista.fromJson(registro as Map<String, dynamic>))
             .toList();
+
+        for (final animal in lista) {
+          if (animal.animal.geolocalizacion != null) {
+            await traducirCoordenadasAGoogleMaps(
+                animal.animal.geolocalizacion!);
+          }
+        }
+
+        return lista;
       } else {
         throw Exception('Formato inesperado en la respuesta');
       }

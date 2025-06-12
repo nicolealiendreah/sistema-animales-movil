@@ -22,16 +22,17 @@ class Liberacion {
   });
 
   factory Liberacion.fromJson(Map<String, dynamic> json) {
+    final ubicacion = json['ubicacionLiberacion'];
     return Liberacion(
       id: json['id'],
       animalId: json['animalId'],
-      nombreAnimal: json['animal']?['nombre'] ?? json['nombreAnimal'],
-      ubicacionLiberacion: json['ubicacionLiberacion'] ?? '',
+      nombreAnimal: json['animal']?['nombre'],
       fechaLiberacion: json['fechaLiberacion'],
       observaciones: json['observaciones'],
-      latitud: json['latitud']?.toDouble(),
-      longitud: json['longitud']?.toDouble(),
-      descripcion: json['descripcion'],
+      latitud: ubicacion?['latitud']?.toDouble(),
+      longitud: ubicacion?['longitud']?.toDouble(),
+      descripcion: ubicacion?['descripcion'],
+      ubicacionLiberacion: ubicacion != null ? ubicacion.toString() : '',
     );
   }
 

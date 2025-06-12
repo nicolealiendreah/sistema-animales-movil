@@ -27,6 +27,7 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
   DateTime? _fechaAdopcion;
   LatLng? _selectedPosition;
   MapController _mapController = MapController();
+  String? estadoSeleccionado;
 
   final TextEditingController estado = TextEditingController();
   final TextEditingController nombreAdoptante = TextEditingController();
@@ -221,9 +222,25 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        _buildField(
-                          'Estado actual',
-                          estado,
+                        DropdownButtonFormField<String>(
+                          value: estadoSeleccionado,
+                          decoration: const InputDecoration(
+                            hintText: 'Estado actual',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(),
+                          ),
+                          items: ['Adoptado', 'En seguimiento', 'Pendiente']
+                              .map((estado) => DropdownMenuItem(
+                                    value: estado,
+                                    child: Text(estado),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              estadoSeleccionado = value;
+                            });
+                          },
                           validator: (value) {
                             const validStates = [
                               'Adoptado',

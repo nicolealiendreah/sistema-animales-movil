@@ -23,8 +23,8 @@ class Rescuer {
       nombre: json['nombre'],
       telefono: json['telefono'],
       fechaRescatista: DateTime.parse(json['fechaRescatista']),
-      geolocalizacion: json['geolocalizacion'] != null
-          ? Geolocalizacion.fromJson(json['geolocalizacion'])
+      geolocalizacion: json['ubicacion'] != null
+          ? Geolocalizacion.fromJson(json['ubicacion'])
           : null,
       imagen: json['imagen'],
     );

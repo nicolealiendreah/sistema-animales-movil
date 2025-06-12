@@ -7,11 +7,13 @@ class AnimalCard extends StatelessWidget {
   final Animal animal;
   final VoidCallback onDetails;
   final VoidCallback onRescuer;
+  final VoidCallback onHistory;
 
   const AnimalCard({
     required this.animal,
     required this.onDetails,
     required this.onRescuer,
+    required this.onHistory,
     super.key,
   });
 
@@ -74,7 +76,6 @@ class AnimalCard extends StatelessWidget {
               ),
             ],
           ),
-
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
             child: Column(
@@ -91,13 +92,13 @@ class AnimalCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-
                 SizedBox(
                   width: double.infinity,
                   height: 44,
                   child: ElevatedButton.icon(
                     onPressed: onDetails,
-                    icon: const Icon(Icons.info_outline, size: 18, color: Colors.white),
+                    icon: const Icon(Icons.info_outline,
+                        size: 18, color: Colors.white),
                     label: const Text(
                       "Detalles",
                       style: TextStyle(
@@ -115,17 +116,40 @@ class AnimalCard extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
                 SizedBox(
                   width: double.infinity,
                   height: 44,
                   child: OutlinedButton.icon(
                     onPressed: onRescuer,
-                    icon: Icon(Icons.person_outline_rounded, size: 18, color: AppColors.primary),
+                    icon: Icon(Icons.person_outline_rounded,
+                        size: 18, color: AppColors.primary),
                     label: Text(
                       "Rescatista",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: AppColors.primary, width: 1.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  height: 44,
+                  child: OutlinedButton.icon(
+                    onPressed: onHistory,
+                    icon:
+                        Icon(Icons.history, size: 18, color: AppColors.primary),
+                    label: Text(
+                      "Historial",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,

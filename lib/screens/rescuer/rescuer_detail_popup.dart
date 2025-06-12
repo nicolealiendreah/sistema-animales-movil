@@ -6,11 +6,18 @@ import 'package:sistema_animales/widgets/modal_card.dart';
 
 class RescuerDetailPopup extends StatelessWidget {
   final Rescuer rescuer;
-  
-  const RescuerDetailPopup({super.key, required this.rescuer});
+
+  RescuerDetailPopup({super.key, required this.rescuer});
 
   @override
   Widget build(BuildContext context) {
+    final raw = rescuer.geolocalizacion?.descripcion;
+    final direccion = (raw == null ||
+            raw.trim().isEmpty ||
+            raw.trim().toLowerCase() == 'ubicación seleccionada')
+        ? 'Dirección no disponible'
+        : raw.trim();
+
     return ModalCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +84,6 @@ class RescuerDetailPopup extends StatelessWidget {
               ],
             ),
           ),
-          
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -103,7 +109,8 @@ class RescuerDetailPopup extends StatelessWidget {
                               height: 120,
                               width: 120,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => Container(
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
                                 height: 120,
                                 width: 120,
                                 decoration: BoxDecoration(
@@ -145,9 +152,7 @@ class RescuerDetailPopup extends StatelessWidget {
                     ),
                   ),
                 ),
-                
                 const SizedBox(height: 32),
-                
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -182,15 +187,17 @@ class RescuerDetailPopup extends StatelessWidget {
                       _buildModernRow(
                         Icons.calendar_today_outlined,
                         'Fecha del Rescatista:',
-                        rescuer.fechaRescatista != null
-                            ? rescuer.fechaRescatista!.toIso8601String().split('T').first
-                            : 'Sin fecha',
+                        rescuer.fechaRescatista
+                                ?.toIso8601String()
+                                .split('T')
+                                .first ??
+                            'Sin fecha',
                       ),
                       _buildDivider(),
                       _buildModernRow(
                         Icons.location_on_outlined,
                         'Ubicación del Rescatista:',
-                        rescuer.geolocalizacion?.descripcion ?? 'Ubicación Seleccionada',
+                        direccion,
                         isLast: true,
                       ),
                     ],
@@ -204,7 +211,8 @@ class RescuerDetailPopup extends StatelessWidget {
     );
   }
 
-  Widget _buildModernRow(IconData icon, String label, String value, {bool isFirst = false, bool isLast = false}) {
+  Widget _buildModernRow(IconData icon, String label, String value,
+      {bool isFirst = false, bool isLast = false}) {
     return Container(
       padding: const EdgeInsets.all(20),
       child: Row(

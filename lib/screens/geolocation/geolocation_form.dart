@@ -59,15 +59,12 @@ class _GeolocationFormScreenState extends State<GeolocationFormScreen> {
           ? '${placemarks.first.street}, ${placemarks.first.locality}'
           : 'Ubicación desconocida';
 
-      print('Dirección estimada: $direccion');
-
       final geo = Geolocalizacion(
         id: '',
         latitud: lat,
         longitud: lng,
-        descripcion: _descripcion.text.isNotEmpty
-            ? _descripcion.text
-            : direccion,
+        descripcion:
+            _descripcion.text.isNotEmpty ? _descripcion.text : direccion,
         fechaRegistro: null,
       );
 
@@ -90,102 +87,138 @@ class _GeolocationFormScreenState extends State<GeolocationFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Registrar Geolocalización'),
-        backgroundColor: AppColors.primary,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
+      resizeToAvoidBottomInset: true,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset('assets/background2.jpg', fit: BoxFit.cover),
+          Column(
             children: [
-              const Text(
-                'Selecciona la ubicación en el mapa:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 250,
-                child: FlutterMap(
-                  mapController: _mapController,
-                  options: MapOptions(
-                    initialCenter: _selectedPosition ?? LatLng(-17.7832, -63.1817),
-                    initialZoom: 15,
-                    onTap: (tapPosition, point) {
-                      setState(() {
-                        _selectedPosition = point;
-                        _latitud.text = point.latitude.toString();
-                        _longitud.text = point.longitude.toString();
-                      });
-                    },
-                  ),
+              Container(
+                padding: const EdgeInsets.only(
+                    top: 50, left: 20, right: 20, bottom: 16),
+                color: AppColors.primary,
+                child: Row(
                   children: [
-                    TileLayer(
-                      urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      subdomains: ['a', 'b', 'c'],
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                    if (_selectedPosition != null)
-                      MarkerLayer(
-                        markers: [
-                          Marker(
-                            width: 40,
-                            height: 40,
-                            point: _selectedPosition!,
-                            child: const Icon(Icons.location_pin,
-                                size: 40, color: Colors.red),
-                          ),
-                        ],
-                      ),
+                    const SizedBox(width: 8),
+                    const Text('Registrar Geolocalización',
+                        style: AppTextStyles.heading),
                   ],
                 ),
               ),
-              const SizedBox(height: 10),
-              Text(
-                _selectedPosition != null
-                    ? 'Lat: ${_selectedPosition!.latitude.toStringAsFixed(5)} - Lng: ${_selectedPosition!.longitude.toStringAsFixed(5)}'
-                    : 'Toque el mapa para seleccionar una ubicación.',
-                style: const TextStyle(color: Colors.black54),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _latitud,
-                decoration: const InputDecoration(labelText: 'Latitud'),
-                keyboardType: TextInputType.number,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Campo obligatorio' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _longitud,
-                decoration: const InputDecoration(labelText: 'Longitud'),
-                keyboardType: TextInputType.number,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Campo obligatorio' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descripcion,
-                decoration:
-                    const InputDecoration(labelText: 'Descripción (opcional)'),
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: _guardar,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 100, vertical: 14),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text(
+                          'Seleccione una ubicación en el mapa:',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: 250,
+                          child: FlutterMap(
+                            mapController: _mapController,
+                            options: MapOptions(
+                              initialCenter: _selectedPosition ??
+                                  LatLng(-17.7832, -63.1817),
+                              initialZoom: 15,
+                              onTap: (tapPosition, point) {
+                                setState(() {
+                                  _selectedPosition = point;
+                                  _latitud.text = point.latitude.toString();
+                                  _longitud.text = point.longitude.toString();
+                                });
+                              },
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                subdomains: ['a', 'b', 'c'],
+                              ),
+                              if (_selectedPosition != null)
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      width: 40,
+                                      height: 40,
+                                      point: _selectedPosition!,
+                                      child: const Icon(Icons.location_pin,
+                                          size: 40, color: Colors.red),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _selectedPosition != null
+                              ? 'Lat: ${_selectedPosition!.latitude.toStringAsFixed(5)} - Lng: ${_selectedPosition!.longitude.toStringAsFixed(5)}'
+                              : 'Toque el mapa para seleccionar una ubicación.',
+                          style: const TextStyle(color: Colors.black54),
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _latitud,
+                          decoration: const InputDecoration(
+                            labelText: 'Latitud',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'Campo obligatorio'
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _longitud,
+                          decoration: const InputDecoration(
+                            labelText: 'Longitud',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'Campo obligatorio'
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _descripcion,
+                          decoration: const InputDecoration(
+                            labelText: 'Descripción',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        ElevatedButton.icon(
+                          onPressed: _guardar,
+                          label: const Text('Guardar Ubicación'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: AppColors.buttonText,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                  ),
                 ),
-                child: const Text('GUARDAR'),
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }

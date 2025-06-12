@@ -3,6 +3,7 @@ import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/core/routers.dart';
 import 'package:sistema_animales/models/animal_rescatista_model.dart';
 import 'package:sistema_animales/screens/animal/animal_detail_popup.dart';
+import 'package:sistema_animales/screens/animalhistory/animal_history_screen.dart';
 import 'package:sistema_animales/screens/rescuer/rescuer_detail_popup.dart';
 import 'package:sistema_animales/screens/shared/pantalla_nav.dart';
 import 'package:sistema_animales/servicess/animal_service.dart';
@@ -26,10 +27,14 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
   late Future<List<AnimalRescatista>> _futureAnimals;
   List<AnimalRescatista> _allAnimals = [];
   List<AnimalRescatista> _filteredAnimals = [];
+  List<AnimalRescatista> _silvestres = [];
+  List<AnimalRescatista> _domesticos = [];
 
   Timer? _timer;
 
-  @override
+  // Variable para controlar qué categoría mostrar
+  String _currentCategory = 'todos'; // 'todos', 'silvestres', 'domesticos'
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +51,12 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
 
       setState(() {
         _allAnimals = updatedAnimals;
+        _silvestres = updatedAnimals
+            .where((a) => a.animal.tipo?.toLowerCase() == 'silvestre')
+            .toList();
+        _domesticos = updatedAnimals
+            .where((a) => a.animal.tipo?.toLowerCase() == 'doméstico')
+            .toList();
         _filterAnimals(_searchController.text);
       });
     });
@@ -56,12 +67,31 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
     setState(() {
       _allAnimals = animals;
       _filteredAnimals = animals;
+      _silvestres = animals
+          .where((a) => a.animal.tipo?.toLowerCase() == 'silvestre')
+          .toList();
+      _domesticos = animals
+          .where((a) => a.animal.tipo?.toLowerCase() == 'doméstico')
+          .toList();
     });
     return animals;
   }
 
   void _filterAnimals(String query) {
-    final filtered = _allAnimals.where((item) {
+    List<AnimalRescatista> sourceList;
+
+    switch (_currentCategory) {
+      case 'silvestres':
+        sourceList = _silvestres;
+        break;
+      case 'domesticos':
+        sourceList = _domesticos;
+        break;
+      default:
+        sourceList = _allAnimals;
+    }
+
+    final filtered = sourceList.where((item) {
       final name = item.animal.nombre.toLowerCase();
       return name.contains(query.toLowerCase());
     }).toList();
@@ -71,7 +101,13 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
     });
   }
 
-  @override
+  void _changeCategory(String category) {
+    setState(() {
+      _currentCategory = category;
+      _filterAnimals(_searchController.text);
+    });
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -124,6 +160,20 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                   ],
                 ),
               ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildCategoryButton('Todos', 'todos', Icons.pets),
+                    _buildCategoryButton(
+                        'Silvestres', 'silvestres', Icons.forest),
+                    _buildCategoryButton(
+                        'Domésticos', 'domesticos', Icons.home),
+                  ],
+                ),
+              ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -170,47 +220,34 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (_filteredAnimals.isEmpty) {
-                      return GridView.builder(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          mainAxisExtent: 360,
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 64,
+                              color: Colors.white.withOpacity(0.7),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No se encontraron animales',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.8),
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _getCurrentCategoryText(),
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.6),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
-                        itemCount: _filteredAnimals.length,
-                        itemBuilder: (context, index) {
-                          final item = _filteredAnimals[index];
-
-                          return AnimalCard(
-                            animal: item.animal,
-                            onDetails: () {
-                              showDialog(
-                                context: context,
-                                builder: (_) =>
-                                    AnimalDetailPopup(animal: item.animal),
-                              );
-                            },
-                            onRescuer: () {
-                              final rescuer = item.rescuer;
-                              if (rescuer != null) {
-                                showDialog(
-                                  context: context,
-                                  builder: (_) =>
-                                      RescuerDetailPopup(rescuer: rescuer),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'Este animal no tiene rescatista registrado')),
-                                );
-                              }
-                            },
-                          );
-                        },
                       );
                     } else {
                       return GridView.builder(
@@ -221,7 +258,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
-                          mainAxisExtent: 360,
+                          mainAxisExtent: 420,
                         ),
                         itemCount: _filteredAnimals.length,
                         itemBuilder: (context, index) {
@@ -247,10 +284,20 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                      content: Text(
-                                          'Este animal no tiene rescatista registrado')),
+                                    content: Text(
+                                        'Este animal no tiene rescatista registrado'),
+                                  ),
                                 );
                               }
+                            },
+                            onHistory: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => AnimalHistoryScreen(
+                                      nombre: item.animal.nombre),
+                                ),
+                              );
                             },
                           );
                         },
@@ -326,5 +373,57 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
       ),
       bottomNavigationBar: PantallaNav(context: context),
     );
+  }
+
+  Widget _buildCategoryButton(String label, String category, IconData icon) {
+    final isSelected = _currentCategory == category;
+
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: ElevatedButton.icon(
+          onPressed: () => _changeCategory(category),
+          icon: Icon(
+            icon,
+            size: 18,
+            color: isSelected ? Colors.white : AppColors.primary,
+          ),
+          label: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : AppColors.primary,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor:
+                isSelected ? AppColors.primary : Colors.white.withOpacity(0.95),
+            foregroundColor: isSelected ? Colors.white : AppColors.primary,
+            elevation: isSelected ? 8 : 3,
+            shadowColor: Colors.black.withOpacity(0.3),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(
+                color: AppColors.primary,
+                width: isSelected ? 0 : 1.5,
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _getCurrentCategoryText() {
+    switch (_currentCategory) {
+      case 'silvestres':
+        return 'en la categoría de animales silvestres';
+      case 'domesticos':
+        return 'en la categoría de animales domésticos';
+      default:
+        return 'en todas las categorías';
+    }
   }
 }

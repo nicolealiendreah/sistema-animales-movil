@@ -34,22 +34,26 @@ class Transfer {
   });
 
   factory Transfer.fromJson(Map<String, dynamic> json) {
+    final anterior = json['ubicacionAnterior'];
+    final nueva = json['ubicacionNueva'];
+
     return Transfer(
       id: json['id'],
       animalId: json['animalId'],
       nombreAnimal: json['animal']?['nombre'] ?? json['nombreAnimal'],
-      ubicacionAnterior: json['ubicacionAnterior'],
+      ubicacionAnterior: anterior?['descripcion'],
       motivo: json['motivo'],
       observaciones: json['observaciones'],
       responsable: json['responsable'],
       fechaTraslado: DateTime.parse(json['fechaTraslado']),
-      latitud: (json['latitud'] as num?)?.toDouble(),
-      longitud: (json['longitud'] as num?)?.toDouble(),
-      descripcion: json['descripcion'],
-      latitudAnterior: (json['latitudAnterior'] as num?)?.toDouble(),
-      longitudAnterior: (json['longitudAnterior'] as num?)?.toDouble(),
-      latitudNueva: (json['latitudNueva'] as num?)?.toDouble(),
-      longitudNueva: (json['longitudNueva'] as num?)?.toDouble(),
+      latitudAnterior: anterior?['latitud']?.toDouble(),
+      longitudAnterior: anterior?['longitud']?.toDouble(),
+      latitudNueva: nueva?['latitud']?.toDouble(),
+      longitudNueva: nueva?['longitud']?.toDouble(),
+      descripcion: nueva?['descripcion'], // opcional, si lo necesitas
+      latitud:
+          nueva?['latitud']?.toDouble(), // redundante si ya usas latitudNueva
+      longitud: nueva?['longitud']?.toDouble(), // igual aquí
     );
   }
 
