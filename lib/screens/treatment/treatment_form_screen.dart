@@ -54,6 +54,16 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
       initialDate: fechaTratamiento ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (date != null) {
       setState(() => fechaTratamiento = date);
@@ -76,19 +86,29 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
       await _TratamientoService.create(treatment);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tratamiento registrado correctamente')),
+        SnackBar(
+          content: const Text('Tratamiento registrado correctamente'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
       );
       Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al registrar tratamiento: $e')),
+        SnackBar(
+          content: Text('Error al registrar tratamiento: $e'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
       );
     }
   }
 
   String _formatDate(DateTime? date) =>
-      date != null ? DateFormat.yMMMd().format(date) : '-';
+      date != null ? DateFormat.yMMMd().format(date) : 'Seleccionar fecha';
 
   @override
   Widget build(BuildContext context) {
@@ -98,92 +118,119 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
         fit: StackFit.expand,
         children: [
           Image.asset('assets/background2.jpg', fit: BoxFit.cover),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.3),
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.1),
+                ],
+              ),
+            ),
+          ),
           Column(
             children: [
               Container(
-                color: AppColors.primary,
-                padding: const EdgeInsets.only(top: 50, bottom: 12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppColors.primary, AppColors.primary.withOpacity(0.8)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.only(top: 50, bottom: 16),
                 child: Row(
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Registrar Tratamiento ${widget.animal.nombre}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.center,
+                    Container(
+                      margin: const EdgeInsets.only(left: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+                        onPressed: () => Navigator.pop(context),
                       ),
                     ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Registrar Tratamiento',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              widget.animal.nombre,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 56),
                   ],
                 ),
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        _buildTextField('Tratamiento', tratamiento),
-                        DropdownButtonFormField<Veterinario>(
-                          value: _selectedVeterinario,
-                          items: _veterinarios.map((v) {
-                            return DropdownMenuItem(
-                              value: v,
-                              child: Text(v.nombre),
-                            );
-                          }).toList(),
-                          onChanged: (v) {
-                            setState(() => _selectedVeterinario = v);
-                          },
-                          decoration: const InputDecoration(
-                            labelText: 'Veterinario responsable',
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) => value == null
-                              ? 'Seleccione un veterinario'
-                              : null,
-                        ),
-                        _buildTextField('Observaciones', observaciones),
-                        _buildTextField('Duración', duracion),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            const Text('Fecha del tratamiento:',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            const SizedBox(width: 10),
-                            TextButton(
-                              onPressed: () => _pickDate(context),
-                              child: Text(
-                                _formatDate(fechaTratamiento),
-                                style: const TextStyle(color: Colors.blue),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: _saveTreatment,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: AppColors.primary,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 60, vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: const Text('GUARDAR'),
+                  padding: const EdgeInsets.all(24),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.95),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
                         ),
                       ],
+                    ),
+                    padding: const EdgeInsets.all(24),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildTextField('Tratamiento', tratamiento, Icons.medical_services),
+                          const SizedBox(height: 20),
+                          _buildDropdown(),
+                          const SizedBox(height: 20),
+                          _buildTextField('Observaciones', observaciones, Icons.notes, maxLines: 3),
+                          const SizedBox(height: 20),
+                          _buildTextField('Duración', duracion, Icons.schedule),
+                          const SizedBox(height: 24),
+                          _buildDatePicker(),
+                          const SizedBox(height: 32),
+                          _buildSaveButton(),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -195,17 +242,173 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: TextFormField(
-        controller: controller,
-        validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-        decoration: InputDecoration(
-          labelText: label,
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+  Widget _buildTextField(String label, TextEditingController controller, IconData icon, {int maxLines = 1}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[700],
+            letterSpacing: 0.3,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          maxLines: maxLines,
+          validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: AppColors.primary.withOpacity(0.7)),
+            filled: true,
+            fillColor: Colors.grey[50],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: Colors.grey[200]!, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: AppColors.primary, width: 2),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Colors.red, width: 1),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Veterinario Responsable',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[700],
+            letterSpacing: 0.3,
+          ),
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<Veterinario>(
+          value: _selectedVeterinario,
+          items: _veterinarios.map((v) {
+            return DropdownMenuItem(
+              value: v,
+              child: Text(
+                v.nombre,
+                style: const TextStyle(fontSize: 16),
+              ),
+            );
+          }).toList(),
+          onChanged: (v) {
+            setState(() => _selectedVeterinario = v);
+          },
+          decoration: InputDecoration(
+            prefixIcon: Icon(Icons.person, color: AppColors.primary.withOpacity(0.7)),
+            filled: true,
+            fillColor: Colors.grey[50],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: Colors.grey[200]!, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: AppColors.primary, width: 2),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          ),
+          validator: (value) => value == null ? 'Seleccione un veterinario' : null,
+          dropdownColor: Colors.white,
+          icon: Icon(Icons.arrow_drop_down, color: AppColors.primary),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDatePicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Fecha del Tratamiento',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[700],
+            letterSpacing: 0.3,
+          ),
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () => _pickDate(context),
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[200]!),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.calendar_today, color: AppColors.primary.withOpacity(0.7)),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    _formatDate(fechaTratamiento),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: fechaTratamiento != null ? Colors.black87 : Colors.grey[600],
+                    ),
+                  ),
+                ),
+                Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: _saveTreatment,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 18),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 3,
+          shadowColor: AppColors.primary.withOpacity(0.3),
+        ),
+        child: const Text(
+          'GUARDAR TRATAMIENTO',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1,
+          ),
         ),
       ),
     );
