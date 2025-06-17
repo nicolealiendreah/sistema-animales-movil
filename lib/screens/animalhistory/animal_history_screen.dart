@@ -12,7 +12,7 @@ class AnimalHistoryScreen extends StatefulWidget {
   State<AnimalHistoryScreen> createState() => _AnimalHistoryScreenState();
 }
 
-class _AnimalHistoryScreenState extends State<AnimalHistoryScreen> 
+class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
     with TickerProviderStateMixin {
   final AnimalHistoryService _historyService = AnimalHistoryService();
   late Future<AnimalHistorial> _futureHistorial;
@@ -54,7 +54,8 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
     }
   }
 
-  Widget _buildModernCard(String title, List<Widget> content, IconData icon, Color iconColor) {
+  Widget _buildModernCard(
+      String title, List<Widget> content, IconData icon, Color iconColor) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
@@ -302,7 +303,7 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                   ],
                 ),
               ),
-              
+
               // Contenido
               Expanded(
                 child: FutureBuilder<AnimalHistorial>(
@@ -430,13 +431,35 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                               _buildModernCard(
                                 "Información del Animal",
                                 [
-                                  _buildInfoRow("Nombre", historial.animal.nombre ?? 'No disponible', icon: Icons.pets),
-                                  _buildInfoRow("Especie", historial.animal.especie ?? 'No disponible', icon: Icons.category),
-                                  _buildInfoRow("Raza", historial.animal.raza ?? 'No disponible', icon: Icons.info_outline),
-                                  _buildInfoRow("Sexo", historial.animal.sexo ?? 'No disponible', icon: Icons.wc),
-                                  _buildInfoRow("Edad", "${historial.animal.edad?.toString() ?? 'No registrada'} años", icon: Icons.cake),
-                                  _buildInfoRow("Estado de salud", historial.animal.estadoSalud ?? 'No disponible', icon: Icons.health_and_safety),
-                                  _buildInfoRow("Ubicación rescate", historial.animal.ubicacionRescate ?? 'No disponible', icon: Icons.location_on),
+                                  _buildInfoRow(
+                                      "Nombre",
+                                      historial.animal.nombre ??
+                                          'No disponible',
+                                      icon: Icons.pets),
+                                  _buildInfoRow(
+                                      "Especie",
+                                      historial.animal.especie ??
+                                          'No disponible',
+                                      icon: Icons.category),
+                                  _buildInfoRow("Raza",
+                                      historial.animal.raza ?? 'No disponible',
+                                      icon: Icons.info_outline),
+                                  _buildInfoRow("Sexo",
+                                      historial.animal.sexo ?? 'No disponible',
+                                      icon: Icons.wc),
+                                  _buildInfoRow("Edad",
+                                      "${historial.animal.edad?.toString() ?? 'No registrada'} años",
+                                      icon: Icons.cake),
+                                  _buildInfoRow(
+                                      "Estado de salud",
+                                      historial.animal.estadoSalud ??
+                                          'No disponible',
+                                      icon: Icons.health_and_safety),
+                                  _buildInfoRow(
+                                      "Ubicación rescate",
+                                      historial.animal.ubicacionRescate ??
+                                          'No disponible',
+                                      icon: Icons.location_on),
                                 ],
                                 Icons.pets,
                                 AppColors.primary,
@@ -446,8 +469,16 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                               _buildModernCard(
                                 "Información del Rescatista",
                                 [
-                                  _buildInfoRow("Nombre", historial.rescatista.nombre ?? 'No disponible', icon: Icons.person),
-                                  _buildInfoRow("Teléfono", historial.rescatista.telefono ?? 'No disponible', icon: Icons.phone),
+                                  _buildInfoRow(
+                                      "Nombre",
+                                      historial.rescatista.nombre ??
+                                          'No disponible',
+                                      icon: Icons.person),
+                                  _buildInfoRow(
+                                      "Teléfono",
+                                      historial.rescatista.telefono ??
+                                          'No disponible',
+                                      icon: Icons.phone),
                                 ],
                                 Icons.person_pin,
                                 Colors.blue,
@@ -462,27 +493,44 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                                           padding: const EdgeInsets.all(16),
                                           decoration: BoxDecoration(
                                             color: Colors.grey[50],
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
                                           child: const Row(
                                             children: [
-                                              Icon(Icons.info_outline, color: Colors.grey),
+                                              Icon(Icons.info_outline,
+                                                  color: Colors.grey),
                                               SizedBox(width: 12),
-                                              Text("No se registraron evaluaciones.", 
-                                                   style: TextStyle(color: Colors.grey)),
+                                              Text(
+                                                  "No se registraron evaluaciones.",
+                                                  style: TextStyle(
+                                                      color: Colors.grey)),
                                             ],
                                           ),
                                         )
                                       ]
-                                    : historial.evaluations.map((e) => _buildTimelineItem(
-                                        "Evaluación - ${formatDate(e.fechaEvaluacion)}",
-                                        [
-                                          _buildInfoRow("Diagnóstico", e.diagnostico ?? 'No especificado'),
-                                          _buildInfoRow("Síntomas", e.sintomas ?? 'No especificado'),
-                                          _buildInfoRow("Medicación", e.medicacion ?? 'No especificado'),
-                                        ],
-                                        Colors.red,
-                                      )).toList(),
+                                    : historial.evaluations.map((e) {
+                                        print(
+                                            '[DEBUG] EVALUATION: ${e.toJson()}');
+                                        return _buildTimelineItem(
+                                          "Evaluación - ${formatDate(e.fechaEvaluacion)}",
+                                          [
+                                            _buildInfoRow(
+                                                "Diagnóstico",
+                                                e.diagnostico ??
+                                                    'No especificado'),
+                                            _buildInfoRow(
+                                                "Síntomas",
+                                                e.sintomas ??
+                                                    'No especificado'),
+                                            _buildInfoRow(
+                                                "Medicación",
+                                                e.medicacion ??
+                                                    'No especificado'),
+                                          ],
+                                          Colors.red,
+                                        );
+                                      }).toList(),
                                 Icons.medical_services,
                                 Colors.red,
                               ),
@@ -496,27 +544,40 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                                           padding: const EdgeInsets.all(16),
                                           decoration: BoxDecoration(
                                             color: Colors.grey[50],
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
                                           child: const Row(
                                             children: [
-                                              Icon(Icons.info_outline, color: Colors.grey),
+                                              Icon(Icons.info_outline,
+                                                  color: Colors.grey),
                                               SizedBox(width: 12),
-                                              Text("No se registraron tratamientos.", 
-                                                   style: TextStyle(color: Colors.grey)),
+                                              Text(
+                                                  "No se registraron tratamientos.",
+                                                  style: TextStyle(
+                                                      color: Colors.grey)),
                                             ],
                                           ),
                                         )
                                       ]
-                                    : historial.treatments.map((t) => _buildTimelineItem(
-                                        "Tratamiento",
-                                        [
-                                          _buildInfoRow("Tratamiento", t.tratamiento ?? 'No especificado'),
-                                          _buildInfoRow("Duración", "${t.duracion ?? 'No especificada'} días"),
-                                          _buildInfoRow("Observaciones", t.observaciones ?? 'No especificadas'),
-                                        ],
-                                        Colors.orange,
-                                      )).toList(),
+                                    : historial.treatments
+                                        .map((t) => _buildTimelineItem(
+                                              "Tratamiento",
+                                              [
+                                                _buildInfoRow(
+                                                    "Tratamiento",
+                                                    t.tratamiento ??
+                                                        'No especificado'),
+                                                _buildInfoRow("Duración",
+                                                    "${t.duracion ?? 'No especificada'} días"),
+                                                _buildInfoRow(
+                                                    "Observaciones",
+                                                    t.observaciones ??
+                                                        'No especificadas'),
+                                              ],
+                                              Colors.orange,
+                                            ))
+                                        .toList(),
                                 Icons.healing,
                                 Colors.orange,
                               ),
@@ -530,27 +591,40 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                                           padding: const EdgeInsets.all(16),
                                           decoration: BoxDecoration(
                                             color: Colors.grey[50],
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
                                           child: const Row(
                                             children: [
-                                              Icon(Icons.info_outline, color: Colors.grey),
+                                              Icon(Icons.info_outline,
+                                                  color: Colors.grey),
                                               SizedBox(width: 12),
-                                              Text("No se registraron traslados.", 
-                                                   style: TextStyle(color: Colors.grey)),
+                                              Text(
+                                                  "No se registraron traslados.",
+                                                  style: TextStyle(
+                                                      color: Colors.grey)),
                                             ],
                                           ),
                                         )
                                       ]
-                                    : historial.transfers.map((t) => _buildTimelineItem(
-                                        "Traslado - ${formatDate(t.fechaTraslado)}",
-                                        [
-                                          _buildInfoRow("Motivo", t.motivo ?? 'No indicado'),
-                                          _buildInfoRow("Responsable", t.responsable ?? 'No registrado'),
-                                          _buildInfoRow("Observaciones", t.observaciones ?? 'Ninguna'),
-                                        ],
-                                        Colors.purple,
-                                      )).toList(),
+                                    : historial.transfers
+                                        .map((t) => _buildTimelineItem(
+                                              "Traslado - ${formatDate(t.fechaTraslado)}",
+                                              [
+                                                _buildInfoRow("Motivo",
+                                                    t.motivo ?? 'No indicado'),
+                                                _buildInfoRow(
+                                                    "Responsable",
+                                                    t.responsable ??
+                                                        'No registrado'),
+                                                _buildInfoRow(
+                                                    "Observaciones",
+                                                    t.observaciones ??
+                                                        'Ninguna'),
+                                              ],
+                                              Colors.purple,
+                                            ))
+                                        .toList(),
                                 Icons.transfer_within_a_station,
                                 Colors.purple,
                               ),
@@ -564,25 +638,34 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                                           padding: const EdgeInsets.all(16),
                                           decoration: BoxDecoration(
                                             color: Colors.grey[50],
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
                                           child: const Row(
                                             children: [
-                                              Icon(Icons.info_outline, color: Colors.grey),
+                                              Icon(Icons.info_outline,
+                                                  color: Colors.grey),
                                               SizedBox(width: 12),
-                                              Text("No se registraron liberaciones.", 
-                                                   style: TextStyle(color: Colors.grey)),
+                                              Text(
+                                                  "No se registraron liberaciones.",
+                                                  style: TextStyle(
+                                                      color: Colors.grey)),
                                             ],
                                           ),
                                         )
                                       ]
-                                    : historial.liberations.map((l) => _buildTimelineItem(
-                                        "Liberación - ${formatDate(l.fechaLiberacion)}",
-                                        [
-                                          _buildInfoRow("Observaciones", l.observaciones ?? 'Ninguna'),
-                                        ],
-                                        Colors.green,
-                                      )).toList(),
+                                    : historial.liberations
+                                        .map((l) => _buildTimelineItem(
+                                              "Liberación - ${formatDate(l.fechaLiberacion)}",
+                                              [
+                                                _buildInfoRow(
+                                                    "Observaciones",
+                                                    l.observaciones ??
+                                                        'Ninguna'),
+                                              ],
+                                              Colors.green,
+                                            ))
+                                        .toList(),
                                 Icons.flight_takeoff,
                                 Colors.green,
                               ),
@@ -596,25 +679,34 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                                           padding: const EdgeInsets.all(16),
                                           decoration: BoxDecoration(
                                             color: Colors.grey[50],
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
                                           child: const Row(
                                             children: [
-                                              Icon(Icons.info_outline, color: Colors.grey),
+                                              Icon(Icons.info_outline,
+                                                  color: Colors.grey),
                                               SizedBox(width: 12),
-                                              Text("Este animal no fue adoptado.", 
-                                                   style: TextStyle(color: Colors.grey)),
+                                              Text(
+                                                  "Este animal no fue adoptado.",
+                                                  style: TextStyle(
+                                                      color: Colors.grey)),
                                             ],
                                           ),
                                         )
                                       ]
-                                    : historial.adoptions.map((a) => _buildTimelineItem(
-                                        "Adopción - ${formatDate(a.fechaAdopcion)}",
-                                        [
-                                          _buildInfoRow("Adoptante", a.nombreAdoptante ?? 'No registrado'),
-                                        ],
-                                        Colors.pink,
-                                      )).toList(),
+                                    : historial.adoptions
+                                        .map((a) => _buildTimelineItem(
+                                              "Adopción - ${formatDate(a.fechaAdopcion)}",
+                                              [
+                                                _buildInfoRow(
+                                                    "Adoptante",
+                                                    a.nombreAdoptante ??
+                                                        'No registrado'),
+                                              ],
+                                              Colors.pink,
+                                            ))
+                                        .toList(),
                                 Icons.favorite,
                                 Colors.pink,
                               ),

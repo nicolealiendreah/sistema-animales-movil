@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/models/veterinarian_model.dart';
 import 'package:sistema_animales/servicess/veterinario_service.dart';
@@ -20,20 +22,38 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
   final TextEditingController _telefonoController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
-  Future<void> _guardarVeterinario() async {
-    if (_formKey.currentState!.validate()) {
-      final nuevo = Veterinario(
-        nombre: _nombreController.text,
-        especialidad: _especialidadController.text,
-        telefono: _telefonoController.text,
-        email: _emailController.text,
-        
-      );
+  final ImagePicker _picker = ImagePicker();
+  XFile? _pickedImage;
 
-      await _service.create(nuevo);
-      if (!mounted) return;
-      Navigator.pop(context, true);
+  Future<void> _guardarVeterinario() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (_pickedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Debe seleccionar una imagen del veterinario')),
+      );
+      return;
     }
+
+    final extension = _pickedImage!.path.split('.').last.toLowerCase();
+    if (!['jpg', 'jpeg', 'png', 'gif'].contains(extension)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Solo se permiten imágenes JPG, PNG o GIF')),
+      );
+      return;
+    }
+
+    final nuevo = Veterinario(
+      nombre: _nombreController.text,
+      especialidad: _especialidadController.text,
+      telefono: _telefonoController.text,
+      email: _emailController.text,
+    );
+
+    await _service.create(nuevo, imageFile: _pickedImage); // Asumiendo que tu servicio ya acepta `imageFile`
+
+    if (!mounted) return;
+    Navigator.pop(context, true);
   }
 
   String? _requiredValidator(String? value) {
@@ -108,9 +128,44 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
                           icon: Icons.email,
                           validator: _requiredValidator,
                         ),
+                        const SizedBox(height: 16),
+                        const Text('Imagen del Veterinario',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        GestureDetector(
+                          onTap: () async {
+                            final picked = await _picker.pickImage(source: ImageSource.gallery);
+                            if (picked != null) {
+                              final extension = picked.path.split('.').last.toLowerCase();
+                              if (!['jpg', 'jpeg', 'png', 'gif'].contains(extension)) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Solo se permiten imágenes JPG, PNG o GIF')),
+                                );
+                                return;
+                              }
+                              setState(() {
+                                _pickedImage = picked;
+                              });
+                            }
+                          },
+                          child: Container(
+                            height: 150,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.grey),
+                            ),
+                            child: _pickedImage != null
+                                ? Image.file(File(_pickedImage!.path), fit: BoxFit.cover)
+                                : const Center(child: Icon(Icons.add_a_photo, size: 40)),
+                          ),
+                        ),
                         const SizedBox(height: 24),
                         ElevatedButton.icon(
                           onPressed: _guardarVeterinario,
+                          icon: const Icon(Icons.save),
                           label: const Text('Guardar Detalles Veterinario'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,

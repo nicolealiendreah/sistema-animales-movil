@@ -6,7 +6,7 @@ class Transfer {
   final String? motivo;
   final String? observaciones;
   final String? responsable;
-  final DateTime fechaTraslado;
+  final DateTime? fechaTraslado;
   final double? latitud;
   final double? longitud;
   final String? descripcion;
@@ -23,7 +23,7 @@ class Transfer {
     this.motivo,
     this.observaciones,
     this.responsable,
-    required this.fechaTraslado,
+    this.fechaTraslado,
     this.latitud,
     this.longitud,
     this.descripcion,
@@ -40,20 +40,21 @@ class Transfer {
     return Transfer(
       id: json['id'],
       animalId: json['animalId'],
-      nombreAnimal: json['animal']?['nombre'] ?? json['nombreAnimal'],
+      nombreAnimal: json['animal']?['nombre'] ?? json['nombreAnimal'] ?? 'Sin nombre',
       ubicacionAnterior: anterior?['descripcion'],
       motivo: json['motivo'],
       observaciones: json['observaciones'],
       responsable: json['responsable'],
-      fechaTraslado: DateTime.parse(json['fechaTraslado']),
+      fechaTraslado: json['fechaTraslado'] != null
+          ? DateTime.tryParse(json['fechaTraslado'])
+          : null,
       latitudAnterior: anterior?['latitud']?.toDouble(),
       longitudAnterior: anterior?['longitud']?.toDouble(),
       latitudNueva: nueva?['latitud']?.toDouble(),
       longitudNueva: nueva?['longitud']?.toDouble(),
-      descripcion: nueva?['descripcion'], // opcional, si lo necesitas
-      latitud:
-          nueva?['latitud']?.toDouble(), // redundante si ya usas latitudNueva
-      longitud: nueva?['longitud']?.toDouble(), // igual aquí
+      descripcion: nueva?['descripcion'],
+      latitud: nueva?['latitud']?.toDouble(),
+      longitud: nueva?['longitud']?.toDouble(),
     );
   }
 
@@ -64,7 +65,7 @@ class Transfer {
       'motivo': motivo,
       'observaciones': observaciones,
       'responsable': responsable,
-      'fechaTraslado': fechaTraslado.toIso8601String(),
+      'fechaTraslado': fechaTraslado?.toIso8601String(),
       'latitud': latitud,
       'longitud': longitud,
       'descripcion': descripcion,

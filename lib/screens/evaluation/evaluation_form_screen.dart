@@ -8,7 +8,9 @@ import 'package:sistema_animales/servicess/evaluation_service.dart';
 import 'package:sistema_animales/servicess/veterinario_service.dart';
 
 List<Veterinario> _veterinarios = [];
+String? _selectedVeterinarioId;
 Veterinario? _selectedVeterinario;
+
 final _veterinarioService = VeterinarioService();
 
 class EvaluationFormScreen extends StatefulWidget {
@@ -162,17 +164,18 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
                         _buildTextField(
                             'Tratamiento Administrado', tratamiento),
                         _buildTextField('Medicación Recetada', medicacion),
-                        DropdownButtonFormField<Veterinario>(
-                          value: _selectedVeterinario,
+                        DropdownButtonFormField<String>(
+                          value: _selectedVeterinario?.id,
                           items: _veterinarios.map((v) {
                             return DropdownMenuItem(
-                              value: v,
+                              value: v.id,
                               child: Text(v.nombre),
                             );
                           }).toList(),
-                          onChanged: (v) {
+                          onChanged: (idSeleccionado) {
                             setState(() {
-                              _selectedVeterinario = v;
+                              _selectedVeterinario = _veterinarios
+                                  .firstWhere((v) => v.id == idSeleccionado);
                             });
                           },
                           decoration: const InputDecoration(

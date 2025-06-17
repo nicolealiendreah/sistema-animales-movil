@@ -1,8 +1,8 @@
 class Evaluation {
   final String? id;
   final String? animalId;
-  final String nombreAnimal;
-  final String diagnostico;
+  final String? nombreAnimal;
+  final String? diagnostico;
   final String? sintomas;
   final String? medicacion;
   final String? responsable;
@@ -25,8 +25,9 @@ class Evaluation {
     return Evaluation(
       id: json['id'],
       animalId: json['animalId'],
-      nombreAnimal: json['animal']?['nombre'] ?? json['nombreAnimal'],
-      diagnostico: json['diagnostico'],
+      nombreAnimal:
+          json['animal']?['nombre'] ?? json['nombreAnimal'] ?? 'Sin nombre',
+      diagnostico: json['diagnostico'] ?? 'Sin diagnóstico',
       sintomas: json['sintomas'],
       medicacion: json['medicacion'],
       responsable: json['responsableNombre'],
@@ -45,7 +46,7 @@ class Evaluation {
       'diagnostico': diagnostico,
       'sintomas': sintomas,
       'medicacion': medicacion,
-      'responsableNombre': responsable, 
+      'responsableNombre': responsable,
       'fechaEvaluacion': fechaEvaluacion?.toIso8601String(),
       'proximaRevision': proximaRevision?.toIso8601String(),
     };

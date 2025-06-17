@@ -31,9 +31,7 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
   List<AnimalRescatista> _domesticos = [];
 
   Timer? _timer;
-
-  // Variable para controlar qué categoría mostrar
-  String _currentCategory = 'todos'; // 'todos', 'silvestres', 'domesticos'
+  String _currentCategory = 'todos';
 
   @override
   void initState() {
