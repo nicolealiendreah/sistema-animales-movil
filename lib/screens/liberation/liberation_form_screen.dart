@@ -91,9 +91,11 @@ class _LiberationFormScreenState extends State<LiberationFormScreen>
   }
 
   Future<void> _loadAnimals() async {
-    final list = await _animalService.getAll();
+    final allAnimals = await _animalService.getAll();
+    final wildAnimals =
+        allAnimals.where((a) => a.animal.tipo == 'Silvestre').toList();
     setState(() {
-      _animals = list;
+      _animals = wildAnimals;
     });
   }
 
@@ -289,7 +291,8 @@ class _LiberationFormScreenState extends State<LiberationFormScreen>
               icon: Icons.description,
               child: Column(
                 children: [
-                  _buildModernField('Observaciones', observaciones, maxLines: 3),
+                  _buildModernField('Observaciones', observaciones,
+                      maxLines: 3),
                   const SizedBox(height: 16),
                   _buildDateSelector(),
                 ],

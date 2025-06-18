@@ -31,7 +31,8 @@ class Adoption {
     return Adoption(
       id: json['id'],
       animalId: json['animalId'],
-      nombreAnimal: json['animal']?['nombre'] ?? json['nombreAnimal'],
+      nombreAnimal:
+          json['animal']?['nombre'] ?? json['nombreAnimal'] ?? 'Sin nombre',
       estado: json['estado'],
       nombreAdoptante: json['nombreAdoptante'],
       contactoAdoptante: json['contactoAdoptante'],

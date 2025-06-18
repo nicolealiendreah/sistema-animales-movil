@@ -34,9 +34,12 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
 
   Future<void> _loadAnimalsAndAdoptions() async {
     try {
-      final animals = await _animalService.getAll();
+      final allAnimals = await _animalService.getAll();
+      final domesticAnimals = allAnimals
+          .where((a) => a.animal.tipo?.toLowerCase().trim() == 'doméstico')
+          .toList();
       setState(() {
-        _animals = animals;
+        _animals = domesticAnimals;
         _isLoading = false;
       });
     } catch (e) {
@@ -148,7 +151,6 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                 child: Row(
                   children: [
                     Container(
-                      
                       child: IconButton(
                         icon: const Icon(Icons.arrow_back, color: Colors.white),
                         onPressed: () => Navigator.pop(context, true),
@@ -216,14 +218,16 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                   Container(
                                     padding: const EdgeInsets.all(24),
                                     decoration: BoxDecoration(
-                                      color: AppColors.primary.withOpacity(0.05),
+                                      color:
+                                          AppColors.primary.withOpacity(0.05),
                                       borderRadius: const BorderRadius.only(
                                         topLeft: Radius.circular(20),
                                         topRight: Radius.circular(20),
                                       ),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
@@ -246,25 +250,30 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                         Container(
                                           decoration: BoxDecoration(
                                             color: Colors.white,
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
                                             border: Border.all(
                                               color: Colors.grey.shade300,
                                             ),
                                           ),
-                                          child: DropdownButtonFormField<AnimalRescatista>(
+                                          child: DropdownButtonFormField<
+                                              AnimalRescatista>(
                                             decoration: const InputDecoration(
                                               border: InputBorder.none,
-                                              contentPadding: EdgeInsets.symmetric(
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
                                                 horizontal: 16,
                                                 vertical: 12,
                                               ),
                                             ),
                                             value: _selectedAnimal,
-                                            hint: const Text('Seleccionar animal'),
+                                            hint: const Text(
+                                                'Seleccionar animal'),
                                             items: _animals
                                                 .map((ar) => DropdownMenuItem(
                                                       value: ar,
-                                                      child: Text(ar.animal.nombre),
+                                                      child: Text(
+                                                          ar.animal.nombre),
                                                     ))
                                                 .toList(),
                                             onChanged: (value) {
@@ -273,7 +282,8 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                                 _adoption = null;
                                               });
                                               if (value != null) {
-                                                _loadAdoptionData(value.animal.nombre);
+                                                _loadAdoptionData(
+                                                    value.animal.nombre);
                                               }
                                             },
                                           ),
@@ -281,7 +291,6 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                       ],
                                     ),
                                   ),
-                                  
                                   if (_adoption != null)
                                     Padding(
                                       padding: const EdgeInsets.all(24),
@@ -290,11 +299,14 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                           Container(
                                             padding: const EdgeInsets.all(16),
                                             decoration: BoxDecoration(
-                                              color: _getStatusColor(_adoption?.estado)
+                                              color: _getStatusColor(
+                                                      _adoption?.estado)
                                                   .withOpacity(0.1),
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                               border: Border.all(
-                                                color: _getStatusColor(_adoption?.estado)
+                                                color: _getStatusColor(
+                                                        _adoption?.estado)
                                                     .withOpacity(0.3),
                                               ),
                                             ),
@@ -302,13 +314,17 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                               children: [
                                                 Expanded(
                                                   child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: [
                                                       Text(
                                                         'Fecha de Adopción',
                                                         style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.grey.shade600,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors
+                                                              .grey.shade600,
                                                           fontSize: 12,
                                                         ),
                                                       ),
@@ -316,29 +332,43 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                                       Row(
                                                         children: [
                                                           Icon(
-                                                            Icons.calendar_today,
+                                                            Icons
+                                                                .calendar_today,
                                                             size: 16,
-                                                            color: Colors.grey.shade600,
+                                                            color: Colors
+                                                                .grey.shade600,
                                                           ),
-                                                          const SizedBox(width: 4),
+                                                          const SizedBox(
+                                                              width: 4),
                                                           Text(
-                                                            _formatDate(_adoption?.fechaAdopcion),
-                                                            style: const TextStyle(
-                                                              fontWeight: FontWeight.w600,
+                                                            _formatDate(_adoption
+                                                                ?.fechaAdopcion),
+                                                            style:
+                                                                const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
                                                               fontSize: 16,
                                                             ),
                                                           ),
-                                                          const SizedBox(width: 8),
+                                                          const SizedBox(
+                                                              width: 8),
                                                           Icon(
                                                             Icons.access_time,
                                                             size: 16,
-                                                            color: Colors.grey.shade600,
+                                                            color: Colors
+                                                                .grey.shade600,
                                                           ),
-                                                          const SizedBox(width: 4),
+                                                          const SizedBox(
+                                                              width: 4),
                                                           Text(
-                                                            _formatTime(_adoption?.fechaAdopcion),
-                                                            style: const TextStyle(
-                                                              fontWeight: FontWeight.w600,
+                                                            _formatTime(_adoption
+                                                                ?.fechaAdopcion),
+                                                            style:
+                                                                const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
                                                               fontSize: 16,
                                                             ),
                                                           ),
@@ -348,19 +378,25 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                                   ),
                                                 ),
                                                 Container(
-                                                  padding: const EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                     horizontal: 12,
                                                     vertical: 6,
                                                   ),
                                                   decoration: BoxDecoration(
-                                                    color: _getStatusColor(_adoption?.estado),
-                                                    borderRadius: BorderRadius.circular(20),
+                                                    color: _getStatusColor(
+                                                        _adoption?.estado),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
                                                   ),
                                                   child: Text(
-                                                    _adoption?.estado ?? 'Sin estado',
+                                                    _adoption?.estado ??
+                                                        'Sin estado',
                                                     style: const TextStyle(
                                                       color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize: 12,
                                                     ),
                                                   ),
@@ -368,9 +404,7 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                               ],
                                             ),
                                           ),
-                                          
                                           const SizedBox(height: 20),
-                                          
                                           _buildModernInfoCard(
                                             'Información del Adoptante',
                                             Icons.person,
@@ -392,23 +426,27 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                               ),
                                             ],
                                           ),
-                                          
                                           const SizedBox(height: 16),
-                                          
-                                          if (_adoption?.observaciones?.isNotEmpty == true)
+                                          if (_adoption
+                                                  ?.observaciones?.isNotEmpty ==
+                                              true)
                                             _buildModernInfoCard(
                                               'Observaciones',
                                               Icons.note,
                                               [
                                                 Container(
                                                   width: double.infinity,
-                                                  padding: const EdgeInsets.all(12),
+                                                  padding:
+                                                      const EdgeInsets.all(12),
                                                   decoration: BoxDecoration(
                                                     color: Colors.grey.shade50,
-                                                    borderRadius: BorderRadius.circular(8),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
                                                   ),
                                                   child: Text(
-                                                    _adoption?.observaciones ?? '',
+                                                    _adoption?.observaciones ??
+                                                        '',
                                                     style: const TextStyle(
                                                       fontSize: 14,
                                                       height: 1.4,
@@ -423,9 +461,7 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
                                 ],
                               ),
                             ),
-                            
                             const SizedBox(height: 32),
-                            
                             ElevatedButton.icon(
                               onPressed: () async {
                                 final result = await Navigator.pushNamed(
@@ -465,7 +501,8 @@ class _AdoptionListScreenState extends State<AdoptionListScreen> {
     );
   }
 
-  Widget _buildModernInfoCard(String title, IconData icon, List<Widget> children) {
+  Widget _buildModernInfoCard(
+      String title, IconData icon, List<Widget> children) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),

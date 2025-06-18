@@ -16,7 +16,8 @@ class AdoptionFormScreen extends StatefulWidget {
   State<AdoptionFormScreen> createState() => _AdoptionFormScreenState();
 }
 
-class _AdoptionFormScreenState extends State<AdoptionFormScreen> with TickerProviderStateMixin {
+class _AdoptionFormScreenState extends State<AdoptionFormScreen>
+    with TickerProviderStateMixin {
   final AdoptionService _adoptionService = AdoptionService();
   final AnimalService _animalService = AnimalService();
   final _formKey = GlobalKey<FormState>();
@@ -76,9 +77,11 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> with TickerProv
   }
 
   Future<void> _loadAnimals() async {
-    final animals = await _animalService.getAll();
+    final allAnimals = await _animalService.getAll();
+    final domesticAnimals =
+        allAnimals.where((a) => a.animal.tipo == 'Doméstico').toList();
     setState(() {
-      _animals = animals;
+      _animals = domesticAnimals;
     });
   }
 
@@ -188,7 +191,8 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> with TickerProv
 
       await _adoptionService.create(adoption);
       if (!mounted) return;
-      _showSnackBar('Adopción guardada exitosamente', Icons.check_circle, Colors.green);
+      _showSnackBar(
+          'Adopción guardada exitosamente', Icons.check_circle, Colors.green);
       Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
@@ -243,7 +247,10 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> with TickerProv
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.primary, AppColors.primary.withOpacity(0.8)],
+                      colors: [
+                        AppColors.primary,
+                        AppColors.primary.withOpacity(0.8)
+                      ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -257,7 +264,8 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> with TickerProv
                   ),
                   child: SafeArea(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 16),
                       child: Row(
                         children: [
                           Container(
@@ -266,7 +274,8 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> with TickerProv
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
-                              icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+                              icon: const Icon(Icons.arrow_back_ios_rounded,
+                                  color: Colors.white),
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),
@@ -473,9 +482,11 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> with TickerProv
           controller: controller,
           maxLines: maxLines,
           keyboardType: keyboardType,
-          validator: validator ?? (value) => value!.isEmpty ? 'Campo requerido' : null,
+          validator:
+              validator ?? (value) => value!.isEmpty ? 'Campo requerido' : null,
           decoration: InputDecoration(
-            prefixIcon: icon != null ? Icon(icon, color: AppColors.primary) : null,
+            prefixIcon:
+                icon != null ? Icon(icon, color: AppColors.primary) : null,
             filled: true,
             fillColor: Colors.grey[50],
             border: OutlineInputBorder(
@@ -498,7 +509,8 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> with TickerProv
               borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(color: Colors.red, width: 2),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
         ),
       ],
@@ -522,9 +534,11 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> with TickerProv
       child: DropdownButtonFormField<T>(
         value: value,
         decoration: InputDecoration(
-          prefixIcon: icon != null ? Icon(icon, color: AppColors.primary) : null,
+          prefixIcon:
+              icon != null ? Icon(icon, color: AppColors.primary) : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           hintText: hint,
           hintStyle: TextStyle(color: Colors.grey[600]),
         ),
@@ -551,19 +565,21 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> with TickerProv
       child: DropdownButtonFormField<String>(
         value: estadoSeleccionado,
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.track_changes_outlined, color: AppColors.primary),
+          prefixIcon:
+              Icon(Icons.track_changes_outlined, color: AppColors.primary),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           hintText: 'Seleccionar estado',
           hintStyle: TextStyle(color: Colors.grey[600]),
         ),
         items: ['Adoptado', 'En seguimiento', 'Pendiente'].map((estado) {
-          Color statusColor = estado == 'Adoptado' 
-              ? Colors.green 
-              : estado == 'En seguimiento' 
-                  ? Colors.orange 
+          Color statusColor = estado == 'Adoptado'
+              ? Colors.green
+              : estado == 'En seguimiento'
+                  ? Colors.orange
                   : Colors.blue;
-          
+
           return DropdownMenuItem(
             value: estado,
             child: Row(
@@ -696,7 +712,9 @@ class _AdoptionFormScreenState extends State<AdoptionFormScreen> with TickerProv
                     _formatDate(_fechaAdopcion),
                     style: TextStyle(
                       fontSize: 16,
-                      color: _fechaAdopcion != null ? Colors.black87 : Colors.grey[600],
+                      color: _fechaAdopcion != null
+                          ? Colors.black87
+                          : Colors.grey[600],
                     ),
                   ),
                 ),

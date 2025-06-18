@@ -11,7 +11,6 @@ class AnimalHistoryService {
 
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-      print('[DEBUG JSON HISTORIAL] ${jsonEncode(body)}');
 
       if (body['success'] == true && body['postgres'] != null) {
         return AnimalHistorial.fromJson(body['postgres']);

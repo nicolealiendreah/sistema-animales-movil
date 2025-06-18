@@ -8,7 +8,9 @@ import 'package:sistema_animales/servicess/tratamiento_service.dart';
 import 'package:sistema_animales/servicess/veterinario_service.dart';
 
 List<Veterinario> _veterinarios = [];
+String? _selectedVeterinarioId;
 Veterinario? _selectedVeterinario;
+
 final _veterinarioService = VeterinarioService();
 
 class TreatmentFormScreen extends StatefulWidget {
@@ -42,6 +44,16 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
       final list = await _veterinarioService.getAll();
       setState(() {
         _veterinarios = list;
+
+        if (_selectedVeterinarioId != null) {
+          try {
+            _selectedVeterinario = _veterinarios.firstWhere(
+              (v) => v.id == _selectedVeterinarioId,
+            );
+          } catch (e) {
+            _selectedVeterinario = null;
+          }
+        }
       });
     } catch (e) {
       print('Error al cargar veterinarios: $e');
@@ -90,7 +102,8 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
           content: const Text('Tratamiento registrado correctamente'),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
       Navigator.pop(context, true);
@@ -101,7 +114,8 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
           content: Text('Error al registrar tratamiento: $e'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
     }
@@ -136,7 +150,10 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [AppColors.primary, AppColors.primary.withOpacity(0.8)],
+                    colors: [
+                      AppColors.primary,
+                      AppColors.primary.withOpacity(0.8)
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -158,7 +175,8 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+                        icon: const Icon(Icons.arrow_back_ios,
+                            color: Colors.white, size: 20),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
@@ -176,7 +194,8 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
                           ),
                           const SizedBox(height: 4),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(20),
@@ -218,11 +237,14 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildTextField('Tratamiento', tratamiento, Icons.medical_services),
+                          _buildTextField('Tratamiento', tratamiento,
+                              Icons.medical_services),
                           const SizedBox(height: 20),
                           _buildDropdown(),
                           const SizedBox(height: 20),
-                          _buildTextField('Observaciones', observaciones, Icons.notes, maxLines: 3),
+                          _buildTextField(
+                              'Observaciones', observaciones, Icons.notes,
+                              maxLines: 3),
                           const SizedBox(height: 20),
                           _buildTextField('Duración', duracion, Icons.schedule),
                           const SizedBox(height: 24),
@@ -242,7 +264,9 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, IconData icon, {int maxLines = 1}) {
+  Widget _buildTextField(
+      String label, TextEditingController controller, IconData icon,
+      {int maxLines = 1}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -280,7 +304,8 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
               borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(color: Colors.red, width: 1),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
         ),
       ],
@@ -301,41 +326,40 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        DropdownButtonFormField<Veterinario>(
-          value: _selectedVeterinario,
-          items: _veterinarios.map((v) {
-            return DropdownMenuItem(
-              value: v,
-              child: Text(
-                v.nombre,
-                style: const TextStyle(fontSize: 16),
-              ),
-            );
-          }).toList(),
-          onChanged: (v) {
-            setState(() => _selectedVeterinario = v);
-          },
-          decoration: InputDecoration(
-            prefixIcon: Icon(Icons.person, color: AppColors.primary.withOpacity(0.7)),
-            filled: true,
-            fillColor: Colors.grey[50],
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.grey[200]!, width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: AppColors.primary, width: 2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.shade200),
           ),
-          validator: (value) => value == null ? 'Seleccione un veterinario' : null,
-          dropdownColor: Colors.white,
-          icon: Icon(Icons.arrow_drop_down, color: AppColors.primary),
+          child: DropdownButtonFormField<String>(
+            value: _selectedVeterinarioId,
+            items: _veterinarios.map((v) {
+              return DropdownMenuItem(
+                value: v.id,
+                child: Text(v.nombre),
+              );
+            }).toList(),
+            onChanged: (idSeleccionado) {
+              setState(() {
+                _selectedVeterinarioId = idSeleccionado;
+                _selectedVeterinario =
+                    _veterinarios.firstWhere((v) => v.id == idSeleccionado);
+              });
+            },
+            decoration: InputDecoration(
+              labelText: 'Veterinario responsable',
+              prefixIcon: Icon(Icons.person_outline, color: AppColors.primary),
+              border: InputBorder.none,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              labelStyle: TextStyle(color: Colors.grey.shade600),
+            ),
+            validator: (value) =>
+                value == null ? 'Seleccione un veterinario' : null,
+            dropdownColor: Colors.white,
+            style: const TextStyle(color: Colors.black),
+          ),
         ),
       ],
     );
@@ -367,18 +391,22 @@ class _TreatmentFormScreenState extends State<TreatmentFormScreen> {
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: AppColors.primary.withOpacity(0.7)),
+                Icon(Icons.calendar_today,
+                    color: AppColors.primary.withOpacity(0.7)),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     _formatDate(fechaTratamiento),
                     style: TextStyle(
                       fontSize: 16,
-                      color: fechaTratamiento != null ? Colors.black87 : Colors.grey[600],
+                      color: fechaTratamiento != null
+                          ? Colors.black87
+                          : Colors.grey[600],
                     ),
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
+                Icon(Icons.arrow_forward_ios,
+                    size: 16, color: Colors.grey[400]),
               ],
             ),
           ),

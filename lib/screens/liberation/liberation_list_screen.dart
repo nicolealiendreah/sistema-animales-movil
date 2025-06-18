@@ -30,16 +30,20 @@ class _LiberationListScreenState extends State<LiberationListScreen> {
   }
 
   Future<void> _loadAnimals() async {
-    try {
-      final list = await _animalService.getAll();
-      setState(() {
-        _animals = list;
-        _isLoading = false;
-      });
-    } catch (_) {
-      setState(() => _isLoading = false);
-    }
+  try {
+    final list = await _animalService.getAll();
+    final wildAnimals = list
+        .where((a) => a.animal.tipo?.toLowerCase().trim() == 'silvestre')
+        .toList();
+    setState(() {
+      _animals = wildAnimals;
+      _isLoading = false;
+    });
+  } catch (_) {
+    setState(() => _isLoading = false);
   }
+}
+
 
   Future<void> _loadLiberacion(String nombreAnimal) async {
     try {
