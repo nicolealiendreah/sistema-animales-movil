@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color primary = Color(0xFF43A047); //(botones)
-  static const Color background = Color(0xFFA5D6A7); //(pantallas login/register)
+  static const Color primary = Color(0xFF43A047);
+  static const Color background = Color(0xFFA5D6A7);
   static const Color white = Colors.white;
   static const Color textLight = Colors.white;
   static const Color textDark = Colors.black87;

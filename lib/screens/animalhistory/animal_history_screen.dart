@@ -237,7 +237,6 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
           ),
           Column(
             children: [
-              // Header moderno
               Container(
                 padding: const EdgeInsets.only(
                     top: 50, left: 20, right: 20, bottom: 20),
@@ -307,8 +306,6 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                   ],
                 ),
               ),
-
-              // Contenido
               Expanded(
                 child: FutureBuilder<AnimalHistorial>(
                   future: _futureHistorial,
@@ -431,7 +428,6 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // Datos del Animal
                               _buildModernCard(
                                 "Información del Animal",
                                 [
@@ -468,8 +464,6 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                                 Icons.pets,
                                 AppColors.primary,
                               ),
-
-                              // Rescatista
                               _buildModernCard(
                                 "Información del Rescatista",
                                 [
@@ -487,8 +481,6 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                                 Icons.person_pin,
                                 Colors.blue,
                               ),
-
-                              // Evaluaciones Médicas
                               _buildModernCard(
                                 "Evaluaciones Médicas",
                                 historial.evaluations.isEmpty
@@ -538,8 +530,6 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                                 Icons.medical_services,
                                 Colors.red,
                               ),
-
-                              // Tratamientos
                               _buildModernCard(
                                 "Tratamientos",
                                 historial.treatments.isEmpty
@@ -585,8 +575,6 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                                 Icons.healing,
                                 Colors.orange,
                               ),
-
-                              // Traslados
                               _buildModernCard(
                                 "Traslados",
                                 historial.transfers.isEmpty
@@ -632,8 +620,6 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                                 Icons.transfer_within_a_station,
                                 Colors.purple,
                               ),
-
-                              // Liberaciones
                               _buildModernCard(
                                 "Liberaciones",
                                 historial.liberations.isEmpty
@@ -673,8 +659,6 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
                                 Icons.flight_takeoff,
                                 Colors.green,
                               ),
-
-                              // Adopciones
                               _buildModernCard(
                                 "Adopciones",
                                 historial.adoptions.isEmpty
