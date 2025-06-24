@@ -40,7 +40,8 @@ class Transfer {
     return Transfer(
       id: json['id'],
       animalId: json['animalId'],
-      nombreAnimal: json['animal']?['nombre'] ?? json['nombreAnimal'] ?? 'Sin nombre',
+      nombreAnimal:
+          json['animal']?['nombre'] ?? json['nombreAnimal'] ?? 'Sin nombre',
       ubicacionAnterior: anterior?['descripcion'],
       motivo: json['motivo'],
       observaciones: json['observaciones'],
@@ -61,14 +62,14 @@ class Transfer {
   Map<String, dynamic> toJson() {
     return {
       'nombreAnimal': nombreAnimal,
-      'ubicacionAnterior': ubicacionAnterior,
+      'ubicacionAnterior': ubicacionAnterior ?? 'Ubicación seleccionada',
       'motivo': motivo,
       'observaciones': observaciones,
       'responsable': responsable,
       'fechaTraslado': fechaTraslado?.toIso8601String(),
       'latitud': latitud,
       'longitud': longitud,
-      'descripcion': descripcion,
+      'descripcion': descripcion ?? 'Ubicación seleccionada',
       'latitudAnterior': latitudAnterior,
       'longitudAnterior': longitudAnterior,
       'latitudNueva': latitudNueva,

@@ -34,7 +34,8 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
           content: const Text('Debe seleccionar una imagen del veterinario'),
           backgroundColor: Colors.red.shade600,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
       return;
@@ -47,7 +48,8 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
           content: const Text('Solo se permiten imágenes JPG, PNG o GIF'),
           backgroundColor: Colors.red.shade600,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
       return;
@@ -98,7 +100,8 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
                     ],
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
                     child: Row(
                       children: [
                         Container(
@@ -107,7 +110,8 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: IconButton(
-                            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+                            icon: const Icon(Icons.arrow_back_ios_new,
+                                color: Colors.white),
                             onPressed: () => Navigator.pop(context),
                           ),
                         ),
@@ -189,14 +193,32 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
                                 hintText: 'Número de teléfono',
                                 controller: _telefonoController,
                                 icon: Icons.phone_outlined,
-                                validator: _requiredValidator,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Este campo es obligatorio';
+                                  } else if (!RegExp(r'^\d+$')
+                                      .hasMatch(value)) {
+                                    return 'Solo se permiten números';
+                                  }
+                                  return null;
+                                },
+                                keyboardType: TextInputType.phone,
                               ),
                               const SizedBox(height: 20),
                               CustomFormTextField(
                                 hintText: 'Correo electrónico',
                                 controller: _emailController,
                                 icon: Icons.email_outlined,
-                                validator: _requiredValidator,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Este campo es obligatorio';
+                                  } else if (!RegExp(r'^[\w\.-]+@gmail\.com$')
+                                      .hasMatch(value)) {
+                                    return 'Ingrese un correo válido de Gmail';
+                                  }
+                                  return null;
+                                },
+                                keyboardType: TextInputType.emailAddress,
                               ),
                               const SizedBox(height: 32),
                               Row(
@@ -227,16 +249,25 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
                               const SizedBox(height: 16),
                               GestureDetector(
                                 onTap: () async {
-                                  final picked = await _picker.pickImage(source: ImageSource.gallery);
+                                  final picked = await _picker.pickImage(
+                                      source: ImageSource.gallery);
                                   if (picked != null) {
-                                    final extension = picked.path.split('.').last.toLowerCase();
-                                    if (!['jpg', 'jpeg', 'png', 'gif'].contains(extension)) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                    final extension = picked.path
+                                        .split('.')
+                                        .last
+                                        .toLowerCase();
+                                    if (!['jpg', 'jpeg', 'png', 'gif']
+                                        .contains(extension)) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         SnackBar(
-                                          content: const Text('Solo se permiten imágenes JPG, PNG o GIF'),
+                                          content: const Text(
+                                              'Solo se permiten imágenes JPG, PNG o GIF'),
                                           backgroundColor: Colors.red.shade600,
                                           behavior: SnackBarBehavior.floating,
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12)),
                                         ),
                                       );
                                       return;
@@ -249,12 +280,12 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
                                 child: Container(
                                   height: 180,
                                   decoration: BoxDecoration(
-                                    color: _pickedImage != null 
-                                        ? Colors.transparent 
+                                    color: _pickedImage != null
+                                        ? Colors.transparent
                                         : Colors.grey.shade50,
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
-                                      color: _pickedImage != null 
+                                      color: _pickedImage != null
                                           ? AppColors.primary.withOpacity(0.3)
                                           : Colors.grey.shade300,
                                       width: 2,
@@ -269,7 +300,8 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
                                   ),
                                   child: _pickedImage != null
                                       ? ClipRRect(
-                                          borderRadius: BorderRadius.circular(14),
+                                          borderRadius:
+                                              BorderRadius.circular(14),
                                           child: Stack(
                                             children: [
                                               Image.file(
@@ -282,10 +314,14 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
                                                 top: 12,
                                                 right: 12,
                                                 child: Container(
-                                                  padding: const EdgeInsets.all(8),
+                                                  padding:
+                                                      const EdgeInsets.all(8),
                                                   decoration: BoxDecoration(
-                                                    color: Colors.black.withOpacity(0.6),
-                                                    borderRadius: BorderRadius.circular(20),
+                                                    color: Colors.black
+                                                        .withOpacity(0.6),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
                                                   ),
                                                   child: const Icon(
                                                     Icons.edit,
@@ -298,13 +334,16 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
                                           ),
                                         )
                                       : Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Container(
                                               padding: const EdgeInsets.all(16),
                                               decoration: BoxDecoration(
-                                                color: AppColors.primary.withOpacity(0.1),
-                                                borderRadius: BorderRadius.circular(50),
+                                                color: AppColors.primary
+                                                    .withOpacity(0.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
                                               ),
                                               child: const Icon(
                                                 Icons.photo_camera_outlined,
@@ -337,7 +376,10 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
                               Container(
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
-                                    colors: [AppColors.primary, AppColors.primary.withOpacity(0.8)],
+                                    colors: [
+                                      AppColors.primary,
+                                      AppColors.primary.withOpacity(0.8)
+                                    ],
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
                                   ),
@@ -352,7 +394,8 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
                                 ),
                                 child: ElevatedButton.icon(
                                   onPressed: _guardarVeterinario,
-                                  icon: const Icon(Icons.save_outlined, color: Colors.white),
+                                  icon: const Icon(Icons.save_outlined,
+                                      color: Colors.white),
                                   label: const Text(
                                     'Guardar Veterinario',
                                     style: TextStyle(
@@ -364,7 +407,8 @@ class _VeterinarioFormScreenState extends State<VeterinarioFormScreen> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
                                     shadowColor: Colors.transparent,
-                                    padding: const EdgeInsets.symmetric(vertical: 18),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 18),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
                                     ),

@@ -8,6 +8,7 @@ import 'package:sistema_animales/screens/rescuer/rescuer_detail_popup.dart';
 import 'package:sistema_animales/screens/shared/pantalla_nav.dart';
 import 'package:sistema_animales/servicess/animal_service.dart';
 import 'package:sistema_animales/servicess/rescuer_service.dart';
+import 'package:sistema_animales/utils/geolocation_helper.dart';
 import 'package:sistema_animales/widgets/animal_card.dart';
 import 'package:sistema_animales/widgets/loading_indicator.dart';
 import 'dart:async';
@@ -271,9 +272,17 @@ class _AnimalListScreenState extends State<AnimalListScreen> {
                                     AnimalDetailPopup(animal: item.animal),
                               );
                             },
-                            onRescuer: () {
+                            onRescuer: () async {
                               final rescuer = item.rescuer;
+
                               if (rescuer != null) {
+                                if (rescuer.geolocalizacion != null) {
+                                  rescuer.geolocalizacion!.descripcion =
+                                      'Ubicación seleccionada';
+                                  await traducirCoordenadasAGoogleMaps(
+                                      rescuer.geolocalizacion!);
+                                  
+                                }
                                 showDialog(
                                   context: context,
                                   builder: (_) =>

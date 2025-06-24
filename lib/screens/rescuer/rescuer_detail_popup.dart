@@ -2,22 +2,56 @@ import 'package:flutter/material.dart';
 import 'package:sistema_animales/core/constants.dart';
 import 'package:sistema_animales/core/env.dart';
 import 'package:sistema_animales/models/rescuer_model.dart';
+import 'package:sistema_animales/utils/geolocation_helper.dart';
 import 'package:sistema_animales/widgets/modal_card.dart';
 
-class RescuerDetailPopup extends StatelessWidget {
+class RescuerDetailPopup extends StatefulWidget {
   final Rescuer rescuer;
 
-  RescuerDetailPopup({super.key, required this.rescuer});
+  const RescuerDetailPopup({super.key, required this.rescuer});
+
+  @override
+  State<RescuerDetailPopup> createState() => _RescuerDetailPopupState();
+}
+
+class _RescuerDetailPopupState extends State<RescuerDetailPopup> {
+  late String direccion;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final geo = widget.rescuer.geolocalizacion;
+
+    if (geo != null) {
+      Future.delayed(Duration.zero, () async {
+        await traducirCoordenadasAGoogleMaps(geo);
+
+        final raw = geo.descripcion.trim();
+        final invalidValues = [
+          '',
+          'ubicación seleccionada',
+          'direccion no disponible',
+          'null',
+          'sin ubicación',
+          'no disponible'
+        ];
+
+        final isValid =
+            raw.isNotEmpty && !invalidValues.contains(raw.toLowerCase());
+
+        setState(() {
+          direccion = isValid ? raw : 'Dirección no disponible';
+        });
+      });
+    } else {
+      direccion = 'Sin coordenadas';
+    }
+   
+  }
 
   @override
   Widget build(BuildContext context) {
-    final raw = rescuer.geolocalizacion?.descripcion;
-    final direccion = (raw == null ||
-            raw.trim().isEmpty ||
-            raw.trim().toLowerCase() == 'ubicación seleccionada')
-        ? 'Dirección no disponible'
-        : raw.trim();
-
     return ModalCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,9 +137,9 @@ class RescuerDetailPopup extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: rescuer.imagen != null
+                      child: widget.rescuer.imagen != null
                           ? Image.network(
-                              '$baseImageUrl/${rescuer.imagen}',
+                              '$baseImageUrl/${widget.rescuer.imagen}',
                               height: 120,
                               width: 120,
                               fit: BoxFit.cover,
@@ -174,20 +208,20 @@ class RescuerDetailPopup extends StatelessWidget {
                       _buildModernRow(
                         Icons.person_outline,
                         'Nombre del rescatista:',
-                        rescuer.nombre,
+                        widget.rescuer.nombre,
                         isFirst: true,
                       ),
                       _buildDivider(),
                       _buildModernRow(
                         Icons.phone_outlined,
                         'Teléfono de contacto:',
-                        rescuer.telefono,
+                        widget.rescuer.telefono,
                       ),
                       _buildDivider(),
                       _buildModernRow(
                         Icons.calendar_today_outlined,
                         'Fecha del Rescatista:',
-                        rescuer.fechaRescatista
+                        widget.rescuer.fechaRescatista
                                 ?.toIso8601String()
                                 .split('T')
                                 .first ??
@@ -197,7 +231,9 @@ class RescuerDetailPopup extends StatelessWidget {
                       _buildModernRow(
                         Icons.location_on_outlined,
                         'Ubicación del Rescatista:',
-                        direccion,
+                        direccion == 'Cargando...'
+                            ? 'Obteniendo ubicación...'
+                            : direccion,
                         isLast: true,
                       ),
                     ],

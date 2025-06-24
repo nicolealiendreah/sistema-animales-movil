@@ -10,11 +10,19 @@ class AnimalRescatista {
   String? get id => animal.id;
 
   factory AnimalRescatista.fromJson(Map<String, dynamic> json) {
+    final rescJson = json['rescatista'];
+    final geoJson = json['geolocalizacion'];
+
+    final rescuer = rescJson != null
+        ? Rescuer.fromJson({
+            ...rescJson,
+            if (geoJson != null) 'geolocalizacion': geoJson,
+          })
+        : null;
+
     return AnimalRescatista(
       animal: Animal.fromJson(json),
-      rescuer: json['rescatista'] != null
-          ? Rescuer.fromJson(json['rescatista'])
-          : null,
+      rescuer: rescuer,
     );
   }
 }

@@ -92,7 +92,9 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
 
     final transfer = Transfer(
       nombreAnimal: widget.animal.nombre,
-      ubicacionAnterior: _ubicacionAnterior.text,
+      ubicacionAnterior: _ubicacionAnterior.text.isNotEmpty
+          ? _ubicacionAnterior.text
+          : 'Ubicación seleccionada',
       motivo: _motivo.text,
       observaciones: _observaciones.text,
       responsable: _responsable.text,
@@ -105,8 +107,6 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
           ? _ubicacionNueva.text
           : 'Ubicación seleccionada',
     );
-
-    print('Enviando Transfer: ${transfer.toJson()}');
 
     try {
       await _service.create(transfer);

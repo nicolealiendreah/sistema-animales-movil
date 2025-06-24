@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sistema_animales/servicess/animal_history_service.dart';
 import 'package:sistema_animales/core/constants.dart';
 import '../../models/animal_historial_model.dart';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 
 class AnimalHistoryScreen extends StatefulWidget {
   final String nombre;
@@ -18,6 +21,7 @@ class _AnimalHistoryScreenState extends State<AnimalHistoryScreen>
   late Future<AnimalHistorial> _futureHistorial;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  final GlobalKey _repaintKey = GlobalKey();
 
   @override
   void initState() {

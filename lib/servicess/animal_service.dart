@@ -26,6 +26,11 @@ class AnimalService {
             await traducirCoordenadasAGoogleMaps(
                 animal.animal.geolocalizacion!);
           }
+
+          if (animal.rescuer?.geolocalizacion != null) {
+            await traducirCoordenadasAGoogleMaps(
+                animal.rescuer!.geolocalizacion!);
+          }
         }
 
         return lista;

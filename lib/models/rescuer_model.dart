@@ -18,14 +18,15 @@ class Rescuer {
   });
 
   factory Rescuer.fromJson(Map<String, dynamic> json) {
+    final geoJson = json['ubicacion'] ?? json['geolocalizacion'];
+
     return Rescuer(
       id: json['id']?.toString() ?? json['_id'],
       nombre: json['nombre'],
       telefono: json['telefono'],
       fechaRescatista: DateTime.parse(json['fechaRescatista']),
-      geolocalizacion: json['ubicacion'] != null
-          ? Geolocalizacion.fromJson(json['ubicacion'])
-          : null,
+      geolocalizacion:
+          geoJson != null ? Geolocalizacion.fromJson(geoJson) : null,
       imagen: json['imagen'],
     );
   }
